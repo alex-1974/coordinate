@@ -1,0 +1,10 @@
+name "coordinate"
+description "A minimal D application."
+authors "Alexander Leisser"
+copyright "Copyright © 2020, Alexander Leisser"
+license "proprietary"
+dependency "mathematics" version="*"
+buildType "docs" {
+  buildOptions "syntaxOnly"
+  dflags "-c" "-Dddocs" "-preview=markdown"
+}
