@@ -1,12 +1,10 @@
-/** **/
+/** Conversions between geographic coordinate systems **/
 module coordinate.conv;
 
-public import coordinate: UTM, GEO;
-import coordinate: LAT, LON;
+public import coordinate: UTM, MGRS, GEO;
+import coordinate;
 debug import std.stdio;
 
-const real falseEasting = 500e3;
-const real falseNorthing = 10000e3;
 
 /** Converts UTM zone/easting/northing coordinate to latitude/longitude.
 
@@ -19,7 +17,7 @@ const real falseNorthing = 10000e3;
 
   See: https://www.movable-type.co.uk/scripts/latlong-utm-mgrs.html
 **/
-auto toLatLon (UTM utm) {
+GEO toLatLon (UTM utm) {
   import std.math;
   import coordinate.mathematics;
 
@@ -27,7 +25,7 @@ auto toLatLon (UTM utm) {
   const real f = 1/298.257223563;
   const real k0 = 0.9996;
 
-  const real x = utm.easting -falseEasting; // make x ± relative to central meridian
+  const real x = utm.easting - falseEasting; // make x ± relative to central meridian
   const real y = (utm.hemisphere == 's')? utm.northing - falseNorthing:utm.northing;  // make y ± relative to equator
 
   // ---- from Karney 2011 Eq 15-22, 36:
@@ -49,6 +47,7 @@ auto toLatLon (UTM utm) {
                                           4397/161280*n4 -   11/504*n5 -  830251/7257600*n6,
                                                         4583/161280*n5 -  108847/3991680*n6,
                                                                       20648693/638668800*n6];
+
   real zeta_dot = zeta;
   for (uint j = 1; j <= 6; j++) {
     zeta_dot -= beta[j] * (2*j*zeta).sin * (2*j*eta).cosh;
@@ -102,7 +101,6 @@ auto toLatLon (UTM utm) {
   const real convergence = gamma.toDegree();
   const real scale = k;
 
-  debug writefln ("lat %s lon %s conv %s scale %s", lat, lon, convergence, scale);
   return GEO(LAT(lat), LON(lon), real.nan, real.nan, real.nan);
 }
 /** **/
@@ -119,18 +117,20 @@ unittest {
   for distances up to 3900km from the central meridian.
 
 **/
-auto toUTM (GEO geo)  {}
-/** ditto **/
-auto toUTM (real lat, real lon, real a, real f) {
+UTM toUTM (GEO geo) {
   import std.math;
   import std.conv: to;
   import coordinate.mathematics;
   import coordinate.utm: mgrsBands;
-  uint zone = cast(uint)floor((lon+180)/6) + 1; // longitudinal zone
+  const real lat = geo.lat.lat;
+  const real lon = geo.lon.lon;
+  const real a = geo.datum.ellipsoid.a;
+  const real f = geo.datum.ellipsoid.f;
+  uint zone = cast(uint)floor((lon+180)/6.0) + 1; // longitudinal zone
   real lambda_0 = ((zone-1)*6.0 - 180 + 3).toRadians(); // longitude of central meridian
   // handle Norway/Svalbard exceptions
   // grid zones are 8° tall; 0°N is offset 10 into latitude bands array
-  const char latBand = mgrsBands[floor(lat/8 + 10).to!size_t];
+  const char latBand = mgrsBands[floor(lat/8.0 + 10).to!size_t];
   // adjust zone & central meridian for Norway
   if (zone==31 && latBand=='v' && lon>= 3) { zone++; lambda_0 += (6.0).toRadians(); }
   // adjust zone & central meridian for Svalbard
@@ -147,9 +147,10 @@ auto toUTM (real lat, real lon, real a, real f) {
   const real k0 = 0.9996; // UTM scale on the central meridian
 
   // easting, northing: Karney 2011 Eq 7-14, 29, 35:
-  const real e = (f*(2-f)).sqrt;  // eccentricity
+  const real e = (f*(2.0-f)).sqrt;  // eccentricity
   const real n = f / (2-f); // 3rd flattening
-  const real n2 = n*n; const real n3 = n*n2; const real n4 = n*n3; const real n5 = n*n4; const real n6 = n*n5;
+  const real n2 = n*n; const real n3 = n*n2; const real n4 = n*n3;
+  const real n5 = n*n4; const real n6 = n*n5;
   const real clambda = lambda.cos; const real slambda = lambda.sin; const real tlambda = lambda.tan;
   const real tau = phi.tan;  // τ ≡ tanφ, τʹ ≡ tanφʹ; prime (ʹ) indicates angles on the conformal sphere
   const real sigma = (e*atanh(e*tau/(1+tau*tau).sqrt)).sinh;
@@ -169,9 +170,9 @@ auto toUTM (real lat, real lon, real a, real f) {
                                                                   212378941/319334400*n6 ];
 
   real zeta = zeta_dot;
-  for (uint j = 1; j <= 6; j++) { zeta += alpha[j] * (2*j*zeta_dot).sin * (2*j*eta_dot).cosh; }
+  for (uint j = 1; j <= 6; j++) { zeta += alpha[j] * (2.0*j*zeta_dot).sin * (2.0*j*eta_dot).cosh; }
   real eta = eta_dot;
-  for (uint j = 1; j <= 6; j++) { eta += alpha[j] * (2*j*zeta_dot).cos * (2*j*eta_dot).sinh; }
+  for (uint j = 1; j <= 6; j++) { eta += alpha[j] * (2.0*j*zeta_dot).cos * (2.0*j*eta_dot).sinh; }
 
   real x = k0 * A * eta;
   real y = k0 * A * zeta;
@@ -205,5 +206,76 @@ auto toUTM (real lat, real lon, real a, real f) {
 }
 /** **/
 unittest {
-  writefln ("toUTM %s", toUTM(52.2, 0.12, 6378137, 1/298.257223563));
+  auto geo = geo(52.2, 0.12);
+  writefln ("toUTM %s", toUTM(geo));
+}
+
+/** **/
+UTM toUTM (MGRS mgrs) {
+  import std.uni: toUpper;
+  import std.string: indexOf;
+  import std.math: floor;
+  const char hemisphere = (mgrs.band.toUpper >= 'N') ? 'N' : 'S';
+  // get easting specified by e100k (note +1 because eastings start at 166e3 due to 500km false origin)
+  const size_t col = e100kLetters[(mgrs.zone-1)%3].indexOf(mgrs.grid[0]) + 1;
+  const real e100kNum = col * 100e3; // e100k in metres
+
+  // get northing specified by n100k
+  const size_t row = n100kLetters[(mgrs.zone-1)%2].indexOf(mgrs.grid[1]);
+  const real n100kNum = row * 100e3; // n100k in metres
+
+  // get latitude of (bottom of) band
+  const real latBand = (mgrsBands.indexOf(mgrs.band)-10)*8.0;
+  // get northing of bottom of band, extended to include entirety of bottom-most 100km square
+
+  const real nBand = floor(GEO(LAT(latBand), LON(3.0), real.nan, real.nan, real.nan).toUTM().northing/100e3)*100e3;
+  // 100km grid square row letters repeat every 2,000km north; add enough 2,000km blocks to get into required band
+  real n2M = 0.0; // northing of 2,000km block
+  while (n2M + n100kNum + mgrs.northing < nBand) n2M += 2000e3;
+  return UTM(hemisphere, mgrs.zone, e100kNum+mgrs.easting, n2M+n100kNum+mgrs.northing);
+}
+/** **/
+unittest {
+  auto mgrs = MGRS(31, 'U',  "DQ", 48251, 11932);
+  writefln ("to utm %s", mgrs.toUTM());
+}
+
+/** **/
+MGRS toMGRS (UTM utm) {
+  import std.math;
+  //import std.string: indexOf;
+  // convert UTM to lat/long to get latitude to determine band
+  GEO latlong = utm.toLatLon();
+  // grid zones are 8° tall, 0°N is 10th band
+  const char band = mgrsBands[cast(size_t)(floor(latlong.lat/8+10))]; // latitude band
+
+  // columns in zone 1 are A-H, zone 2 J-R, zone 3 S-Z, then repeating every 3rd zone
+  const size_t col = cast(size_t)floor(utm.easting / 100e3);
+  // (note -1 because eastings start at 166e3 due to 500km false origin)
+  const char e100k = e100kLetters[(utm.zone-1)%3][col-1];
+
+  // rows in even zones are A-V, in odd zones are F-E
+  const size_t row = cast(size_t)(floor(utm.northing / 100e3) % 20);
+  const char n100k = n100kLetters[(utm.zone-1)%2][row];
+
+  // truncate easting/northing to within 100km grid square
+  real easting = utm.easting % 100e3;
+  real northing = utm.northing % 100e3;
+
+  return MGRS(utm.zone, band, [e100k, n100k], easting, northing);
+}
+/** **/
+unittest {
+  auto utm = UTM('N', 31, 448251, 5411932);
+  writefln("toMGRS %s", toMGRS(utm));
+}
+
+/** **/
+MGRS toMGRS (GEO geo) {
+  return geo.toUTM.toMGRS;
+}
+
+/** **/
+GEO toLatLon (MGRS mgrs) {
+  return mgrs.toUTM.toLatLon;
 }

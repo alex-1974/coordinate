@@ -1,4 +1,4 @@
-/**
+/** Defines a geographic coordinate type with latitude and Longitude
 
 ## Latitude ##
 The latitude (denoted by the Greek letter phi *ϕ*) specifies the north–south position of a point on the Earth's surface.
@@ -9,7 +9,7 @@ Lines of constant latitude, or *parallels*, run east–west as circles parallel 
 The longitude (denoted by the Greek letter lambda *λ*) specifies the east–west position of a point on the Earth's surface.
 Lines of constant longitude, or *meridians*, running from pole to pole.
 
-## Precision of longitudes in decimal degree ##
+## Precision of latitude in decimal degree ##
 
   The radius of the semi-major axis of the Earth at the equator is 6,378,137.0 m resulting in a circumference of 40,075,016.7 m.
   The equator is divided into 360 degrees of longitude, so each degree at the equator represents 111,319.5 m or approximately 111.32 km.
@@ -83,7 +83,15 @@ struct GEO {
   real altitude = real.nan;         /// Altitude in meters
   real accuracy = real.nan;         /// Accuracy in meters
   real altitudeAccuracy = real.nan; /// Altitude accuracy in meters
-  string datum;
+  Datum datum;
+  this(LAT lat, LON lon, real altitude, real accuracy, real altitudeAccuracy) {
+    this.lat = lat;
+    this.lon = lon;
+    this.altitude = altitude;
+    this.accuracy = accuracy;
+    this.altitudeAccuracy = altitudeAccuracy;
+    this.datum = geoDatum["wgs1984"];
+  }
   invariant {
     import std.math: isNaN;
     import mathematics.floating: ltE;

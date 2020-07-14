@@ -1,7 +1,7 @@
-/** **/
+/** Definitions of geographic datums **/
 module coordinate.datums;
 
-import std.stdio;
+debug import std.stdio;
 
 /** Ellipsoid parameters
 
@@ -33,11 +33,11 @@ struct Datum {
   }
 }
 
-const Ellipsoid[string] ellipsoid;  ///
-const Datum[string] datum;          ///
+const Ellipsoid[string] geoEllipsoid;  ///
+const Datum[string] geoDatum;          ///
 shared static this() {
   Ellipsoid undefinedEllipsoid = Ellipsoid(real.nan, real.nan, real.nan);
-  ellipsoid = [
+  geoEllipsoid = [
     "undefined":      Ellipsoid(real.nan, real.nan, real.nan),
     "airy1830":       Ellipsoid(6377563.396, 6356256.909, 1/299.3249646),
     "airyModified":   Ellipsoid(6377340.189, 6356034.448, 1/299.3249646),
@@ -75,48 +75,48 @@ shared static this() {
 
   ];
 
-  datum = [
-    "osgb36":     Datum(ellipsoid["airy1830"],     [-446.448, 125.157,-542.060, -0.1502,-0.2470,-0.8421, 20.4894]),
-    "irl1975":    Datum(ellipsoid["airyModified"], [-482.530,130.596,-564.557, -1.042,-0.214,-0.631, -8.150]),
-    "tokyoJapan": Datum(ellipsoid["bessel1841"],   [148.0,-507.0,-685.0, 0.0,0.0,0.0, 0.0]),
+  geoDatum = [
+    "osgb36":     Datum(geoEllipsoid["airy1830"],     [-446.448, 125.157,-542.060, -0.1502,-0.2470,-0.8421, 20.4894]),
+    "irl1975":    Datum(geoEllipsoid["airyModified"], [-482.530,130.596,-564.557, -1.042,-0.214,-0.631, -8.150]),
+    "tokyoJapan": Datum(geoEllipsoid["bessel1841"],   [148.0,-507.0,-685.0, 0.0,0.0,0.0, 0.0]),
     // --- A ---
-    "adindan":    Datum(ellipsoid["clarke1880"],   []),
-    "afgooye":    Datum(ellipsoid["krassowsky1940"],[]),
-    "agadez":     Datum(ellipsoid["clarke1880"], []),
-    "australianGeod1966":     Datum(ellipsoid["australian"], []),
-    "australianGeod1984":     Datum(ellipsoid["australian"], []),
-    "alaskanIslands":     Datum(ellipsoid["clarke1866"], []),
-    "amersfoort":     Datum(ellipsoid["bessel1841"], []),
-    "anguilla1957":     Datum(ellipsoid["clarke1880"], []),
-    "anna1965":     Datum(ellipsoid["australian"], []),
-    "antigua1943":     Datum(ellipsoid["clarke1880"], []),
-    "aratu":     Datum(ellipsoid["intl1924"], []),
-    "arc1950":     Datum(ellipsoid["clarke1880"], []),
-    "arc1960":     Datum(ellipsoid["clarke1880"], []),
-    "ascensionIsland1958":     Datum(ellipsoid["intl1924"], []),
-    "astro1952":     Datum(ellipsoid["intl1924"], []),
-    "ayabelle":     Datum(ellipsoid["clarke1880"], []),
+    "adindan":    Datum(geoEllipsoid["clarke1880"],   []),
+    "afgooye":    Datum(geoEllipsoid["krassowsky1940"],[]),
+    "agadez":     Datum(geoEllipsoid["clarke1880"], []),
+    "australianGeod1966":     Datum(geoEllipsoid["australian"], []),
+    "australianGeod1984":     Datum(geoEllipsoid["australian"], []),
+    "alaskanIslands":     Datum(geoEllipsoid["clarke1866"], []),
+    "amersfoort":     Datum(geoEllipsoid["bessel1841"], []),
+    "anguilla1957":     Datum(geoEllipsoid["clarke1880"], []),
+    "anna1965":     Datum(geoEllipsoid["australian"], []),
+    "antigua1943":     Datum(geoEllipsoid["clarke1880"], []),
+    "aratu":     Datum(geoEllipsoid["intl1924"], []),
+    "arc1950":     Datum(geoEllipsoid["clarke1880"], []),
+    "arc1960":     Datum(geoEllipsoid["clarke1880"], []),
+    "ascensionIsland1958":     Datum(geoEllipsoid["intl1924"], []),
+    "astro1952":     Datum(geoEllipsoid["intl1924"], []),
+    "ayabelle":     Datum(geoEllipsoid["clarke1880"], []),
     // --- B ---
     // --- E ---
-    "ed1950":       Datum(ellipsoid["intl1924"],     [89.5,93.8,123.1, 0.0,0.0,0.156, -1.2]),
-    "ed1977":       Datum(ellipsoid["intl1924"],     []),
-    "ed1987":       Datum(ellipsoid["intl1924"],     []),
+    "ed1950":       Datum(geoEllipsoid["intl1924"],     [89.5,93.8,123.1, 0.0,0.0,0.156, -1.2]),
+    "ed1977":       Datum(geoEllipsoid["intl1924"],     []),
+    "ed1987":       Datum(geoEllipsoid["intl1924"],     []),
 
-    "etrf1989":     Datum(ellipsoid["wgs1984"], []),
-    "european1979":     Datum(ellipsoid["intl1924"], []),
-    "europeanLibyan1979":     Datum(ellipsoid["intl1924"], []),
-    "everestBangladesh":     Datum(ellipsoid["everest1830"], []),
-    "everestIndiaNepal":     Datum(ellipsoid["everest1975"], []),
+    "etrf1989":     Datum(geoEllipsoid["wgs1984"], []),
+    "european1979":     Datum(geoEllipsoid["intl1924"], []),
+    "europeanLibyan1979":     Datum(geoEllipsoid["intl1924"], []),
+    "everestBangladesh":     Datum(geoEllipsoid["everest1830"], []),
+    "everestIndiaNepal":     Datum(geoEllipsoid["everest1975"], []),
     // --- N ---
-    "nad1927":      Datum(ellipsoid["clarke1866"],   [8.0,-160.0,-176.0, 0.0,0.0,0.0, 0.0]),
-    "nad1983":      Datum(ellipsoid["grs1980"],        [1.004,-1.910,-0.515, 0.0267,0.00034,0.011, -0.0015]),
+    "nad1927":      Datum(geoEllipsoid["clarke1866"],   [8.0,-160.0,-176.0, 0.0,0.0,0.0, 0.0]),
+    "nad1983":      Datum(geoEllipsoid["grs1980"],        [1.004,-1.910,-0.515, 0.0267,0.00034,0.011, -0.0015]),
     // --- W ---
-    "wgs1972":      Datum(ellipsoid["wgs1972"],        [0.0,0.0,-4.5, 0.0,0.0,0.554, -0.22]),
-    "wgs1984":      Datum(ellipsoid["wgs1984"],        [0.0,0.0,0.0, 0.0,0.0,0.0, 0.0])
+    "wgs1972":      Datum(geoEllipsoid["wgs1972"],        [0.0,0.0,-4.5, 0.0,0.0,0.554, -0.22]),
+    "wgs1984":      Datum(geoEllipsoid["wgs1984"],        [0.0,0.0,0.0, 0.0,0.0,0.0, 0.0])
 
   ];
 }
 unittest {
-  writefln ("Ellipsoid list %s", ellipsoid);
-  writefln ("Datum list %s", datum);
+  writefln ("Ellipsoid list %s", geoEllipsoid);
+  writefln ("Datum list %s", geoDatum);
 }
