@@ -106,7 +106,7 @@ GEO toLatLon (UTM utm) {
 /** **/
 unittest {
   import coordinate: utm;
-  auto mopti = utm('N', 30, 370797, 1603103);
+  auto mopti = utm(30, 'N', 370797, 1603103);
   mopti.toLatLon;
 }
 
@@ -202,7 +202,7 @@ UTM toUTM (GEO geo) {
    const real convergence = gamma.toDegree();
    const real scale = k;
    const char hemisphere = (lat >= 0)? 'N':'S';  // Hemisphere
-   return UTM(hemisphere, zone, x, y);
+   return UTM(zone, hemisphere, x, y);
 }
 /** **/
 unittest {
@@ -227,12 +227,11 @@ UTM toUTM (MGRS mgrs) {
   // get latitude of (bottom of) band
   const real latBand = (mgrsBands.indexOf(mgrs.band)-10)*8.0;
   // get northing of bottom of band, extended to include entirety of bottom-most 100km square
-
   const real nBand = floor(GEO(LAT(latBand), LON(3.0), real.nan, real.nan, real.nan).toUTM().northing/100e3)*100e3;
   // 100km grid square row letters repeat every 2,000km north; add enough 2,000km blocks to get into required band
   real n2M = 0.0; // northing of 2,000km block
   while (n2M + n100kNum + mgrs.northing < nBand) n2M += 2000e3;
-  return UTM(hemisphere, mgrs.zone, e100kNum+mgrs.easting, n2M+n100kNum+mgrs.northing);
+  return UTM(mgrs.zone, hemisphere, e100kNum+mgrs.easting, n2M+n100kNum+mgrs.northing);
 }
 /** **/
 unittest {
@@ -266,7 +265,7 @@ MGRS toMGRS (UTM utm) {
 }
 /** **/
 unittest {
-  auto utm = UTM('N', 31, 448251, 5411932);
+  auto utm = UTM(31, 'N', 448251, 5411932);
   writefln("toMGRS %s", toMGRS(utm));
 }
 

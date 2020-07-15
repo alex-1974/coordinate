@@ -27,7 +27,7 @@ struct UTM {
   real easting;   /// Easting
   real northing;  /// Northing
   //string datum;
-  this (char hemisphere, uint zone, real easting, real northing) {
+  this (uint zone, char hemisphere, real easting, real northing) {
     import std.uni: toUpper;
     this.hemisphere = cast(char)(hemisphere.toUpper);
     this.zone = zone;
@@ -37,7 +37,7 @@ struct UTM {
   void toString(scope void delegate(const(char)[]) sink) const {
     import std.conv: to;
     import std.uni: toUpper;
-    sink(this.hemisphere.toUpper.to!string ~ " " ~ this.zone.to!string ~ " " ~ this.easting.to!string ~ " " ~ this.northing.to!string);
+    sink(this.zone.to!string ~ " " ~ this.hemisphere.toUpper.to!string ~ " " ~ this.easting.to!string ~ " " ~ this.northing.to!string);
   }
   invariant {
     import std.uni: toUpper;
@@ -45,27 +45,77 @@ struct UTM {
     assert(0 < zone && zone <= 60, "Zone number out of range!");
   }
 }
+auto band (UTM utm) {
+  // compute and return latitude band
+}
 /** **/
-auto utm (T,U,V) (T hemisphere, U zone, V easting, V northing, string file = __FILE__, size_t line = __LINE__)
-  if (isSomeChar!T && isNumeric!U && isNumeric!V) {
+auto utm (alias string Type, T, U, V) (T zone, U band, V easting, V northing, string file = __FILE__, size_t line = __LINE__)
+  if (Type == "band" && isSomeChar!U && isNumeric!T && isNumeric!V) {
+  import std.uni: toUpper;
+  const char hemisphere = (band.toUpper >= 'N') ? 'N' : 'S';
+  return utm!"hemisphere"(zone, hemisphere, easting, northing, file, line);
+}
+/** ditto **/
+auto utm (alias string Type = "hemisphere", T,U,V) (T zone, U hemisphere, V easting, V northing, string file = __FILE__, size_t line = __LINE__)
+  if (Type != "band" && isSomeChar!U && isNumeric!T && isNumeric!V) {
   import std.exception: enforce;
   import std.math: isNaN;
   import std.uni: toUpper;
   import mathematics.floating: ltE;
-  enforce!UTMException(hemisphere.toUpper == 'N' || hemisphere.toUpper == 'S', "Wrong hemisphere [N, S]!");
-  enforce!UTMException(0 <= zone && zone <= 60, "Zone number out of range [0..60]!");
-  return UTM(cast(char)hemisphere.toUpper, cast(uint)zone, cast(real)easting, cast(real)northing);
+  static if (Type != "hemisphere")  static assert(0, "Type not valid!");
+  enforce!UTMException(hemisphere.toUpper == 'N' || hemisphere.toUpper == 'S', "Wrong hemisphere [N, S]!", file, line);
+  enforce!UTMException(0 <= zone && zone <= 60, "Zone number out of range [0..60]!", file, line);
+  return UTM(cast(uint)zone, cast(char)hemisphere.toUpper, cast(real)easting, cast(real)northing);
 }
-
 /** **/
-auto utm (string ccord, string file = __FILE__, size_t line = __LINE__) {
-
+auto utm (alias string Type) (string coord, string file = __FILE__, size_t line = __LINE__)
+  if (Type == "band") {
+  import std.uni: toUpper;
+  import std.exception: enforce;
+  //enforce!UTMException(band.toUpper == 'N' || band.toUpper == 'S', "Wrong band!", file, line);
+  uint zone; char band; real easting, northing;
+  parseUTM(coord, zone, band, easting, northing, file, line);
+  const char hemisphere = (band.toUpper >= 'N') ? 'N' : 'S';
+  return utm(zone, hemisphere, easting, northing, file, line);
 }
-/** Military Grid Reference System (MGRS/NATO)
+/** **/
+unittest {
+  writefln ("utm band %s", utm!"band"(15, 'S', 580817, 4251205));
+}
+/** ditto **/
+UTM utm (alias string Type = "hemisphere") (string coord, string file = __FILE__, size_t line = __LINE__)
+  if (Type != "band") {
+  static if (Type != "hemisphere")  static assert(0, "Type not valid!");
+  uint zone; char hemisphere; real easting, northing;
+  parseUTM(coord, zone, hemisphere, easting, northing, file, line);
+  return utm(zone, hemisphere, easting, northing);
+}
+/** **/
+unittest {
+  writefln("utm %s", utm("32 N 461344 5481745"));
+}
+private void parseUTM (string coord, out uint zone, out char hemisphere, out real easting, out real northing, string file = __FILE__, size_t line = __LINE__) {
+  import std.regex: ctRegex, matchFirst;
+  import std.string: strip;
+  import std.conv: to;
+  import std.algorithm: substitute;
+  import std.uni: asUpperCase;
+  import std.utf: byCodeUnit;
+  import std.range;
+  auto ct = ctRegex!(`([\d]{1,2})[\s]*([ns]?)[\s]*([\d]+(?:[.,]?[\d]+))[\s]([\d]+(?:[.,]?[\d]+))`, "i");
+  // m[1]: zone, m[2]: hemisphere, m[3]: easting, m[4]: northing
+  auto m = matchFirst(coord.strip, ct);
+  if (m.empty) throw new UTMException("Failed to parse coordinates!", file, line);
+  zone = m[1].to!uint;
+  hemisphere = m[2].asUpperCase.byCodeUnit.front.to!char; // hemisphere
+  easting = m[3].strip.substitute(',', '.').to!real; // easting
+  northing = m[4].strip.substitute(',', '.').to!real; // northing
+}
+/** Military Grid Reference System (MGRS/NATO or UTMRef)
 
   MGRS grid references provides geocoordinate references, covering the entire globe, based on UTM projections.
   MGRS references comprise a grid zone designator, a 100km square identification, and an easting
-  and northing (in metres); e.g. ‘31U DQ 48251 11932’.
+  and northing inside this grid (in metres); e.g. ‘31U DQ 48251 11932’.
 **/
 struct MGRS {
   uint zone;      /// 6° UTM longitudinal zone (1..60 covering 180°W..180°E)
@@ -92,4 +142,56 @@ struct MGRS {
     import std.algorithm;
     //assert (mgrsBands.canFind(band), "Latitude band out of range!");
   }
+}
+/** **/
+MGRS mgrs (uint zone, char band, string grid, real easting, real northing, string file = __FILE__, size_t line = __LINE__) {
+  return MGRS(zone, band, grid, easting, northing);
+}
+/** **/
+unittest {}
+/** **/
+MGRS mgrs (string coord, string file = __FILE__, size_t line = __LINE__) {
+  import std.regex: ctRegex, matchFirst;
+  import std.string: strip;
+  import std.conv: to;
+  import std.algorithm: substitute, count, splitter;
+  import std.uni: asUpperCase;
+  import std.utf: byCodeUnit;
+  import std.range;
+  // m[1]: zone, m[2]: band, m[3]: grid, m[4]: easting and northing
+  auto ct = ctRegex!(`([\d]{1,2})[\s]*([a-z])[\s]*([a-z]{2})[\s]*([\d,.\s]*)`, "i");
+  auto m = matchFirst(coord.strip, ct);
+  if (m.empty) throw new MGRSException("Failed to parse coordinates!", file, line);
+  const uint zone = m[1].to!uint;
+  const char band = m[2].asUpperCase.byCodeUnit.front.to!char;
+  const string grid = m[3];
+  string[2] s;
+  auto c = count(m[4], ',');
+  switch (c) {
+    case 0: goto case 2;                          // if e n
+    case 1: s = m[4].splitter(",").array; break;  // if e,n
+    case 2: {                                     // if e,e n,n
+      auto a = m[4].splitter(" ").array;
+      s = [a[0..a.length/2].join(' '),a[a.length/2..$].join(' ')];
+      break;
+    }
+    case 3: {                                     // if e,e, n,n
+      string[4] a = m[4].splitter(",").array;
+      s = [a[0..2].join('.'),a[2..4].join('.')];
+      break;
+    }
+    default: break;
+  }
+  // if we have no seperator between easting and northing (eg. 15SWC8081751205)
+  if (!s[0].length) {
+    s[0] = s[1][0..s[1].length/2];
+    s[1] = s[1][s[1].length/2..$];
+  }
+  const real easting = s[0].strip.substitute(',', '.').to!real;
+  const real northing = s[1].strip.substitute(',', '.').to!real;
+  return mgrs(zone, band, grid, easting, northing, file, line);
+}
+/** **/
+unittest {
+  writefln ("mgrs %s", mgrs("15SWC8081751205"));
 }
