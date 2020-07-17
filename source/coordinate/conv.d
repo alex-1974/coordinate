@@ -1,7 +1,8 @@
 /** Conversions between geographic coordinate systems **/
 module coordinate.conv;
 
-public import coordinate: UTM, MGRS, GEO;
+public import coordinate: UTM, MGRS, GEO, ECEF;
+import coordinate.utils: AltitudeType, AccuracyType, defaultDatum;
 import coordinate;
 debug import std.stdio;
 
@@ -21,15 +22,15 @@ GEO toLatLon (UTM utm) {
   import std.math;
   import coordinate.mathematics;
 
-  const real a = 6378137;
-  const real f = 1/298.257223563;
+  const real a = utm.datum.ellipsoid.a;
+  const real f = utm.datum.ellipsoid.f;
   const real k0 = 0.9996;
 
   const real x = utm.easting - falseEasting; // make x ± relative to central meridian
   const real y = (utm.hemisphere == 's')? utm.northing - falseNorthing:utm.northing;  // make y ± relative to equator
 
   // ---- from Karney 2011 Eq 15-22, 36:
-  const real e = (f*(2-f)).sqrt;  // eccenticity
+  const real e = (f*(2-f)).sqrt;  // eccentricity
   const real n = f/(2-f);         // 3rd flattening;
   const real n2 = n*n; const real n3 = n*n2;
   const real n4 = n*n3; const real n5 = n*n4; const real n6 = n*n5;
@@ -101,7 +102,7 @@ GEO toLatLon (UTM utm) {
   const real convergence = gamma.toDegree();
   const real scale = k;
 
-  return GEO(LAT(lat), LON(lon), real.nan, real.nan, real.nan);
+  return GEO(LAT(lat), LON(lon), utm.altitude, utm.accuracy, utm.altitudeAccuracy, utm.datum);
 }
 /** **/
 unittest {
@@ -110,8 +111,7 @@ unittest {
   mopti.toLatLon;
 }
 
-/**
-  Converts latitude/longitude to UTM coordinate.
+/** Converts latitude/longitude to UTM coordinate.
 
   Implements Karney’s method, using Krüger series to order n⁶, giving results accurate to 5nm
   for distances up to 3900km from the central meridian.
@@ -202,12 +202,66 @@ UTM toUTM (GEO geo) {
    const real convergence = gamma.toDegree();
    const real scale = k;
    const char hemisphere = (lat >= 0)? 'N':'S';  // Hemisphere
-   return UTM(zone, hemisphere, x, y);
+   return UTM(zone, hemisphere, x, y, geo.altitude, geo.accuracy, geo.altitudeAccuracy, geo.datum);
 }
 /** **/
 unittest {
   auto geo = geo(52.2, 0.12);
   writefln ("toUTM %s", toUTM(geo));
+}
+
+/** **/
+GEO toLatLon (ECEF ecef, Datum datum = geoDatum[defaultDatum]) {
+  import std.math;
+  import coordinate.mathematics: toDegree;
+  const real x = ecef.x; const real y = ecef.y; const real z = ecef.z;
+  const real a = datum.ellipsoid.a;
+  const real b = datum.ellipsoid.b;
+  const real f = datum.ellipsoid.f;
+
+  const real e2 = 2*f - f*f;
+  const real eps2 = e2 / (1-e2);
+  const p = (x*x + y*y).sqrt;
+  const R = (p*p + z*z).sqrt;
+
+  // parametric latitude (Bowring eqn.17, replacing tanβ = z·a / p·b)
+  const real tbeta = (b*z)/(a*p) * (1+eps2*b/R);
+  const real sbeta = tbeta / (1+tbeta*tbeta).sqrt;
+  const real cbeta = sbeta / tbeta;
+
+  // geodetic latitude (Bowring eqn.18: tanφ = z+ε²⋅b⋅sin³β / p−e²⋅cos³β)
+  const real phi = (cbeta.isNaN) ? 0 : atan2(z + eps2*b*sbeta*sbeta*sbeta, p - e2*a*cbeta*cbeta*cbeta);
+  // longitude
+  const real lambda = atan2(y, x);
+
+  // height above ellipsoid (Bowring eqn.7)
+  const real sphi = phi.sin, cphi = phi.cos;
+  const real ny = a / (1-e2*sphi*sphi).sqrt; // length of the normal terminated by the minor axis
+  const real h = p*cphi + z*sphi - (a*a/ny);
+  return GEO(LAT(phi.toDegree()), LON(lambda.toDegree()), cast(AltitudeType)h, AccuracyType.nan, AccuracyType.nan, datum);
+}
+
+/** **/
+ECEF toLatLon (GEO geo) {
+  import std.math;
+  import coordinate.mathematics: toRadians;
+  // x = (ν+h)⋅cosφ⋅cosλ, y = (ν+h)⋅cosφ⋅sinλ, z = (ν⋅(1-e²)+h)⋅sinφ
+  // where ν = a/√(1−e²⋅sinφ⋅sinφ), e² = (a²-b²)/a² or (better conditioned) 2⋅f-f²
+  const real phi = geo.lat.lat.toRadians();
+  const real lambda = geo.lon.lon.toRadians();
+  const real h = geo.altitude;
+  const real a = geo.datum.ellipsoid.a;
+  const real f = geo.datum.ellipsoid.f;
+
+  const real sphi = phi.sin; const real cphi = phi.cos;
+  const real slambda = lambda.sin; const real clambda = lambda.cos;
+
+  const real eSq = 2*f - f*f;
+  const ny = a / (1 - eSq*sphi*sphi).sqrt; // radius of curvature in prime vertical
+  const x = (ny+h) * cphi * clambda;
+  const y = (ny+h) * cphi * slambda;
+  const z = (ny*(1-eSq)+h) * sphi;
+  return ECEF(x,y,z);
 }
 
 /** **/
@@ -231,11 +285,11 @@ UTM toUTM (MGRS mgrs) {
   // 100km grid square row letters repeat every 2,000km north; add enough 2,000km blocks to get into required band
   real n2M = 0.0; // northing of 2,000km block
   while (n2M + n100kNum + mgrs.northing < nBand) n2M += 2000e3;
-  return UTM(mgrs.zone, hemisphere, e100kNum+mgrs.easting, n2M+n100kNum+mgrs.northing);
+  return UTM(mgrs.zone, hemisphere, e100kNum+mgrs.easting, n2M+n100kNum+mgrs.northing, mgrs.altitude, mgrs.accuracy, mgrs.altitudeAccuracy);
 }
 /** **/
 unittest {
-  auto mgrs = MGRS(31, 'U',  "DQ", 48251, 11932);
+  auto mgrs = mgrs(31, 'U',  "DQ", 48251, 11932);
   writefln ("to utm %s", mgrs.toUTM());
 }
 
@@ -261,11 +315,11 @@ MGRS toMGRS (UTM utm) {
   real easting = utm.easting % 100e3;
   real northing = utm.northing % 100e3;
 
-  return MGRS(utm.zone, band, [e100k, n100k], easting, northing);
+  return MGRS(utm.zone, band, [e100k, n100k], easting, northing, utm.altitude, utm.accuracy, utm.altitudeAccuracy, utm.datum);
 }
 /** **/
 unittest {
-  auto utm = UTM(31, 'N', 448251, 5411932);
+  auto utm = utm(31, 'N', 448251, 5411932);
   writefln("toMGRS %s", toMGRS(utm));
 }
 

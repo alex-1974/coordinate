@@ -78,13 +78,12 @@ unittest {
 }
 /** Defines geographic coordinates **/
 struct GEO {
+  import coordinate.utils;
   LAT lat;                          /// [Latitude](#Lat)
   LON lon;                          /// [Longitude](#Lon)
-  real altitude = real.nan;         /// Altitude in meters
-  real accuracy = real.nan;         /// Accuracy in meters
-  real altitudeAccuracy = real.nan; /// Altitude accuracy in meters
-  Datum datum;
-  this(LAT lat, LON lon, real altitude, real accuracy, real altitudeAccuracy) {
+  mixin ExtendCoordinate; ///
+  /** **/
+  this(LAT lat, LON lon, real altitude, real accuracy, real altitudeAccuracy, Datum datum = geoDatum[defaultDatum]) {
     this.lat = lat;
     this.lon = lon;
     this.altitude = altitude;
