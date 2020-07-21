@@ -58,6 +58,11 @@ private double powNeg (double base, double exponent) {
     return base.pow(exponent);
   return 1.0 / base.pow(-exponent);
 }
+unittest {
+  assert(10.powNeg(0) == 1);
+  assert(10.powNeg(2) == 100);
+  assert(10.powNeg(-2) == 0.01);
+}
 
 /** Compute the latitude precision value for a given code length. Lengths <= 10
     have the same precision for latitude and longitude, but lengths > 10 have
@@ -66,7 +71,13 @@ private double powNeg (double base, double exponent) {
 private double computePrecisionForLength (size_t codeLength) {
   if (codeLength <= 10)
     return powNeg(encodingBase, ((codeLength / -2.0) + 2.0).floor);
-  return powNeg(encodingBase, -3.0) / 5.pow(codeLength - 10.0);
+  return powNeg(encodingBase, -3.0) / 5.0.pow(codeLength - 10.0);
+}
+unittest {
+  writefln("cpfl %s", computePrecisionForLength(2));
+  writefln("cpfl %s", computePrecisionForLength(10));
+  writefln("cpfl %s", computePrecisionForLength(12));
+
 }
 
 /** Returns the position of a char in the encoding alphabet, or -1 if invalid. **/
@@ -86,6 +97,15 @@ private double normalizeLongitude (double lon) {
   while (lon >= lonMaxDegrees) lon -= 360.0;
   return lon;
 }
+unittest {
+  assert(normalizeLongitude(0) == 0.0);
+  writefln("nLon %s", normalizeLongitude(180.0));
+  writefln("nLon %s", normalizeLongitude(-180.0));
+  writefln("nLon %s", normalizeLongitude(360.0));
+  writefln("nLon %s", normalizeLongitude(-360.0));
+  writefln("nLon %s", normalizeLongitude(270.0));
+  writefln("nLon %s", normalizeLongitude(-270.0));
+}
 
 /** // Adjusts 90 degree latitude to be lower so that a legal OLC code can be generated. **/
 private double adjustLat (double lat, size_t codeLength) {
@@ -97,14 +117,33 @@ private double adjustLat (double lat, size_t codeLength) {
   double precision = computePrecisionForLength(codeLength);
   return lat - precision / 2;
 }
+unittest {
+  writefln ("aLat %s", adjustLat(0, 12));
+  writefln ("aLat %s", adjustLat(90, 12));
+  writefln ("aLat %s", adjustLat(-90, 12));
 
+  writefln ("aLat %s", adjustLat(180, 12));
+  writefln ("aLat %s", adjustLat(-180, 12));
+  writefln ("aLat %s", adjustLat(90, 4));
+
+}
 private void cleanCodeChars (ref char[] code) {
   import std.algorithm: remove, canFind, countUntil;
   import std.string: indexOf;
   code.remove!(a => a == separator);
-  if (size_t i = indexOf(code, padding) > 0) {
+  auto i = indexOf(code, padding);
+  if (i > 0) {
     code = code[0..i];
   }
+}
+unittest {
+  char[] c1 = "8FVC2222+22".dup;
+  char[] c2 = "CFX30000+".dup;
+  cleanCodeChars(c1);
+  cleanCodeChars(c2);
+  writefln ("ccc %s", c1);
+  writefln ("ccc %s", c2);
+
 }
 
 size_t codeLength(ref string code) {
@@ -114,11 +153,11 @@ size_t codeLength(ref string code) {
 }
 
 /** **/
-string encode (GEO geo, size_t codeLength = pairCodeLength) {
+string encode (double latitude, double longitude, size_t codeLength = pairCodeLength) {
   import std.algorithm: min;
   codeLength = min(codeLength, maxDigitCount);
-  double lat = adjustLat(geo.lat.lat, codeLength);
-  double lon = normalizeLongitude(geo.lon.lon);
+  double lat = adjustLat(latitude, codeLength);
+  double lon = normalizeLongitude(longitude);
   char[] code = "123456789abcdef".dup;
 
   auto latVal = latMaxDegrees * gridLatPrecisionInverse;
@@ -164,8 +203,8 @@ string encode (GEO geo, size_t codeLength = pairCodeLength) {
 unittest {
   import coordinate: geo;
   auto c = geo(47.0000625, 8.0000625);
-  writefln ("encode olc %s", encode(c));      // 8FVC2222+22
-  writefln ("encode olc %s", encode(c, 16));  // 8FVC2222+22GCCCC
+  writefln ("encode olc %s", encode(c.lat, c.lon));      // 8FVC2222+22
+  writefln ("encode olc %s", encode(c.lat, c.lon, 16));  // 8FVC2222+22GCCCC
 }
 
 /** **/
@@ -221,10 +260,11 @@ CodeArea decode (ref string olc) {
   double lat = cast(double)normLat / pairPrecisionInverse + cast(double)extraLat / gridLatPrecisionInverse;
   double lon = cast(double)normLon / pairPrecisionInverse + cast(double)extraLon / gridLonPrecisionInverse;
   // Round everything off to 14 places.
-  return CodeArea(round(lat * 1e14) / 1e14, round(lon * 1e14) / 1e14,
-                  round((lat + latPrecision) * 1e14) / 1e14,
-                  round((lon + lonPrecision) * 1e14) / 1e14,
-                  code.length);
+  return CodeArea(round(lat * 1e14) / 1e14,                   // latLo
+                  round(lon * 1e14) / 1e14,                   // lonLo
+                  round((lat + latPrecision) * 1e14) / 1e14,  // latHi
+                  round((lon + lonPrecision) * 1e14) / 1e14,  // lonHi
+                  code.length);                               // code length
 }
 /** **/
 unittest {
@@ -235,7 +275,7 @@ unittest {
 }
 
 /** **/
-auto shorten (ref string code, GEO reference) {
+auto shorten (string code, GEO reference) {
   import coordinate: GEO;
   import std.algorithm: max;
   import std.math: fabs;
@@ -274,7 +314,7 @@ unittest {
   auto olc = "9C3W9QCJ+2VX";
   auto reference = geo(51.3708675, -1.217765625);
   writefln ("olc for shorten %s", olc.decode);
-  writefln ("ref %s", reference.encode);
+  writefln ("ref %s", encode(reference.lat, reference.lon));
   writefln ("shorten %s", shorten(olc, reference) );
 }
 /** **/
@@ -285,11 +325,18 @@ struct OLC {
 }
 /** **/
 struct CodeArea {
-  double latLo;   ///
-  double latHi;   ///
-  double lonLo;   ///
-  double lonHi;   ///
-  size_t codeLength;  ///
+  double latLo;   /// low Latitude
+  double lonLo;   /// low Longitude
+  double latHi;   /// high Latitide
+  double lonHi;   /// high Longitude
+  size_t codeLength;  /// code length
+  this (double latLo, double lonLo, double latHi, double lonHi, size_t codeLength) {
+    this.latLo = latLo;
+    this.lonLo = lonLo;
+    this.latHi = latHi;
+    this.lonHi = lonHi;
+    this.codeLength = codeLength;
+  }
   auto getCenter () {
     import std.algorithm: min;
     import coordinate: GEO, LAT, LON;
