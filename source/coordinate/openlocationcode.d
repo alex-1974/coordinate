@@ -317,6 +317,45 @@ unittest {
   writefln ("ref %s", encode(reference.lat, reference.lon));
   writefln ("shorten %s", shorten(olc, reference) );
 }
+
+/** **/
+bool isValid (string code) {
+  import std.string: indexOf;
+  import std.algorithm: count, remove, any;
+  if (!code.length) return false;
+  // separator is required but there must be only one separator
+  if (code.count(separator) != 1) return false;
+  // is the separator the only character?
+  if (code.length == 1) return false;
+  // is the separator in an illegal position?
+  auto sepPos = code.indexOf(separator);
+  if (sepPos > separatorPosition || sepPos % 2 == 1) return false;
+  // We can have an even number of padding characters before the separator,
+  // but then it must be the final character.
+  auto padStart = code.indexOf(padding);
+  if (padStart > 0) {
+    // short codes cannot have padding
+    if (sepPos < separatorPosition) return false;
+    // the first padding character needs to be in an odd position
+    if (padStart == 0 || padStart % 2) return false;
+    // Padded codes must not have anything after the separator
+    if (code.length > sepPos + 1) return false;
+    // get from first padding character to separator
+    auto padSec = code[padStart..separatorPosition - padStart];
+    if (remove!(a => a == padding)(padSec.dup).length) return false;
+  }
+  // if there are characters after the separator, make sure there isn't just one of them (not legal)
+  if (code.length - sepPos - 1 == 1) return false;
+  // Are there any invalid characters?
+  foreach (c; code) {
+    if (!c == separator && getAlphabetPosition(c) < 0) return false;
+  }
+  return true;
+}
+/** **/
+unittest {
+  assert(isValid("9C3W9QCJ+2VX"));
+}
 /** **/
 struct OLC {
   import coordinate.utils: ExtendCoordinate;
