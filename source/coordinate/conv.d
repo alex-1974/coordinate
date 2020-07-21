@@ -1,7 +1,7 @@
 /** Conversions between geographic coordinate systems **/
 module coordinate.conv;
 
-public import coordinate: UTM, MGRS, GEO, ECEF;
+public import coordinate: UTM, MGRS, GEO, ECEF, GeoHash;
 import coordinate.utils: AltitudeType, AccuracyType, defaultDatum;
 import coordinate;
 debug import std.stdio;
@@ -331,4 +331,27 @@ MGRS toMGRS (GEO geo) {
 /** **/
 GEO toLatLon (MGRS mgrs) {
   return mgrs.toUTM.toLatLon;
+}
+
+/** **/
+GEO toLatLon (GeoHash geohash) {
+  import coordinate.geohash: decode;
+  auto coord = decode(geohash.geohash);
+  return GEO(LAT(coord[0]), LON(coord[1]), real.nan, real.nan, real.nan);
+}
+/** **/
+unittest {
+  auto hash = GeoHash("u120fxw");
+  writefln ("toLatLon %s", toLatLon(hash));
+}
+/** **/
+GeoHash toGeoHash (GEO geo, size_t precision = 0) {
+  auto hash = encode(geo.lat.lat, geo.lon.lon, precision);
+  return GeoHash(hash);
+}
+/** **/
+unittest {
+  auto geo = geo(52.205, 0.119);
+  writefln ("toGeoHash %s", toGeoHash(geo));
+
 }

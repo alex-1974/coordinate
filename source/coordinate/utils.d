@@ -12,6 +12,7 @@ alias ECEFType = float;       ///
 const string defaultDatum = "wgs1984";  ///
 
 mixin template ExtendCoordinate () {
+  import coordinate.datums: Datum;
   AltitudeType altitude = AltitudeType.nan;         /// Altitude in meters
   AccuracyType accuracy = AccuracyType.nan;         /// Accuracy in meters
   AccuracyType altitudeAccuracy = AccuracyType.nan; /// Altitude accuracy in meters

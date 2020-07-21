@@ -1,13 +1,32 @@
+/**
+
+  ## Digits and precision in km ##
+
+  | length | lat bits | lon bits | lat error | lon error | km error |
+  |--------|----------|----------|-----------|-----------|----------|
+  | 1 | 2 | 3 | &plusmn; 23 | &plusmn; 23 | &plusmn; 2500 |
+  | 2 | 5 | 5 | &plusmn; 2.8 | &plusmn; 5.6 | &plusmn; 630 |
+  | 3 | 7 | 8 | &plusmn; 0.70 | &plusmn; 0.70 | &plusmn; 78 |
+  | 4 | 10 | 10 | &plusmn; 0.087 | &plusmn; 0.18 | &plusmn; 20 |
+  | 5 | 12 | 13 | &plusmn; 0.022 | &plusmn; 0.022 | &plusmn; 2.4 |
+  | 6 | 15 | 15 | &plusmn; 0.0027 | &plusmn; 0.0055 | &plusmn; 0.61 |
+  | 7 | 17 | 18 | &plusmn; 0.00068 | &plusmn; 0.00068 | &plusmn; 0.076 |
+  | 8 | 20 | 20 | &plusmn; 0.000085 | &plusmn; 0.00017 | &plusmn; 0.019 |
+
+
+**/
 module coordinate.geohash;
 
-import coordinate: GEO;
+//import coordinate: GEO;
 import coordinate.mathematics;
 debug import std.stdio;
 
 
 /** **/
 struct GeoHash {
-  string geohash;
+  import coordinate.utils;
+  string geohash; ///
+  mixin ExtendCoordinate; ///
 }
 
 const char[] base32 = "0123456789bcdefghjkmnpqrstuvwxyz"; // (geohash-specific) Base32 map
@@ -68,7 +87,6 @@ string encode (real lat, real lon, size_t precision = 0) {
       idx = 0;
     }
   }
-  writefln ("geohash %s", geohash);
   return geohash.idup;
 }
 unittest {
@@ -79,7 +97,7 @@ unittest {
 
     Location is approximate centre of geohash cell.
 **/
-auto decode (string geohash) {
+real[2] decode (string geohash) {
   const real[4] bound = bounds(geohash);
   // now determine the centre of the cell
   const real latMin = bound[0], lonMin = bound[1];
@@ -89,7 +107,6 @@ auto decode (string geohash) {
   real lat = (latMin + latMax) / 2;
   real lon = (lonMin + lonMax) / 2;
 
-  writefln ("lat %s lon %s", lat, lon);
   return [lat, lon];
 }
 unittest {
@@ -105,13 +122,9 @@ private auto bounds (string geohash) {
   real lonMin = -180, lonMax = 180;
 
   for (uint i = 0; i < geohash.length; i++) {
-    writefln ("i %s", i);
     const char chr = cast(char)(geohash.asLowerCase.array[i]);
-    writefln ("chr %s", chr);
     auto idx = cast(int)base32.indexOf(chr);
-    writefln ("idx %s", idx);
     for (byte n = 4; n >= 0; n--) {
-      writefln ("n %s", n);
       auto bitN = idx >> n & 1;
       if (evenBit) {
         // longitude
