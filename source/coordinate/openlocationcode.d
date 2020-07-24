@@ -56,50 +56,59 @@ import coordinate.utils: AltitudeType, AccuracyType, defaultDatum;
 import std.math: log, floor, pow;
 debug import std.stdio;
 
-const int codePrecisionNormal = 10;
-const int codePrecisionExtra = 11;
-const char separatorChar = 0x002B;
-const char paddingChar = 0x0030;
-const int separatorPosition = 8;
-const string codeAlphabet = "23456789CFGHJMPQRVWX"; // [50..57,67,70..72,74,77,80..82,86..88]
-const int encodingBase = 20;
-const int encodingBaseSquared = encodingBase * encodingBase;
-const int latitudeMax = 90;
-const int longitudeMax = 180;
-const int maxDigitCount = 15;
-const int pairCodeLength = 10;
-const int gridCodeLength = maxDigitCount - pairCodeLength;
-const int gridColumns = 4;
-const int gridRows = 5;
-const int firstLatitudeDigitValueMax = 8; // lat -> 90
-const int firstLongitudeDigitValueMax = 17; // lon -> 180
-const long gridRowsMultiplier = 3125; // pow(gridRows, gridCodeLength)
-const long gridColumnsMultiplier = 1024;  // pow(gridColumns, gridCodeLength)
-const long latIntegerMultiplier = 8000 * gridRowsMultiplier;
-const long lonIntegerMultiplier = 8000 * gridColumnsMultiplier;
-const long latMspValue = latIntegerMultiplier * encodingBaseSquared;
-const long lonMspValue = lonIntegerMultiplier * encodingBaseSquared;
-const int indexedDigitValueOffset = codeAlphabet[0];  // 50
-static const int[codeAlphabet[codeAlphabet.length - 1]-indexedDigitValueOffset + 1] indexedDigitValues;
+private {
+  const int codePrecisionNormal = 10; // Provides a normal precision code, approximately 14x14 meters. Used to specify encoded code length
+  const int codePrecisionExtra = 11;  // Provides an extra precision code length, approximately 2x3 meters. Used to specify encoded code length
+  const char separatorChar = 0x002B;  // A separator used to break the code into two parts to aid memorability.
+  const char paddingChar = 0x0030;    // The character used to pad codes.
+  const int separatorPosition = 8;    // The number of characters to place before the separator.
+  // The character set used to encode the digit values.
+  // [50..57,67,70..72,74,77,80..82,86..88]
+  const string codeAlphabet = "23456789CFGHJMPQRVWX"; // [50..57,67,70..72,74,77,80..82,86..88]
+  const int encodingBase = 20;  // The base to use to convert numbers to/from. codeAlphabet.length
+  const int encodingBaseSquared = encodingBase * encodingBase; // The encoding base squared also rep
+  const int latitudeMax = 90;   // The maximum value for latitude in degrees.
+  const int longitudeMax = 180; // The maximum value for longitude in degrees.
+  const int maxDigitCount = 15; // Maximum code length for any plus code
+  const int pairCodeLength = 10;  //  Maximum code length using just lat/lng pair encoding.
+  const int gridCodeLength = maxDigitCount - pairCodeLength;  // Number of digits in the grid coding section.
+  const int gridColumns = 4;  // Number of columns in the grid refinement method.
+  const int gridRows = 5;     // Number of rows in the grid refinement method.
+  const int firstLatitudeDigitValueMax = 8; // The maximum latitude digit value for the first grid layer. lat -> 90
+  const int firstLongitudeDigitValueMax = 17; // The maximum longitude digit value for the first grid layer. lon -> 180
+  const long gridRowsMultiplier = 3125; // pow(gridRows, gridCodeLength)
+  const long gridColumnsMultiplier = 1024;  // pow(gridColumns, gridCodeLength)
+  // Value to multiple latitude degrees to convert it to an integer with the maximum encoding
+  // precision. I.e. ENCODING_BASE**3 * GRID_ROWS**GRID_CODE_LENGTH
+  const long latIntegerMultiplier = 8000 * gridRowsMultiplier;
+  // Value to multiple longitude degrees to convert it to an integer with the maximum encoding
+  // precision. I.e. ENCODING_BASE**3 * GRID_COLUMNS**GRID_CODE_LENGTH
+  const long lonIntegerMultiplier = 8000 * gridColumnsMultiplier;
+  // Value of the most significant latitude digit after it has been converted to an integer.
+  const long latMspValue = latIntegerMultiplier * encodingBaseSquared;
+  // Value of the most significant longitude digit after it has been converted to an integer.
+  const long lonMspValue = lonIntegerMultiplier * encodingBaseSquared;
+  // The ASCII integer of the minimum digit character used as the offset for indexed code digits
+  const int indexedDigitValueOffset = codeAlphabet[0];  // 50
+  // The digit values indexed by the character ASCII integer for efficient lookup of a digit value by its character
+  static const int[codeAlphabet[codeAlphabet.length - 1]-indexedDigitValueOffset + 1] indexedDigitValues;
+}
 
-static this () {
-  writefln("indexedDigitValueOffset %s", indexedDigitValueOffset);
+private static this () {
+  // Fill indexedDigitValues at start of module
   for (int i = 0, digitVal = 0; i < indexedDigitValues.length; i++) {
     int digitIndex = codeAlphabet[digitVal] - indexedDigitValueOffset;
     indexedDigitValues[i] = (digitIndex == i)? digitVal++:-1;
   }
-  foreach (idx; indexedDigitValues) {
-    int i = (idx == -1)? -1:idx+50;
-    writefln("i %s", i);
-  }
 }
-int digitValueOf(char digitChar) {
-  //writefln("digitValueOf: digitChar %s", digitChar);
-  //writefln("index %s", digitChar - indexedDigitValueOffset);
+
+/** Get digit value of char **/
+private int digitValueOf(char digitChar) {
   return indexedDigitValues[digitChar - indexedDigitValueOffset];
 }
 
-double clipLatitude (double latitude) {
+/** Clip latitude between -90 and +90 **/
+private double clipLatitude (double latitude) {
   return min(max(latitude, -latitudeMax), latitudeMax);
 }
 unittest {
@@ -109,7 +118,8 @@ unittest {
   writefln("clip -180 %s", clipLatitude(-180));
 
 }
-double normalizeLongitude (double longitude) {
+/** Normalize Longitude between -180 and +180 **/
+private double normalizeLongitude (double longitude) {
   while(longitude < -longitudeMax) longitude += longitudeMax * 2;
   while(longitude >= longitudeMax) longitude -= longitudeMax * 2;
   return longitude;
@@ -125,7 +135,7 @@ unittest {
 /** Normalize a location code by adding the separator '+' character and any padding '0' characters
     that are necessary to form a valid location code.
 **/
-string normalizeCode(string code) {
+private string normalizeCode(string code) {
   import std.conv: to;
   // if code needs padding
   if (code.length < separatorPosition) {
@@ -140,15 +150,15 @@ string normalizeCode(string code) {
   else return code;
 }
 unittest {
-  writefln("normalized code %s", normalizeCode("abcdefgh"));
-  writefln("normalized code %s", normalizeCode("abcdefghijk"));
+  assert(normalizeCode("abcdefgh") == "abcdefgh+");
+  assert(normalizeCode("abcdefghijk") == "abcdefgh+ijk");
 
 }
 
 /** Trim a location code by removing the separator '+' character and any padding '0' characters
-    resulting in only the code digits.
+    resulting in only the code digits in upper case.
 **/
-string trimCode (string code) {
+private string trimCode (string code) {
   import std.algorithm: remove;
   import std.uni: toUpper;
   import std.string: indexOf;
@@ -160,8 +170,8 @@ string trimCode (string code) {
   return code;
 }
 unittest {
-  writefln("trimmed code %s", trimCode("abcdefgh+ijk"));
-  writefln("trimmed code %s", trimCode("abcd0000+"));
+  assert(trimCode("abcdefgh+ijk") == "ABCDEFGHIJK");
+  assert(trimCode("abcd0000+") == "ABCD");
 
 }
 
@@ -169,7 +179,7 @@ unittest {
     precision for latitude and longitude, but lengths > 10 have different precisions due to the
     grid method having fewer columns than rows.
 **/
-double computeLatitudePrecision(int codeLength) {
+private double computeLatitudePrecision(int codeLength) {
   import std.math: pow;
   if(codeLength <= codePrecisionNormal) {
     return encodingBase.pow(codeLength / -2.0 + 2);
@@ -177,6 +187,7 @@ double computeLatitudePrecision(int codeLength) {
   return encodingBase.pow(-3) / gridRows.pow(codeLength - pairCodeLength);
 }
 
+/** **/
 auto encode (double latitude, double longitude, int codeLength = pairCodeLength) {
   import std.math: round;
   import std.algorithm: reverse;
@@ -234,6 +245,7 @@ unittest {
 
 }
 
+/** **/
 CodeArea decode (string code) {
   import std.algorithm: min;
   //if (!olc.isFull) throw new OLCException("Passed Open Location Code is not a valid full code");
@@ -272,9 +284,13 @@ CodeArea decode (string code) {
   );
 }
 
+/** **/
 string shorten (string code, double refLat, double refLon) {
+  if (!code.isFull) throw new OLCException("Code cannot be short.");
+  if (code.isPadded) throw new OLCException("Code cannot be padded.");
   return shorten(decode(code), code, refLat, refLon);
 }
+/** **/
 string shorten (CodeArea codeArea, string code, double referenceLatitude, double referenceLongitude) {
   import std.math: fabs, fmax, cmp;
   import coordinate: GEO;
@@ -302,10 +318,11 @@ unittest {
 
 }
 
+/** **/
 auto recoverNearest (string shortCode, double referenceLatitude, double referenceLongitude) {
   import std.string: indexOf;
   import coordinate: GEO;
-  if (!shortCode.isValid) throw new OLCException("Is not a valid short Open Location Code.");
+  if (!shortCode.isShort) throw new OLCException("Is not a valid short Open Location Code.");
   referenceLatitude = clipLatitude(referenceLatitude);
   referenceLongitude = normalizeLongitude(referenceLongitude);
 
@@ -338,40 +355,73 @@ unittest {
   writefln("recover %s", recoverNearest("CJ+2VX", 51.3708675,-1.217765625));
 }
 
+/** **/
 bool isValid (string code) {
   import std.string: indexOf;
   import std.algorithm: count, remove, any;
-  if (!code.length) return false;
-  // separator is required but there must be only one separator
-  if (code.count(separatorChar) != 1) return false;
-  // is the separator the only character?
-  if (code.length == 1) return false;
-  // is the separator in an illegal position?
-  auto sepPos = code.indexOf(separatorChar);
-  if (sepPos > separatorPosition || sepPos % 2 == 1) return false;
-  // We can have an even number of padding characters before the separator,
-  // but then it must be the final character.
-  auto padStart = code.indexOf(paddingChar);
-  if (padStart > 0) {
-    // short codes cannot have padding
-    if (sepPos < separatorPosition) return false;
-    // the first padding character needs to be in an odd position
-    if (padStart == 0 || padStart % 2) return false;
-    // Padded codes must not have anything after the separator
-    if (code.length > sepPos + 1) return false;
-    // get from first padding character to separator
-    auto padSec = code[padStart..separatorPosition];
-    if (remove!(a => a == paddingChar)(padSec.dup).length) return false;
+  if (code.length < 2) return false;
+
+  // There must be exactly one separator.
+  int separatorIndex = cast(int)code.indexOf(separatorChar);
+  if (separatorIndex == -1) return false;
+  //if (separatorIndex != code.lastIndexOf(separatorCharacter)) return false;
+  // There must be an even number of at most eight characters before the separator.
+  if (separatorIndex % 2 != 0 || separatorIndex > separatorPosition) return false;
+
+  // Check first two characters: only some values from the alphabet are permitted.
+  if (separatorIndex == separatorPosition) {
+    // First latitude character can only have first 9 values.
+    if (codeAlphabet.indexOf(code[0]) > firstLatitudeDigitValueMax) return false;
+    // First longitude character can only have first 18 values.
+    if (codeAlphabet.indexOf(code[1]) > firstLongitudeDigitValueMax) return false;
   }
-  // if there are characters after the separator, make sure there isn't just one of them (not legal)
-  if (code.length - sepPos - 1 == 1) return false;
-  // Are there any invalid characters?
-  foreach (c; code) {
-    //if (c != separatorChar && c != paddingChar && getAlphabetPosition(c) < 0) return false;
+  // Check the characters before the separator.
+  bool paddingStarted = false;
+  for (int i = 0; i < separatorIndex; i++) {
+    if(paddingStarted) {
+      if(code[i] != paddingChar) return false;
+    } else if (code[i] == paddingChar) {
+      paddingStarted = true;
+      // Short codes cannot have padding
+      if (separatorIndex < separatorPosition) return false;
+      // Padding can start on even character: 2, 4 or 6.
+      if (i != 2 && i != 4 && i != 6) return false;
+    } else if (codeAlphabet.indexOf(code[i])  == -1) return false;  // illegal character
+  }
+  // Check the characters after the separator.
+  if (code.length > separatorIndex + 1) {
+    if(paddingStarted) return false;
+    // Only one character after separator is forbidden.
+    if (code.length == separatorIndex + 2) return false;
+    for (int i = separatorIndex + 1; i < code.length; i++) {
+      if (codeAlphabet.indexOf(code[i]) == -1) return false;
+    }
   }
   return true;
-
 }
+unittest {
+  assert("8FWC2345+G6".isValid);
+}
+
+/** Determines if a code is a valid short Open Location Code. **/
+bool isShort (string code) {
+  import std.string: indexOf;
+  if (!code.isValid) return false;
+  int separatorIndex = cast(int)code.indexOf(separatorChar);
+  return (0 <= separatorIndex && separatorIndex < separatorPosition);
+}
+/** Determines if a code is a valid full Open Location Code. **/
+bool isFull (string code) {
+  import std.string: indexOf;
+  if (!code.isValid) return false;
+  return code.indexOf(separatorChar) == separatorPosition;
+}
+bool isPadded (string code) {
+  import std.string: indexOf;
+  if(!code.isValid) return false;
+  return code.indexOf(paddingChar) >= 0;
+}
+version (trash) {
 /++
 static const char separator = 0x002B;  // A '+' separator used to break the code into two parts to aid memorability.
 static const char padding = 0x0030;    // The '0' character used to pad codes.
@@ -868,6 +918,8 @@ bool isFull (string code) {
   return true;
 }
 ++/
+}
+
 /** **/
 struct OLC {
   import coordinate.utils: ExtendCoordinate;
@@ -888,6 +940,7 @@ struct CodeArea {
     this.lonHi = lonHi;
     this.codeLength = codeLength;
   }
+  /** **/
   auto center () {
     import std.algorithm: min;
     import coordinate: GEO, LAT, LON;
