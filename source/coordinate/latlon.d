@@ -40,6 +40,10 @@ debug import std.stdio;
 public import coordinate.datums;
 import coordinate.exceptions: CoordException;
 
+static const dchar degChar = 0x00B0;
+static const dchar minChar = 0x2032;
+static const dchar secChar = 0x2033;
+
 /** Defines latitude **/
 struct LAT {
   real lat; /// Latitude
@@ -101,7 +105,7 @@ struct GEO {
   }
   void toString(scope void delegate(const(char)[]) sink) const {
     import std.conv: to;
-    sink("Lat " ~ this.lat.to!string ~ " Lon " ~ this.lon.to!string);
+    sink("Lat " ~ this.lat.to!string ~ degChar.to!string ~ " Lon " ~ this.lon.to!string ~ degChar.to!string);
   }
 }
 

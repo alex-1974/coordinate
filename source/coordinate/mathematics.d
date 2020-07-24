@@ -54,3 +54,13 @@ do {
 unittest {
   assert(45.wrap90 == 45);
 }
+
+/** Round to given digits after comma **/
+T roundTo (T) (T coord, int dec) {
+  import std.math: pow, round;
+  return round(coord * 10.pow(dec)) / 10.pow(dec);
+}
+unittest {
+  import std.stdio;
+  writefln("round to 5 %s", 1.123456789.roundTo(5));
+}
