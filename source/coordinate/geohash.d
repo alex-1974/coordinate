@@ -1,5 +1,7 @@
 /**
 
+  A geocode system invented in 2008 by Gustavo Niemeyer.
+
   ## Digits and precision in km ##
 
   | length | lat bits | lon bits | lat error | lon error | km error |
@@ -28,6 +30,7 @@ struct GeoHash {
   string geohash; ///
   mixin ExtendCoordinate; ///
 }
+
 
 const char[] base32 = "0123456789bcdefghjkmnpqrstuvwxyz"; // (geohash-specific) Base32 map
 

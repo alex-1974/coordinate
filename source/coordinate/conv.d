@@ -2,7 +2,7 @@
 module coordinate.conv;
 
 public import coordinate: UTM, MGRS, GEO, ECEF, GeoHash;
-import coordinate.utils: AltitudeType, AccuracyType, defaultDatum;
+import coordinate.utils: AltitudeType, AccuracyType;
 import coordinate;
 debug import std.stdio;
 
@@ -24,6 +24,8 @@ GEO toLatLon (UTM utm) {
 
   const real a = utm.datum.ellipsoid.a;
   const real f = utm.datum.ellipsoid.f;
+  //writefln ("utm datum %s", utm.datum);
+  //writefln("utm ellipsoid %s", utm.datum.ellipsoid);
   const real k0 = 0.9996;
 
   const real x = utm.easting - falseEasting; // make x ± relative to central meridian
@@ -108,7 +110,7 @@ GEO toLatLon (UTM utm) {
 unittest {
   import coordinate: utm;
   auto mopti = utm(30, 'N', 370797, 1603103);
-  mopti.toLatLon;
+  //mopti.toLatLon;
 }
 
 /** Converts latitude/longitude to UTM coordinate.
@@ -211,16 +213,17 @@ unittest {
 }
 
 /** **/
-GEO toLatLon (ECEF ecef, Datum datum = geoDatum[defaultDatum]) {
+GEO toLatLon (ECEF ecef, Datum datum = defaultDatum) {
   import std.math;
   import coordinate.mathematics: toDegree;
   const real x = ecef.x; const real y = ecef.y; const real z = ecef.z;
-  const real a = datum.ellipsoid.a;
-  const real b = datum.ellipsoid.b;
-  const real f = datum.ellipsoid.f;
+  const Ellipsoid ellipsoid = datum.ellipsoid;
+  const real a = ellipsoid.a;
+  const real b = ellipsoid.b;
+  const real f = ellipsoid.f;
 
-  const real e2 = 2*f - f*f;
-  const real eps2 = e2 / (1-e2);
+  const real e2 = ellipsoid.e; // e2 = 2*f - f*f;
+  const real eps2 = ellipsoid.e2;
   const p = (x*x + y*y).sqrt;
   const R = (p*p + z*z).sqrt;
 
@@ -238,7 +241,7 @@ GEO toLatLon (ECEF ecef, Datum datum = geoDatum[defaultDatum]) {
   const real sphi = phi.sin, cphi = phi.cos;
   const real ny = a / (1-e2*sphi*sphi).sqrt; // length of the normal terminated by the minor axis
   const real h = p*cphi + z*sphi - (a*a/ny);
-  return GEO(LAT(phi.toDegree()), LON(lambda.toDegree()), cast(AltitudeType)h, AccuracyType.nan, AccuracyType.nan, datum);
+  return geo(LAT(phi.toDegree()), LON(lambda.toDegree()), h, AccuracyType.nan, AccuracyType.nan, datum);
 }
 
 /** **/
@@ -281,11 +284,11 @@ UTM toUTM (MGRS mgrs) {
   // get latitude of (bottom of) band
   const real latBand = (mgrsBands.indexOf(mgrs.band)-10)*8.0;
   // get northing of bottom of band, extended to include entirety of bottom-most 100km square
-  const real nBand = floor(GEO(LAT(latBand), LON(3.0), real.nan, real.nan, real.nan).toUTM().northing/100e3)*100e3;
+  const real nBand = floor(geo(LAT(latBand), LON(3.0)).toUTM().northing/100e3)*100e3;
   // 100km grid square row letters repeat every 2,000km north; add enough 2,000km blocks to get into required band
   real n2M = 0.0; // northing of 2,000km block
   while (n2M + n100kNum + mgrs.northing < nBand) n2M += 2000e3;
-  return UTM(mgrs.zone, hemisphere, e100kNum+mgrs.easting, n2M+n100kNum+mgrs.northing, mgrs.altitude, mgrs.accuracy, mgrs.altitudeAccuracy);
+  return UTM(mgrs.zone, hemisphere, e100kNum+mgrs.easting, n2M+n100kNum+mgrs.northing, mgrs.altitude, mgrs.accuracy, mgrs.altitudeAccuracy, mgrs.datum);
 }
 /** **/
 unittest {
@@ -337,7 +340,7 @@ GEO toLatLon (MGRS mgrs) {
 GEO toLatLon (GeoHash geohash) {
   import coordinate.geohash: decode;
   auto coord = decode(geohash.geohash);
-  return GEO(LAT(coord[0]), LON(coord[1]), real.nan, real.nan, real.nan);
+  return GEO(LAT(coord[0]), LON(coord[1]), geohash.altitude, geohash.accuracy, geohash.altitudeAccuracy, geohash.datum);
 }
 /** **/
 unittest {
@@ -347,11 +350,26 @@ unittest {
 /** **/
 GeoHash toGeoHash (GEO geo, size_t precision = 0) {
   auto hash = encode(geo.lat.lat, geo.lon.lon, precision);
-  return GeoHash(hash);
+  return GeoHash(hash, geo.altitude, geo.accuracy, geo.altitudeAccuracy, geo.datum);
 }
 /** **/
 unittest {
   auto geo = geo(52.205, 0.119);
   writefln ("toGeoHash %s", toGeoHash(geo));
 
+}
+
+/** **/
+string toOpenLocationCode (GEO geo) {
+  import std.exception: enforce;
+  import coordinate.exceptions: OLCException;
+  enforce!OLCException(geo.datum == getDatum(6326), "Open location codes must be in wgs1984 (epsg:6326) datum");
+  return encode(geo.lat, geo.lon);
+}
+/** ditto **/
+string toOpenLocationCode (GEO geo, int codeLength) {
+  import std.exception: enforce;
+  import coordinate.exceptions: OLCException;
+  enforce!OLCException(geo.datum == getDatum(6326), "Open location codes must be in wgs1984 (epsg:6326) datum");
+  return encode(geo.lat, geo.lon, codeLength);
 }

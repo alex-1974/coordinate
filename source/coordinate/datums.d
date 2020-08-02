@@ -5,6 +5,7 @@ import std.math: isNaN;
 
 debug import std.stdio;
 
+
 /** Ellipsoid parameters
 
     An ellipsoid is defined by its semi-major axis (*a*), semi-minor axis (*b*), and flattening (*f*).
@@ -14,15 +15,17 @@ debug import std.stdio;
     </mrow></math>
 **/
 struct Ellipsoid {
-  const real _a; // Semi-major axis
-  const real _b; // Semi-minor axis
-  const real _f; // Flattening
-  const ulong epsg; // EPSG Code
-  this (const real a, const real b, const real f, ulong epsg) {
+   string name;
+   real _a; // Semi-major axis
+   real _b; // Semi-minor axis
+   real _f; // Flattening
+   string comment;
+  this (string name, const real a, const real b, const real f, string comment) {
+    this.name = name;
     this._a = a;
     this._b = b;
     this._f = f;
-    this.epsg = epsg;
+    this.comment = comment;
   }
 
   /** Semi-minor-axis
@@ -39,8 +42,9 @@ struct Ellipsoid {
         <mi>f</mi><mo> = </mo>
         <mfrac bevelled="true"><mrow><mo>(</mo><mi>a</mi><mo>-</mo><mi>b</mi><mo>)</mo></mrow><mi>a</mi></mfrac>
     </mrow></math>
+    Returns: Inverse flattening 1/f
   **/
-  const real f () { return (!_f.isNaN)? _f:(_a-_b)/_a; }
+  const real f () { return (!_f.isNaN)? 1 / _f:1 / (_a-_b)/_a; }
 
   /** Semi-minor-axis
 
@@ -58,7 +62,7 @@ struct Ellipsoid {
       <mo> = </mo><mrow><mi>f</mi><mo>&times;</mo><mo>(</mo><mn>2</mn><mo>-</mo><mi>f</mi><mo>)</mo></mrow>
     </mrow></math>
   **/
-  const real e () { return _f * (2 - _f); }
+  const real e () { return 1 / (_f * (2 - _f)); }
 
   /** Second eccentricity squared
 
@@ -73,31 +77,124 @@ struct Ellipsoid {
   void toString(scope void delegate(const(char)[]) sink) const {
     import std.conv: to;
     import std.uni: toUpper;
-    sink("epsg: " ~ epsg.to!string ~ " " ~ "a: " ~ _a.to!string);
+    sink("name: " ~ name ~ " " ~ "a: " ~ _a.to!string);
     if (!_b.isNaN) sink(" b: " ~ _b.to!string);
     if (!_f.isNaN) sink(" 1/f: " ~ _f.to!string);
   }
 }
 
-/** Datums with associated ellipsoid, and Helmert transform parameters to convert from WGS-84 into given datum.
+/** Datums with associated ellipsoid
  **/
 struct Datum {
-  const ulong epsg;
-  const Ellipsoid ellipsoid;  ///
-  const real[] transform;  ///
-  this(ulong epsg, Ellipsoid e, real[] t) {
-    this.epsg = epsg;
-    this.ellipsoid = e;
-    this.transform = t;
+  string name;  /// Name of datum
+  size_t epoch; /// Epoch of datum
+  private size_t _ellipsoid;  /// epsg of reference ellipsoid
+  string comment; /// Comment
+  this(string name, size_t epoch, size_t ellipsoid, string comment) {
+    this.name = name;
+    this.epoch = epoch;
+    this._ellipsoid = ellipsoid;
+    this.comment = comment;
+  }
+  /** Get the reference ellipsoid **/
+  Ellipsoid ellipsoid () { return geoEllipsoid[_ellipsoid]; }
+  /** **/
+  void toString(scope void delegate(const(char)[]) sink) const {
+    import std.conv: to;
+    import std.uni: toUpper;
+    sink("name: " ~ this.name );
+    if (epoch != 0) sink(" epoch: " ~ epoch.to!string);
+    sink(" ellipsoid: " ~ getEllipsoid(this._ellipsoid).name);
   }
 }
 
-immutable Ellipsoid[string] geoEllipsoid;  ///
-immutable Datum[string] geoDatum;          ///
+const Datum defaultDatum;
+/** Get ellipsoid by name or epsg code
+
+  Params:
+    name = Name of the ellipsoid
+    epsg = Epsg Code of the ellipsoid
+  Returns: Ellipsoid
+**/
+Ellipsoid getEllipsoid (string name) {
+  return getEllipsoid(ellipsoidLUT[name]);
+}
+/** ditto **/
+Ellipsoid getEllipsoid (size_t epsg) {
+  return geoEllipsoid[epsg];
+}
+size_t ellipsoidLookUp (string name, string file = __FILE__, size_t line = __LINE__) {
+  import std.exception;
+  size_t* epsg = (name in ellipsoidLUT);
+  enforce!Exception(epsg !is null, "Name of ellipsoid not found in lookup table!", file, line);
+  return *epsg;
+}
+immutable Ellipsoid[size_t] geoEllipsoid;  /// Ellipsoids indexed by epsg
+immutable Datum[size_t] geoDatum;          /// Datums indexed by epsg
+private size_t[string] ellipsoidLUT;      /// Ellipsoid epsg indexed by name
+private size_t[string] datumLUT;          /// Datum epsg indexed by name
+
+/** Get a Datum
+
+  Params:
+    name = Name of the datum
+    epsg = Epsg Code of the datum
+  Returns: Datum
+**/
+Datum getDatum (string name) {
+  return getDatum(datumLUT[name]);
+}
+/** ditto **/
+Datum getDatum (size_t epsg) {
+  return geoDatum[epsg];
+}
 
 shared static this() {
   import std.exception : assumeUnique;
+  import std.array;
+  import std.algorithm;
+  import std.stdio;
+  import std.csv;
+  import std.range;
+  import std.conv;
+  Ellipsoid[size_t] tmpEllipsoid;
+  //ellipsoidLUT["wgs1984"] = 0;
+  //tmpEllipsoid[0] = Ellipsoid("wgs1984", 0, 0, 0, "");
+  foreach (eLines;import("ellipsoid.csv").parseCSV) {
+    //writefln ("line %s", eLines);
 
+    auto fields = eLines.convertCSV!(ulong, string,real,real,real,string);
+    //writefln ("\nfields: %s %s", fields[0], fields[1]);
+    ellipsoidLUT[fields[1]] = fields[0];
+    tmpEllipsoid[fields[0]] = Ellipsoid(fields[1], fields[2], fields[3], fields[4], fields[5]);
+  }
+  tmpEllipsoid.rehash;
+  geoEllipsoid = assumeUnique(tmpEllipsoid);
+  foreach (e; geoEllipsoid) writefln("geoEllipsoid: %s", e);
+  //writefln ("ellipsoidLUT %s", ellipsoidLUT);
+
+  Datum[size_t] tmpDatum;
+  //datumLUT["wgs1984"] = 0;
+  //tmpDatum[0] = Datum("wgs1984", ellipsoidLookUp("wgs1984", __FILE__, __LINE__), 0, "");
+  foreach (eDatum;import("datum.csv").parseCSV) {
+    //writefln ("try converting %s", eDatum);
+    try {
+      auto fields = eDatum.convertCSV!(ulong, string, ulong, ulong,string);
+      datumLUT[fields[1]] = fields[0];
+      tmpDatum[fields[0]] = Datum(fields[1], fields[2], fields[3], fields[4]);
+    }
+    catch (Exception e) {
+      //writefln("Failed to convert!");
+    }
+  }
+  foreach (d; tmpDatum) {
+    assert((d._ellipsoid in geoEllipsoid) != null, "Can't find an ellipsoid with the epsg code " ~ d._ellipsoid.to!string ~ " in datum " ~ d.name);
+  }
+  tmpDatum.rehash;
+  geoDatum = assumeUnique(tmpDatum);
+
+  defaultDatum = getDatum(6326);
+  /++
   Ellipsoid undefinedEllipsoid = Ellipsoid(real.nan, real.nan, real.nan, 0);
   Ellipsoid[string] tmpEllipsoid = [
   "undefined":      Ellipsoid(real.nan, real.nan, real.nan, 0),    // undefined ellipsoid
@@ -178,10 +275,11 @@ shared static this() {
   "wgs1984":        Ellipsoid(6378137.0, real.nan, 1/298.257223563, 7030),
 
   ];
+  ++/
 
-  tmpEllipsoid.rehash;
-  geoEllipsoid = assumeUnique(tmpEllipsoid);
 
+
+  /++
   Datum[string] tmpDatum = [
   "osgb36":     Datum(6277, geoEllipsoid["airy1830"],     [-446.448, 125.157,-542.060, -0.1502,-0.2470,-0.8421, 20.4894]),
   "irl1975":    Datum(0, geoEllipsoid["airyModified"], [-482.530,130.596,-564.557, -1.042,-0.214,-0.631, -8.150]),
@@ -226,8 +324,158 @@ shared static this() {
 
   tmpDatum.rehash;
   geoDatum = assumeUnique(tmpDatum);
+  ++/
 }
 unittest {
   //writefln ("Ellipsoid list %s", geoEllipsoid);
   //writefln ("Datum list %s", geoDatum);
 }
+
+/** Reads unformatted csv string
+
+  Params:
+    csv = csv string
+    fieldSeparator = Char  (default: comma)
+    lineSeparator = Char (default: newline)
+  Returns: 3D-Array of lines and fields
+  Standards: The parser loosely follows the [RFC-4180](http://tools.ietf.org/html/rfc4180).
+
+    - Lines are separated by a newline (customizable).
+    - Fields are separated by a comma (customizable).
+    - A final record may end with a newline
+    - A field containing new lines, commas, or double quotes should be enclosed in quotes.
+    - Each record must contain the same number of fields
+    - Comments start with an asteriks.
+    - Lines starting with an asteriks are comments end don't get parsed.
+    - Comments can appear after the last field of a line.
+
+  Throws: If number of fields differ.
+**/
+auto parseCSV (string csv) {
+  enum char commaChar = 0x002c; // ,
+  enum char eolChar = 0x000a;   // newline
+  return parseCSV(csv, commaChar, eolChar);
+}
+/** ditto **/
+auto parseCSV (string csv, char fieldSeparator, char lineSeparator) {
+  import std.string: strip, stripLeft, stripRight, splitLines;
+  import std.algorithm: map, filter, splitter, canFind, countUntil, substitute;
+  import std.array: empty, split;
+  import std.range;
+  enum char numberChar = 0x0023;      // #
+  auto lines = csv.splitter(lineSeparator)  // split lines
+                  .map!(a => a.strip)
+                  .filter!(a => (!a.empty && a[0] != numberChar));  // filter empty lines and comment lines
+  return lines.map!(a => a.strip.parseCSVImpl(fieldSeparator)).filter!(a => !a.empty);
+}
+/** **/
+unittest{
+  import std.array;
+  string csv =
+  `#name,age,gender
+  steven,15,male
+  "maria",20,female
+  snoopy,15,`;
+  assert(csv.parseCSV.array == [["steven", "15", "male"],["maria", "20", "female"],["snoopy","15",""]]);
+}
+/** Parses a line of csv fields **/
+string[] parseCSVImpl (string csv, char fieldSeparator, string[] fields = []) {
+  import std.range;
+  import std.algorithm;
+  import std.conv;
+  import std.exception;
+  import std.string;
+  enum dchar quotationChar = 0x0022;   // "
+  enum dchar apostropheChar = 0x0027;  // '
+  enum dchar[] quoteChars = [apostropheChar, quotationChar];
+  string[3] split;
+  csv = csv.stripLeft;
+  //writefln ("csv <%s>", csv);
+  // if field is quoted
+  if (csv.empty) return fields ~ "";
+  if (quoteChars.canFind(csv.front)) {
+    //writefln ("quoted field");
+    // s[0]: before needle s[1]: needle s[2]: after needle
+    split = csv[1..$].findSplit(csv.front.to!string).array;
+    // is this the last field? if so we don't find another field separator
+    if (split[2].findSkip(fieldSeparator.to!string) == false) {
+      //writefln ("end of fields");
+      return fields ~ split[0];
+    } else {
+      //writefln ("next char <%s>", split[2].front);
+    }
+    // unquoted field
+  } else {
+    //writefln("unquoted field");
+    split = csv.findSplit(fieldSeparator.to!string).array;
+    split[2] = split[2].stripLeft;
+    //writefln ("split 0: <%s> 1: <%s>", split[0], split[1]);
+    // is this the last field? if so we don't find another field separator
+    if (split[1].empty) {
+      //writefln ("end of fields");
+      return fields ~ split[0];
+    } else if (split[2].empty) {
+      //writefln ("trailing comma");
+      split[2] = "";
+    } else {
+      //writefln ("not the last field");
+      //if (!split[2].empty) writefln ("next char <%s>", split[2].front);
+    }
+    split[0] = split[0].strip;
+  }
+  return parseCSVImpl(split[2], fieldSeparator, fields ~ split[0]);
+}
+unittest {
+  assert("tom, 4, true".parseCSVImpl(',') == ["tom", "4", "true"]);
+  assert(`"tom", 4, true, `.parseCSVImpl(',') == ["tom", "4", "true", ""]);
+  assert("tom\t 4\t true\t ".parseCSVImpl('\t') == ["tom", "4", "true", ""]);
+}
+/**
+unittest {
+  import std.typecons;
+  // run-time
+  string csv1 =
+  `steven,15,male
+  maria,20,female`;
+  string csv2 =
+  `"thomas",25,male
+  'sybille', 30,female`;
+  string csv3 =
+  `"tom, jerry", 70, ''`;
+  string csv4 =
+  `# name, age, sex`;
+  string csv5 =
+  `shorty, 10, male # just a comment`;
+  parseCSV(csv1);
+  parseCSV(csv1 ~ "\n" ~ csv2);
+  parseCSV(csv1 ~ "\n" ~ csv3);
+  parseCSV(csv4 ~ "\n" ~ csv1);
+  writefln ("commented line %s", parseCSV(csv1 ~ "\n" ~ csv5));
+  // compile-time
+  enum text = "a,1 ,true\n' b, b2 ',2,false\n# \n \n c,3,true\n";
+  enum r = parseCSV(text);
+  writefln ("ct csv %s", r);
+}
+**/
+auto convertCSV (T...) (string[] csv) {
+  import std.typecons;
+  import std.conv;
+  alias Line = Tuple!T;
+  Line line;
+  //writefln("convertCSV %s", csv);
+  if (!csv.length) return line;
+  assert(T.length == csv.length, "Number of types doesn't match number of fields!");
+  static foreach (i; 0..T.length) {
+    line[i] = csv[i].to!(T[i]);
+  }
+  return line;
+}
+/**
+unittest{
+  auto csv = [
+    ["steve", "10", "true"],
+    ["marc", "20", "false"],
+    ["snoopy", "nan", "false"]];
+  //writefln("convert csv %s", convertCSV!(string, double, bool)(csv));
+}
+**/

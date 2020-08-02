@@ -50,9 +50,10 @@ import std.conv: to;
 import std.algorithm: map, min, max;
 import std.array: array;
 import coordinate.mathematics;
-import coordinate: GEO;
+import coordinate: GEO, LAT, LON;
 import coordinate.exceptions: OLCException;
-import coordinate.utils: AltitudeType, AccuracyType, defaultDatum;
+import coordinate.utils: AltitudeType, AccuracyType;
+import coordinate.datums;
 import std.math: log, floor, pow;
 debug import std.stdio;
 
@@ -188,12 +189,12 @@ private double computeLatitudePrecision(int codeLength) {
 }
 
 /** **/
-auto encode (double latitude, double longitude, int codeLength = pairCodeLength) {
+auto encode (double latitude, double longitude, int codeLength = pairCodeLength, string file = __FILE__, size_t line = __LINE__) {
   import std.math: round;
   import std.algorithm: reverse;
   codeLength = min(codeLength, maxDigitCount);
   if (codeLength < 2 || (codeLength < pairCodeLength && codeLength % 2 == 1))
-    throw new OLCException("Illegal code length.");
+    throw new OLCException("Illegal code length.", file, line);
   latitude = clipLatitude(latitude);
   longitude = normalizeLongitude(longitude);
 
@@ -246,9 +247,9 @@ unittest {
 }
 
 /** **/
-CodeArea decode (string code) {
+CodeArea decode (string code, string file = __FILE__, size_t line = __LINE__) {
   import std.algorithm: min;
-  //if (!olc.isFull) throw new OLCException("Passed Open Location Code is not a valid full code");
+  if (!code.isFull) throw new OLCException("Passed Open Location Code is not a valid full code", file, line);
   string codeDigits = code.trimCode;
   //writefln("trimmed code %s", codeDigits);
   long latVal = -latitudeMax * latIntegerMultiplier;
@@ -276,22 +277,22 @@ CodeArea decode (string code) {
     lonVal += col * lonPlaceVal;
   }
   return CodeArea(
-    cast(double)latVal / latIntegerMultiplier,
-    cast(double)lonVal / lonIntegerMultiplier,
-    cast(double)(latVal + latPlaceVal) / latIntegerMultiplier,
-    cast(double)(lonVal + lonPlaceVal) / lonIntegerMultiplier,
+    cast(double)latVal / latIntegerMultiplier,                  // southLatitude
+    cast(double)lonVal / lonIntegerMultiplier,                  // westLongitude
+    cast(double)(latVal + latPlaceVal) / latIntegerMultiplier,  // northLatitude
+    cast(double)(lonVal + lonPlaceVal) / lonIntegerMultiplier,  // eastLongitude
     codeLength
   );
 }
 
 /** **/
-string shorten (string code, double refLat, double refLon) {
-  if (!code.isFull) throw new OLCException("Code cannot be short.");
-  if (code.isPadded) throw new OLCException("Code cannot be padded.");
-  return shorten(decode(code), code, refLat, refLon);
+string shorten (string code, double refLat, double refLon, string file = __FILE__, size_t line = __LINE__) {
+  if (!code.isFull) throw new OLCException("Code cannot be short.", file, line);
+  if (code.isPadded) throw new OLCException("Code cannot be padded.", file, line);
+  return shorten(decode(code), code, refLat, refLon, file, line);
 }
 /** **/
-string shorten (CodeArea codeArea, string code, double referenceLatitude, double referenceLongitude) {
+string shorten (CodeArea codeArea, string code, double referenceLatitude, double referenceLongitude, string file = __FILE__, size_t line = __LINE__) {
   import std.math: fabs, fmax, cmp;
   import coordinate: GEO;
   GEO center = codeArea.center;
@@ -308,7 +309,7 @@ string shorten (CodeArea codeArea, string code, double referenceLatitude, double
     if (range < computeLatitudePrecision(i * 2) * 0.3)
       return code[i*2..$];  // We're done.
   }
-  throw new OLCException("Reference location is too far from the Open Location Code center.");
+  throw new OLCException("Reference location is too far from the Open Location Code center.", file, line);
 }
 unittest {
   // 9C3W9QCJ+2VX,51.3701125,-1.217765625,+2VX,B
@@ -319,10 +320,10 @@ unittest {
 }
 
 /** **/
-auto recoverNearest (string shortCode, double referenceLatitude, double referenceLongitude) {
+auto recoverNearest (string shortCode, double referenceLatitude, double referenceLongitude, string file = __FILE__, size_t line = __LINE__) {
   import std.string: indexOf;
   import coordinate: GEO;
-  if (!shortCode.isShort) throw new OLCException("Is not a valid short Open Location Code.");
+  if (!shortCode.isShort) throw new OLCException("Is not a valid short Open Location Code.", file, line);
   referenceLatitude = clipLatitude(referenceLatitude);
   referenceLongitude = normalizeLongitude(referenceLongitude);
 
@@ -421,533 +422,54 @@ bool isPadded (string code) {
   if(!code.isValid) return false;
   return code.indexOf(paddingChar) >= 0;
 }
-version (trash) {
-/++
-static const char separator = 0x002B;  // A '+' separator used to break the code into two parts to aid memorability.
-static const char padding = 0x0030;    // The '0' character used to pad codes.
-static immutable char[20] alphabet = "23456789CFGHJMPQRVWX";  // The character set used to encode
-static const size_t encodingBase = alphabet.length; // The base to use to convert numbers to/from.
-static const size_t maxDigitCount = 15;   // The max number of digits for any plus code.
-static const size_t pairCodeLength = 10;  // Maximum code length using just lat/lng pair encoding.
-static const size_t gridCodeLength = maxDigitCount - pairCodeLength;  // Number of digits in the grid coding section.
-static const size_t gridColumns = 4;                        // Number of columns in the grid refinement method.
-static const size_t gridRows = encodingBase / gridColumns;  // Number of rows in the grid refinement method.
-static const size_t separatorPosition = 8;  // The number of characters to place before the separator.
-// Work out the encoding base exponent necessary to represent 360 degrees.
-static const size_t initialExponent = cast(size_t)((360.log / encodingBase.log).floor);
-// Work out the enclosing resolution (in degrees) for the grid algorithm.
-static const double gridSizeDegree = 1.0 / (encodingBase).pow(pairCodeLength / 2 - (initialExponent + 1));
-// Inverse (1/) of the precision of the final pair digits in degrees. (20^3)
-static const size_t pairPrecisionInverse = 8000;
-// Inverse (1/) of the precision of the final grid digits in degrees.
-// (Latitude and longitude are different.)
-static const size_t gridLatPrecisionInverse = pairPrecisionInverse * pow(gridRows, gridCodeLength);
-static const size_t gridLonPrecisionInverse = pairPrecisionInverse * gridColumns.pow(gridCodeLength);
-// Latitude bounds are -latMaxDegrees degrees and +latMaxDegrees
-// degrees which we transpose to 0 and 180 degrees.
-static const double latMaxDegrees = 90.0;   // The maximum value for latitude in degrees.
-static const double lonMaxDegrees = 180.0;  // The maximum value for longitude in degrees.
-// Lookup table of the alphabet positions of characters 'C' through 'X',
-// inclusive. A value of -1 means the character isn't part of the alphabet.
-static const int['X' - 'C' + 1] positionLUT = [8,  -1, -1, 9,  10, 11, -1, 12,
-                                         -1, -1, 13, -1, -1, 14, 15, 16,
-                                         -1, -1, -1, 17, 18, 19];
-
-/** Raises a number to an exponent, handling negative exponents. **/
-private double powNeg (double base, double exponent) {
-  if (exponent == 0.0)
-    return 1.0;
-  else if (exponent > 0.0)
-    return base.pow(exponent);
-  return 1.0 / base.pow(-exponent);
-}
-unittest {
-  assert(10.powNeg(0) == 1);
-  assert(10.powNeg(2) == 100);
-  assert(10.powNeg(-2) == 0.01);
-}
-
-/** Compute the latitude precision value for a given code length. Lengths <= 10
-    have the same precision for latitude and longitude, but lengths > 10 have
-    different precisions due to the grid method having fewer columns than rows.
-**/
-deprecated ("use computeLatitudePrecision") private double computePrecisionForLength (size_t length) { return computeLatitudePrecision(length); }
-
-private double computeLatitudePrecision (size_t length) {
-  if (length <= pairCodeLength)
-    //return powNeg(encodingBase, ((length / -2) + 2.0).floor);
-    return encodingBase.pow(length / -2 + 2);
-  //return powNeg(encodingBase, -3) / gridRows.pow(length - pairCodeLength);
-  return encodingBase.pow(-3) / gridRows.pow(length - pairCodeLength);
-}
-unittest {
-  writefln("cpfl %s", computePrecisionForLength(2));
-  writefln("cpfl %s", computePrecisionForLength(10));
-  writefln("cpfl %s", computePrecisionForLength(12));
-
-}
-
-/** Returns the position of a char in the encoding alphabet, or -1 if invalid. **/
-private int getAlphabetPosition (char c) {
-  if (c >= 'C' && c <= 'X') return positionLUT[c - 'C'];
-  if (c >= 'c' && c <= 'x') return positionLUT[c - 'c'];
-  if (c >= '2' && c <= '9') return c - '2';
-  return -1;
-}
-unittest {
-  writefln("getABCPos %s", getAlphabetPosition('c'));
-  writefln("getABCPos %s", getAlphabetPosition('9'));
-}
-/** Normalize a longitude into the range -180 to 180, not including 180. **/
-private double normalizeLongitude (double lon)
-out (result) { assert( -180 <= result && result < 180); }
-do {
-  while (lon < -lonMaxDegrees) lon += 360.0;
-  while (lon >= lonMaxDegrees) lon -= 360.0;
-  return lon;
-}
-unittest {
-  assert(normalizeLongitude(0) == 0.0);
-  writefln("nLon %s", normalizeLongitude(180.0));
-  writefln("nLon %s", normalizeLongitude(-180.0));
-  writefln("nLon %s", normalizeLongitude(360.0));
-  writefln("nLon %s", normalizeLongitude(-360.0));
-  writefln("nLon %s", normalizeLongitude(270.0));
-  writefln("nLon %s", normalizeLongitude(-270.0));
-}
-
-/** Adjusts 90 degree latitude to be lower so that a legal OLC code can be generated. **/
-private double adjustLat (double lat) {
-  import std.algorithm: max, min;
-  //lat = min(90.0, max(-90.0, lat));
-  return min(max(lat, -latMaxDegrees), latMaxDegrees);
-  //return lat; // in csharp lat gets just clipped (no case < 90°)
-  /++
-  if (lat < latMaxDegrees) return lat;
-  // Subtract half the code precision to get the latitude into the code
-  // area.
-  double precision = computePrecisionForLength(length);
-  writefln("adjustLat lat %s (length %s) to %s", lat, length, lat - precision / 2);
-  return lat - precision / 2;
-  ++/
-}
-unittest {
-
-}
-
-/** Normalize a location code by adding the separator '+' character and any padding '0' characters
-    that are necessary to form a valid location code.
-**/
-private string normalizeCode (string code) {
-  import std.conv: to;
-  // if code needs padding
-  if (code.length < separatorPosition) {
-    return code;
-  }
-  // if code needs ends with separator
-  else if (code.length == separatorPosition)
-    return code ~ separator.to!string;
-  // if code needs separator inbetween
-  else if (code[separatorPosition] != separator)
-    return code[0..separatorPosition] ~ separator ~ code[separatorPosition..$];
-  else return code;
-}
-/** Trim a location code by removing the separator '+' character and any padding '0' characters
-  resulting in only the code digits.
-**/
-deprecated("Use trimCode") private void cleanCodeChars (ref char[] code) { trimCode(code); }
-
-private void trimCode (ref char[] code) {
-  import std.algorithm: remove;
-  import std.uni: toUpper;
-  import std.string: indexOf;
-  code.remove!(a => a == separator).toUpper;
-  auto i = indexOf(code, padding);
-  if (i > 0) {
-    code = code[0..i];
-  }
-}
-unittest {
-  char[] c1 = "8FVC2222+22".dup;
-  char[] c2 = "CFX30000+".dup;
-  cleanCodeChars(c1);
-  cleanCodeChars(c2);
-  writefln ("ccc %s", c1);
-  writefln ("ccc %s", c2);
-
-}
-
-size_t codeLength(string code) {
-  char[] cleanCode = code.dup;
-  cleanCodeChars(cleanCode);
-  return cleanCode.length;
-}
-
-/** **/
-string encode (double latitude, double longitude, size_t length = pairCodeLength) {
-  import std.algorithm: min;
-  // Limit the maximum number of digits in the code.
-  debug size_t l1 = length;
-  length = min(length, maxDigitCount);
-  debug if(l1 != length) writefln ("clipped length from %s to %s", l1, length);
-  // Check that the code length requested is valid.
-  if (length < 2 || (length < pairCodeLength && length % 2 == 1))
-    throw new OLCException("Illegal code length!");
-  // Adjust latitude and longitude so they fall into positive ranges.
-  double lat = adjustLat(latitude);
-  double lon = normalizeLongitude(longitude);
-  writefln ("clipped lat %s and lon %s", lat, lon);
-
-  // csharp Conversion
-  if (lat == latMaxDegrees) {
-    lat -= 0.9 * computePrecisionForLength(length);
-    writefln ("  needed to trim lat to %s", lat);
-  }
-  writefln ("trimmed lat %s and lon %s", lat, lon);
-  // Reserve 15 characters for the code digits. The separator will be inserted
-  // at the end.
-  //char[] code = "123456789abcdef".dup;
-  char[16] code;
-  // Compute the code.
-  // This approach converts each value to an integer after multiplying it by
-  // the final precision. This allows us to use only integer operations, so
-  // avoiding any accumulation of floating point representation errors.
-
-  // Multiply values by their precision and convert to positive without any
-  // floating point operations.
-  // long are signed 64 bits
-  long latVal1 = cast(long)(latMaxDegrees * gridLatPrecisionInverse);
-  long lonVal1 = cast(long)(lonMaxDegrees * gridLonPrecisionInverse);
-  writefln("positives ... latValue1 %s lonValue1 %s", latVal1, lonVal1);
-  assert(0 <= latVal1 && 0 <= lonVal1);
-  long latVal = cast(long)(latVal1 + lat * gridLatPrecisionInverse);
-  long lonVal = cast(long)(lonVal1 + lon * gridLonPrecisionInverse);
-  writefln("latValue %s lonValue %s", latVal, lonVal);
-  int pos = maxDigitCount - 1;
-  // Compute the grid part of the code if necessary.
-  // 10 lat/lng pair codes and up to 5 grid codes
-  if (length > pairCodeLength) {  // more than 10 digits in code
-    writefln ("compute grid section:");
-    debug if(latitude < 0) writefln("  Cave negative latitude!!!");
-    debug if(longitude < 0) writefln("  Cave negative longitude!!!");
-    do {
-      long latDigit = latVal % gridRows;
-      long lonDigit = lonVal % gridColumns;
-      int ndx = cast(int)(latDigit * gridColumns + lonDigit);
-      //writefln ("latDigit: %s mod %s is %s", latVal, gridRows, latDigit);
-      //writefln ("lonDigit: %s mod %s is %s", lonVal, gridColumns, lonDigit);
-      //writefln("  pos %s alphabet[%s] is %s", pos, ndx, alphabet[ndx]);
-      //writefln("pos %s alphabet.length %s ndx %s", pos, alphabet.length, ndx);
-      // cpp string:replace(string, pos, 1, 1, abc)
-      code[pos--] = alphabet[ndx];
-      // Note! Integer division.
-      latVal /= gridRows;
-      lonVal /= gridColumns;
-    } while (pos > (maxDigitCount - gridCodeLength)-1);
-  }
-  else {
-    writefln ("%s.pow(%s) = %s", gridRows, gridCodeLength, gridRows.pow(gridCodeLength));
-    latVal /= gridRows.pow(gridCodeLength);
-    lonVal /= gridColumns.pow(gridCodeLength);
-    writefln("  in grid section: latVal %s lonVal %s", latVal, lonVal);
-  }
-  writefln ("after grid section: latVal %s lonVal %s", latVal, lonVal);
-
-  // Compute the pair section of the code.
-  pos = pairCodeLength-1;
-  do {
-    int latNdx = cast(int)(latVal % encodingBase);
-    int lonNdx = cast(int)(lonVal % encodingBase);
-    code[pos--] = alphabet[lonNdx];
-    code[pos--] = alphabet[latNdx];
-    // Note! Integer division.
-    latVal /= encodingBase;
-    lonVal /= encodingBase;
-  } while (pos > 0);
-  // Add the separator character.
-  code = code[0..separatorPosition]
-              ~ separator
-              ~ code[separatorPosition..$-1];
-  // If we don't need to pad the code, return the requested section.
-  if (length >= separatorPosition) return code[0..length+1].idup;
-  // Add the required padding characters.
-  foreach (i; length..separatorPosition) {
-    code[i] = padding;
-  }
-  // Return the code up to and including the separator.
-  return code[0..separatorPosition+1].idup;
-}
-/** **/
-unittest {
-  import coordinate: geo;
-  auto c = geo(47.0000625, 8.0000625);
-  writefln ("encode olc %s", encode(c.lat, c.lon));      // 8FVC2222+22
-  writefln ("encode olc %s", encode(c.lat, c.lon, 16));  // 8FVC2222+22GCCCC
-}
-
-/** **/
-CodeArea decode (ref string olc) {
-  import std.algorithm: min;
-  import std.math: round;
-  if (!olc.isFull) throw new OLCException("Passed Open Location Code is not a valid full code");
-  char[] code = olc.dup;
-  code.cleanCodeChars;
-  // Constrain to the maximum length
-  if (code.length > maxDigitCount) code = code[0..maxDigitCount];
-  // Initialise the values for each section. We work them out as integers and
-  // convert them to floats at the end.
-  int normLat = cast(int)(-latMaxDegrees * pairPrecisionInverse);
-  int normLon = cast(int)(-lonMaxDegrees * pairPrecisionInverse);
-  int extraLat = 0;
-  int extraLon = 0;
-  // How many digits do we have to process?
-  size_t digits = min(pairCodeLength, code.length);
-  // Define the place value for the most significant pair.
-  int pv = cast(int)(encodingBase.pow(pairCodeLength / 2.0 - 1.0));
-  for (size_t i = 0; i < digits - 1; i += 2) {
-    normLat += getAlphabetPosition(code[i]) * pv;
-    normLon += getAlphabetPosition(code[i+1]) * pv;
-    if (i < digits - 2) pv /= encodingBase;
-  }
-  // Convert the place value to a float in degrees.
-  double latPrecision = cast(double)pv / pairPrecisionInverse;
-  double lonPrecision = cast(double)pv / pairPrecisionInverse;
-  // Process any extra precision digits.
-  if (code.length > pairCodeLength) {
-    // Initialise the place values for the grid.
-    //int rowPv = cast(int)(gridRows.pow(gridCodeLength-1.0));
-    //int colPv = cast(int)(gridColumns.pow(gridCodeLength-1.0));
-    int rowPv = cast(int)(gridRows.pow(gridCodeLength));
-    int colPv = cast(int)(gridColumns.pow(gridCodeLength));
-    // How many digits do we have to process?
-    digits = min(maxDigitCount, code.length);
-    foreach(i; pairCodeLength..digits) {
-      int dval = getAlphabetPosition(code[i]); // digit value
-      int row = cast(int)(dval / gridColumns);
-      int col = dval % gridColumns;
-      extraLat += row * rowPv;
-      extraLon += col * colPv;
-      if (i < digits - 1) {
-        rowPv /= gridRows;
-        colPv /= gridColumns;
-      }
-    }
-    // Adjust the precisions from the integer values to degrees.
-    latPrecision = cast(double)rowPv / gridLatPrecisionInverse;
-    lonPrecision = cast(double)colPv / gridLonPrecisionInverse;
-  }
-  // Merge the values from the normal and extra precision parts of the code.
-  // Everything is ints so they all need to be cast to floats.
-  double lat = cast(double)normLat / pairPrecisionInverse +
-               cast(double)extraLat / gridLatPrecisionInverse;
-  double lon = cast(double)normLon / pairPrecisionInverse +
-               cast(double)extraLon / gridLonPrecisionInverse;
-
-  // Round everything off to 14 places.
-  return CodeArea(round(lat * 1e14) / 1e14,                   // latLo
-                  round(lon * 1e14) / 1e14,                   // lonLo
-                  round((lat + latPrecision) * 1e14) / 1e14,  // latHi
-                  round((lon + lonPrecision) * 1e14) / 1e14,  // lonHi
-                  code.length);                               // code length
-}
-/** **/
-unittest {
-  auto code = OLC("8FVC2222+22");
-  writefln("decode olc %s", decode(code.code));
-  auto shortCode = OLC("8FVC2222+");
-  writefln("decode olc %s", decode(shortCode.code));
-}
-
-/** **/
-auto shorten (string code, double latitude, double longitude) {
-  import coordinate: GEO;
-  import std.string: indexOf;
-  import std.algorithm: max;
-  import std.math: fabs;
-  //import std.uni: asUpperCase;
-  if (!code.isFull) throw new OLCException("Passed code is not valid and full!");
-  // we can't shorten padded code?
-  if (code.indexOf(padding) != -1) throw new OLCException("Cannot shorten padded codes!");
-  CodeArea codeArea = decode(code);
-  GEO center = codeArea.getCenter;
-  // Ensure that latitude and longitude are valid.
-  //double lat = adjustLat(latitude, codeLength(code));
-  double lat = adjustLat(latitude);
-
-  double lon = normalizeLongitude(longitude);
-  // How close are the latitude and longitude to the code center.
-  double range = max(fabs(center.lat - lat),
-                     fabs(center.lon - lon));
-  string codeCopy = code;
-  const double safetyFactor = 0.3;
-  const int[3] removalLengths = [8, 6, 4];
-  foreach (removalLength; removalLengths) {
-    // Check if we're close enough to shorten. The range must be less than 1/2
-    // the resolution to shorten at all, and we want to allow some safety, so
-    // use 0.3 instead of 0.5 as a multiplier.
-    double areaEdge = computePrecisionForLength(removalLength) * safetyFactor;
-    if (range < areaEdge) {
-      // get from removalLength to the end
-      codeCopy = codeCopy[removalLength..$];
-      break;
-    }
-  }
-  return codeCopy;
-}
-/** **/
-unittest {
-  import coordinate: geo;
-  auto olc = "9C3W9QCJ+2VX";
-  auto reference = geo(51.3708675, -1.217765625);
-  writefln ("olc for shorten %s", olc.decode);
-  writefln ("ref %s", encode(reference.lat, reference.lon));
-  writefln ("shorten %s", shorten(olc, reference.lat, reference.lon) );
-}
-
-/** **/
-string recoverNearest (string shortCode, double lat, double lon) {
-  import std.string: indexOf;
-  import std.uni: toUpper;
-  // If not short code return
-  if (!shortCode.isShort) return shortCode.toUpper;
-  // Ensure that latitude and longitude are valid.
-  //lat = adjustLat(lat, codeLength(shortCode));
-  lat = adjustLat(lat);
-
-  lon = normalizeLongitude(lon);
-  // Compute the number of digits we need to recover.
-  size_t paddingLength = separatorPosition - shortCode.indexOf(separator);
-  // The resolution (height and width) of the padded area in degrees.
-  double resolution = powNeg(encodingBase, 2.0 - (paddingLength / 2.0));
-  // Distance from the center to an edge (in degrees).
-  double halfRes = resolution / 2.0;
-  //GEO latlon = geo(lat, lon);
-  string paddingCode = encode(lat, lon);
-  paddingCode = paddingCode[0..paddingLength] ~ shortCode;
-  CodeArea codeRect = decode(paddingCode);
-  // How many degrees latitude is the code from the reference? If it is more
-  // than half the resolution, we need to move it north or south but keep it
-  // within -90 to 90 degrees.
-  double centerLat = codeRect.getCenter().lat.lat;
-  double centerLon = codeRect.getCenter().lon.lon;
-  if (lat + halfRes < centerLat && centerLat - resolution > -latMaxDegrees) {
-    // If the proposed code is more than half a cell north of the reference
-    // location, it's too far, and the best match will be one cell south.
-    centerLat -= resolution;
-  }
-  else if (lat - halfRes > centerLat && centerLat + resolution < latMaxDegrees) {
-    // If the proposed code is more than half a cell south of the reference
-    // location, it's too far, and the best match will be one cell north.
-    centerLat += resolution;
-  }
-  // How many degrees longitude is the code from the reference?
-  if (lon + halfRes < centerLon) {
-    centerLon -= resolution;
-  }
-  else if (lon - halfRes > centerLon) {
-    centerLon += resolution;
-  }
-  return encode(centerLat, centerLon, codeLength(shortCode) + paddingLength);
-}
-
-/** **/
-bool isValid (string code) {
-  import std.string: indexOf;
-  import std.algorithm: count, remove, any;
-  if (!code.length) return false;
-  // separator is required but there must be only one separator
-  if (code.count(separator) != 1) return false;
-  // is the separator the only character?
-  if (code.length == 1) return false;
-  // is the separator in an illegal position?
-  auto sepPos = code.indexOf(separator);
-  if (sepPos > separatorPosition || sepPos % 2 == 1) return false;
-  // We can have an even number of padding characters before the separator,
-  // but then it must be the final character.
-  auto padStart = code.indexOf(padding);
-  if (padStart > 0) {
-    // short codes cannot have padding
-    if (sepPos < separatorPosition) return false;
-    // the first padding character needs to be in an odd position
-    if (padStart == 0 || padStart % 2) return false;
-    // Padded codes must not have anything after the separator
-    if (code.length > sepPos + 1) return false;
-    // get from first padding character to separator
-    auto padSec = code[padStart..separatorPosition];
-    if (remove!(a => a == padding)(padSec.dup).length) return false;
-  }
-  // if there are characters after the separator, make sure there isn't just one of them (not legal)
-  if (code.length - sepPos - 1 == 1) return false;
-  // Are there any invalid characters?
-  foreach (c; code) {
-    if (c != separator && c != padding && getAlphabetPosition(c) < 0) return false;
-  }
-  return true;
-}
-/** **/
-unittest {
-  assert(isValid("9C3W9QCJ+2VX"));
-}
-
-/** **/
-bool isShort (string code) {
-  import std.string: indexOf;
-  // check it's valid
-  if (!code.isValid) return false;
-  // if there are less characters than expected before the separator
-  if (code.indexOf(separator) < separatorPosition) return true;
-  return false;
-}
-
-/** **/
-bool isFull (string code) {
-  if (!code.isValid) return false;
-  // if it's short it's not full
-  if (code.isShort) return false;
-  // work out what the first latitude character indicates for latitude
-  size_t firstLatValue = getAlphabetPosition(code[0]);
-  firstLatValue *= encodingBase;
-  // The code would decode to a latitude of >= 90 degrees.
-  if (firstLatValue >= latMaxDegrees * 2) return false;
-  if (code.length > 1) {
-    // Work out what the first longitude character indicates for longitude.
-    size_t firstLonValue = getAlphabetPosition(code[1]);
-    firstLonValue *= encodingBase;
-    if (firstLonValue >= lonMaxDegrees * 2) return false;
-  }
-  return true;
-}
-++/
-}
 
 /** **/
 struct OLC {
   import coordinate.utils: ExtendCoordinate;
   string code;            ///
-  mixin ExtendCoordinate; ///
 }
 /** **/
 struct CodeArea {
-  double latLo;   /// low Latitude
-  double lonLo;   /// low Longitude
-  double latHi;   /// high Latitide
-  double lonHi;   /// high Longitude
+  private double[2] _min;  // [southLatitude, westLongitude]
+  private double[2] _max;  // [northLatitude, eastLongitude]
   size_t codeLength;  /// code length
-  this (double latLo, double lonLo, double latHi, double lonHi, size_t codeLength) {
-    this.latLo = latLo;
-    this.lonLo = lonLo;
-    this.latHi = latHi;
-    this.lonHi = lonHi;
+
+  /** **/
+  this (double southLatitude, double westLongitude, double northLatitude, double eastLongitude, size_t codeLength, string file = __FILE__, size_t line = __LINE__) {
+    import std.exception: enforce;
+    enforce!OLCException(southLatitude <= northLatitude, "South latitude must be less or equal north latitude!", file, line);
+    enforce!OLCException(westLongitude <= eastLongitude, "West longitude must be less or equal east longitude!", file, line);
+    this._min[0] = southLatitude;
+    this._min[1] = westLongitude;
+    this._max[0] = northLatitude;
+    this._max[1] = eastLongitude;
     this.codeLength = codeLength;
   }
-  /** **/
-  auto center () {
+
+  double[2] min () { return _min; } // The min (south west) point coordinates of the area bounds.
+  double[2] max () { return _max; } // The max (north east) point coordinates of the area bounds.
+  double southLatitude () { return _min[0]; } /// The south (min) latitude coordinate in decimal degrees.
+  double westLongitude () { return _min[1]; } /// The west (min) longitude coordinate in decimal degrees.
+  double northLatitude () { return _max[0]; } /// The north (max) latitude coordinate in decimal degrees.
+  double eastLongitude () { return _max[1]; } /// The east (max) longitude coordinate in decimal degrees.
+
+  /** The center point of the area which is equidistant between min and max. **/
+  GEO center () {
     import std.algorithm: min;
-    import coordinate: GEO, LAT, LON;
-    //const double latCenter = min(latLo + (latHi - latLo) / 2.0, latitudeMax);
-    const double latCenter = (latLo + latHi) / 2;
-    //const double lonCenter = min(lonLo + (lonHi - lonLo) / 2.0, longitudeMax);
-    const double lonCenter = (lonLo + lonHi) / 2;
-    return GEO(LAT(latCenter), LON(lonCenter), real.nan, real.nan, real.nan);
+    import coordinate: GEO, LAT, LON, geo;
+    return geo(centerLatitude, centerLongitude, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, getDatum(6326));
+  }
+  LAT centerLatitude () {
+    return LAT((_min[0] + _max[0]) / 2.0); }    // The center latitude coordinate in decimal degrees.
+  LON centerLongitude () { return LON((_min[1] + _max[1]) / 2); }  // The center longitude coordinate in decimal degrees.
+
+  /** Check if this geo area contains the provided point **/
+  bool contains (GEO point) {
+    return contains (point.lat, point.lon);
+  }
+  /** ditto **/
+  bool contains (double latitude, double longitude) {
+    return (min[0] <= latitude && latitude < max[0]
+         && min[1] <= longitude && longitude < max[1]);
   }
 }

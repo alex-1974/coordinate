@@ -3,7 +3,7 @@ module coordinate.utm;
 
 import std.traits: isSomeChar, isNumeric, isFloatingPoint;
 public import coordinate.datums;
-import coordinate.utils: UTMType, AltitudeType, AccuracyType, defaultDatum;
+import coordinate.utils: UTMType, AltitudeType, AccuracyType;
 import coordinate.exceptions: UTMException, MGRSException;
 debug import std.stdio;
 
@@ -22,19 +22,19 @@ const real falseNorthing = 10000e3; /// false northing
 
 /** **/
 struct UTM {
-  import coordinate.utils: ExtendCoordinate, defaultDatum;
+  import coordinate.utils: ExtendCoordinate;
   char hemisphere; /// Hemisphere
   uint zone;       /// UTM zone
   UTMType easting;   /// Easting
   UTMType northing;  /// Northing
   mixin ExtendCoordinate; ///
-  this (uint zone, char hemisphere, UTMType easting, UTMType northing, AltitudeType altitude, Datum datum = geoDatum[defaultDatum]) {
+  this (uint zone, char hemisphere, UTMType easting, UTMType northing, AltitudeType altitude, Datum datum = defaultDatum) {
     import std.uni: toUpper;
     this(zone, hemisphere, easting, northing, altitude, AccuracyType.nan, AccuracyType.nan, datum);
   }
   /** **/
   this (uint zone, char hemisphere, UTMType easting, UTMType northing,
-        AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum = geoDatum[defaultDatum]) {
+        AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum = defaultDatum) {
     import std.uni: toUpper;
     this.hemisphere = cast(char)(hemisphere.toUpper);
     this.zone = zone;
@@ -108,7 +108,7 @@ auto utm (alias string Type) (string coord, string file = __FILE__, size_t line 
 }
 /** **/
 unittest {
-  writefln ("utm band %s", utm!"band"(15, 'S', 580817, 4251205));
+  //writefln ("utm band %s", utm!"band"(15, 'S', 580817, 4251205));
 }
 /** ditto **/
 UTM utm (alias string Type = "hemisphere") (string coord, string file = __FILE__, size_t line = __LINE__)
@@ -153,13 +153,17 @@ struct MGRS {
   UTMType easting;   /// Easting in metres within 100km grid square
   UTMType northing;  /// Northing in metres within 100km grid square
   mixin ExtendCoordinate; ///
-  this(uint zone, char band, string grid, UTMType easting, UTMType northing, AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum) {
+  this(uint zone, char band, string grid, UTMType easting, UTMType northing, AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum = defaultDatum) {
     import std.uni: toUpper;
     this.zone = zone;
     this.band = cast(char)(band.toUpper);
     this.grid = cast(char[])(grid[].toUpper);
     this.easting = easting;
     this.northing = northing;
+    this.accuracy = accuracy;
+    this.altitude = altitude;
+    this.altitudeAccuracy = altitudeAccuracy;
+    this.datum = datum;
   }
   void toString(scope void delegate(const(char)[]) sink) const {
     import std.conv: to;
@@ -180,7 +184,7 @@ MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing,
 }
 /** **/
 MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing, string file = __FILE__, size_t line = __LINE__) {
-  return mgrs(zone, band, grid, easting, northing, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, geoDatum[defaultDatum]);
+  return mgrs(zone, band, grid, easting, northing, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, getDatum("wgs1984"));
 }
 /** **/
 unittest {

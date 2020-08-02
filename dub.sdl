@@ -4,6 +4,7 @@ authors "Alexander Leisser"
 copyright "Copyright © 2020, Alexander Leisser"
 license "proprietary"
 dependency "mathematics" version="*"
+dflags "-J./source/coordinate/data"
 buildType "docs" {
   buildOptions "syntaxOnly"
   dflags "-c" "-Dddocs" "-preview=markdown"

@@ -39,6 +39,8 @@ import std.traits: isNumeric, isFloatingPoint;
 debug import std.stdio;
 public import coordinate.datums;
 import coordinate.exceptions: CoordException;
+import coordinate.utils: AltitudeType, AccuracyType;
+
 
 static const dchar degChar = 0x00B0;
 static const dchar minChar = 0x2032;
@@ -55,7 +57,7 @@ struct LAT {
     import coordinate.mathematics: wrap90;
     return mixin("LAT( (this.lat "~op~" rhs.lat).wrap90 )");
   }
-  invariant { import mathematics.floating: ltE; assert((-90).ltE(this.lat) && this.lat.ltE(90)); }
+  invariant { import mathematics.floating: ltE; assert((-90).ltE(this.lat) && this.lat.ltE(90), "Latitude out of bounds [-90;+90]!"); }
 }
 /** **/
 unittest {
@@ -73,7 +75,7 @@ struct LON {
     import coordinate.mathematics: wrap180;
     return mixin("LON( (this.lon "~op~" rhs.lon).wrap180 )");
   }
-  invariant { import mathematics.floating: ltE; assert((-180).ltE(this.lon) && this.lon.ltE(180)); }
+  invariant { import mathematics.floating: ltE; assert((-180).ltE(this.lon) && this.lon.ltE(180), "Longitude out of bounds [-180;+180]!"); }
 }
 /** **/
 unittest {
@@ -87,13 +89,13 @@ struct GEO {
   LON lon;                          /// [Longitude](#Lon)
   mixin ExtendCoordinate; ///
   /** **/
-  this(LAT lat, LON lon, real altitude, real accuracy, real altitudeAccuracy, Datum datum = geoDatum[defaultDatum]) {
+  this(LAT lat, LON lon, AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum) {
     this.lat = lat;
     this.lon = lon;
     this.altitude = altitude;
     this.accuracy = accuracy;
     this.altitudeAccuracy = altitudeAccuracy;
-    this.datum = geoDatum["wgs1984"];
+    this.datum = datum;
   }
   invariant {
     import std.math: isNaN;
@@ -117,10 +119,11 @@ struct GEO {
       altitude = Altitude in meters
       accuracy = Accuracy of Lat/Lon in meters
       altitudeAccuracy = Altitude accuracy in meters
+      datum = Datum (defaults to World Geodetic System 1984)
     Returns: [Geo] type
     Throws: [CoordException](exceptions.html#CoordException) if latitude/longitude or accuracies are out of bounds.
 **/
-auto geo (T, U) (T lat, T lon, U altitude, real accuracy, real altitudeAccuracy, string file = __FILE__, size_t line = __LINE__)
+auto geo (T, U) (T lat, T lon, U altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum = defaultDatum, string file = __FILE__, size_t line = __LINE__)
 if (isFloatingPoint!T && isNumeric!U)
 {
   import std.exception: enforce;
@@ -130,7 +133,7 @@ if (isFloatingPoint!T && isNumeric!U)
   enforce!CoordException((-180).ltE(lon) && lon.ltE(180), "Longitude out of bounds [-180;+180]!", file, line);
   enforce!CoordException(accuracy.isNaN || 0.ltE(accuracy), "Accuracy out of range!", file, line);
   enforce!CoordException(altitudeAccuracy.isNaN || 0.ltE(altitudeAccuracy), "Altitude accuracy out of range!", file, line);
-  return GEO(LAT(lat), LON(lon), altitude, accuracy, altitudeAccuracy);
+  return GEO(LAT(lat), LON(lon), cast(AltitudeType)altitude, cast(AccuracyType)accuracy, cast(AccuracyType)altitudeAccuracy, datum);
 }
 /** **/
 unittest {
@@ -149,25 +152,25 @@ unittest {
 auto geo (T, U) (T lat, T lon, U altitude, string file = __FILE__, size_t line = __LINE__)
 if (isNumeric!T && isNumeric!U)
 {
-  return geo(lat, lon, altitude, real.nan, real.nan, file, line);
+  return geo(lat, lon, altitude, AccuracyType.nan, AccuracyType.nan, defaultDatum, file, line);
 }
 /** ditto **/
 auto geo (T, U) (T[2] coord, U altitude, string file = __FILE__, size_t line = __LINE__)
 if (isNumeric!T && isNumeric!U)
 {
-  return geo(coord[0], coord[1], altitude, real.nan, real.nan, file, line);
+  return geo(coord[0], coord[1], altitude, file, line);
 }
 /** ditto **/
 auto geo (T) (T lat, T lon, string file = __FILE__, size_t line = __LINE__)
 if (isNumeric!T)
 {
-  return geo(lat, lon, real.nan, file, line);
+  return geo(lat, lon, AltitudeType.nan, file, line);
 }
 /** ditto **/
 auto geo (T) (T[2] coord, string file = __FILE__, size_t line = __LINE__)
 if (isNumeric!T)
 {
-  return geo(coord[0], coord[1], real.nan, file, line);
+  return geo(coord[0], coord[1], AltitudeType.nan, file, line);
 }
 /** **/
 unittest {

@@ -9,8 +9,6 @@ alias UTMType = float;        ///
 alias LatLonType = double;    /// TODO
 alias ECEFType = float;       ///
 
-const string defaultDatum = "wgs1984";  ///
-
 mixin template ExtendCoordinate () {
   import coordinate.datums: Datum;
   AltitudeType altitude = AltitudeType.nan;         /// Altitude in meters
