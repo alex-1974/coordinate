@@ -1,465 +1,457 @@
-# Format: epsg, name, epoch, ellipsoid, comment
-6143,"abidjan1987", 1987, 7012, ""
-6168,"accra",       0,    7029, "Replaced in 1978 by Leigon datum (code 6250)."
-6201,"adindan",     0,    7012, "The 12th parallel traverse of 1966-70 (Point 58 datum, code 6620) is connected to the Adindan network in western Sudan. This has given rise to misconceptions that the Adindan network is used in west Africa."
-6205,"afgooye",     0,    7024, ""
-6206,"agadez",      0,    7011, ""
-6204,"ainElAbd1970",1970, 7022, ""
-6191,"albanian1987",1987, 7024, ""
-6169,"americanSamoa1962", 1962, 7008, ""
-6289,"amersfoort",  0,    7004, ""
-6196,"ammassalik1958",1958,7022,  ""
-6901,"ancienneTriangulationFrancaise",  0,  7027, "Uses the RGS value for the Paris meridian.  In Alsace, data suspected to be transformation of German network into ATF. Replaced by Nouvelle Triangulation Francaise (Paris) (code 6807) which uses the 1936 IGN value for the Paris meridian."
-6600,"anguilla1957",1957, 7012,  ""
-6601,"antigua1943", 1943, 7012, ""
-6208,"Aratu",       0,    7022, ""
-6209,"arc1950",     1950, 7013, ""
-6210,"arc1960",     1960, 7012, ""
-6712,"ascensionIsland1958",1958,7022, ""
-6176,"australianAntarctic1998", 1998, 7019,
-6202,"australianGeodetic1966",  1966, 7003,
-6203,"australianGeodetic1984",  1984, 7003, "Uses all data from 1966 adjustment with additional observations, improved software and a geoid model."
-1041,"Autonomous Regions of Portugal 2008",1994,7019,"Replaces older classical datums for Azores and Madeira archipelagos."
-6122,"ats1977",     1977, 7041, "Average Terrestrial System 1977. In use from 1979.  To be phased out in late 1990's."
-6713,"ayabelleLighthouse",  0,  7012, ""
-6183,"azoresCentralIslands1948",    1948, 7022, "Replaced by 1995 adjustment (datum code 6665)."
-6665,"azoresCentralIslands1995",    1948, 7022, "Classical and GPS observations. Replaces 1948 adjustment (datum code 6183)."
-6182,"azoresOccidentalIslands1939", 1939, 7022, ""
-6184,"azoresOrientalIslands1940",   1940, 7022, "Replaced by 1995 adjustment (datum code 6664)."
-6664,"azoresOrientalIslands1995",   1940, 7022, "Classical and GPS observations. Replaces 1940 adjustment (datum code 6184)."
-6212,"barbados1938",   1938, 7012, ""
-6211,"batavia",          0,  7004, ""
-6813,"bataviaJakarta",   0,  7004, ""
-6213,"beduaram",         0,  7011, ""
-6214,"beijing1954",     1954, 7024, "Scale determined through three baselines in northeast China. Discontinuities at boundaries of adjustment blocks. From 1982 replaced by Xian 1980 and New Beijing."
-6714,"bellevue",  1960, 7022, "Datum covers all the major islands of Vanuatu in two different adjustment blocks, but practical usage is as given in the area of use."
-6216,"bermuda1957",1957,7008, ""
-6762,"bermuda2000",2000,7030, ""
-6306,"bern1938",  1938, 7004, "This redetermination of the coordinates of fundamental point is used for scientific purposes and as the graticule overprinted on topographic maps constructed on the CH1903 / LV03 projected CS (code 21781)."
-1058,"bhutanNational",2000,7019,  "Bhutan National Geodetic Datum"
-6165,"bissau",    0,  7022, ""
-6218,"bogota 1975",1975,7022,"Replaces 1951 adjustment. Replaced by MAGNA-SIRGAS (datum code 6685)."
-6802,"bogota 1975 (Bogota)",1975,7022,
-6219,"bukitRimpah",  0,7004,
-1037,"cadastre1997",1997,7022,"Derived by adjustment of GPS-observed network which was constrained to Combani 1950 coordinates of one station."
-6220,"camacupa",1948,7012,
-6715,"campAreaAstro",   0,  7022,
-6221,"campoInchauspe",  0,  7022,
-6222,"cape",  0,  7013,
-6717,"capeCanaveral",1963,7008,
-6223,"carthage",1925,7011,"Fundamental point astronomic coordinates determined in 1878."
-6816,"carthage (Paris)",1925,7011,"Fundamental point astronomic coordinates determined in 1878."
-1100,"caymanIslands2011",     2011, 7019, "Cayman Islands Geodetic Datum 2011. Replaces GCGD59 (datum code 6723) and SIGD61 (datum code 6726)."
-6623,"centreSpatialGuyanais", 1967, 7022,"Centre Spatial Guyanais 1967. Replaced by RGFG95 (code 6624)."
-6149,"ch1903",    1903, 7004,
-6801,"ch1903Bern",1903, 7004,
-6150,"ch1903+",   0,    7004,
-6672,"chathamIslands1971",1971,7022,"Replaced by Chatham Islands Datum 1979 (code 6673)."
-6673,"chathamIslands1979",1979,7022,"Replaces Chatham Islands Datum 1971 (code 6672). Replaced by New Zealand Geodetic Datum 2000 (code 6167) from March 2000."
-1043,"china2000", 2000, 1024, "Combined adjustment of astro-geodetic observations as used for Xian 1980 and GPS control network observed 2000-2003. Adopted July 2008."
-6160,"Chos Malal 1914",1914,7022,"Also known as Quini-Huao.  Replaced by Campo Inchauspe (code 6221)."
-6224,"Chua",,7022,"The Chua origin and associated network is in Brazil with a connecting traverse through northern Paraguay. It was used in Brazil only as input into the Corrego Allegre adjustment and for government work in Distrito Federal."
-6708,"Cocos Islands 1965",1965,7003,
-6632,"Combani 1950",1950,7022,"Replaced by RGM04 and Cadastre 1997 (datum codes 1036-37)."
-6315,"Conakry 1905",1905,7011,
-6282,"Congo 1960 Pointe Noire",1960,7011,
-1074,"Corrego Alegre 1961",1961,7022,"Replaced by Corrego Alegre 1970-72 (datum code 6225). NIMA gives coordinates of origin as latitude: 19°50'15.14 S, longitude: 48°57'42.75 W."
-6225,"Corrego Alegre 1970-72",1972,7022,"Replaces 1961 adjustment (datum code 1074). NIMA gives coordinates of origin as latitude: 19°50'15.14 S, longitude: 48°57'42.75 W; these may refer to 1961 adjustment."
-1065,"Costa Rica 2005",2005,7030,"Replaces Ocotepeque (datum code 1070) in Costa Rica from March 2007."
-6226,"Cote d'Ivoire",,7011,
-6761,"Croatian Terrestrial Reference System",1996,7019,"Based on 78 control points with coordinates determined in ETRS89."
-6155,"Dabola 1981",1981,7011,
-6274,"Datum 73",1964,7022,
-6755,"Datum Geodesi Nasional 1995",1995,7030,"Replaces ID74 and all older datums."
-6316,"Dealul Piscului 1930",1930,7022,"Replaced by Pulkovo 1942(58) (datum code 6179)"
-6317,"Dealul Piscului 1970",1970,7024,"Replaces 1933 adjustment (datum code 6316)"
-6736,"Deception Island",,7012,
-6227,"Deir ez Zor",,7011,
-1081,"Deutsche Bahn Reference System",,7004,
-6314,"Deutsches Hauptdreiecksnetz",,7004,
-6724,"Diego Garcia 1969",1969,7022,
-6602,"Dominica 1945",1945,7012,
-6228,"Douala",,7011,
-6192,"Douala 1948",1948,7022,"Replaced  by Manoca 1962 datum (code 6193)."
-6719,"Easter Island 1967",1967,7022,
-1027,"EGM2008 geoid",2008,,
-5203,"EGM84 geoid",1984,,
-5171,"EGM96 geoid",1996,,
-6229,"Egypt 1907",1907,7020,
-6199,"Egypt 1930",1930,7022,"Note that Egypt 1930 uses the International 1924 ellipsoid, unlike the Egypt 1907 datum (code 6229) which uses the Helmert ellipsoid. Oil industry references to the Egypt 1930 datum name and the Helmert ellipsoid probably mean Egypt 1907 datum."
-6706,"Egypt Gulf of Suez S-650 TL",1980,7020,"A coherent set of stations bordering the Gulf of Suez coordinated by Transit translocation (""TL"") between 1980 and 1984. Based on incorrect Egypt 1907 values for origin station S-650. Differs from true Egypt 1907 by approximately 20m."
-6133,"Estonia 1992",1992,7019,"Based on ETRS89 as established during the 1992 Baltic campaign. Replaced by Estonia 1997 adjustment (code 6180)."
-6180,"Estonia 1997",1997,7019,"Replaces Estonia 1992 adjustment (code 6133)."
-6230,"European Datum 1950",1950,7022,
-6154,"European Datum 1950(1977)",1977,7022,"Sometimes referred to as ED50-ED77."
-6668,"European Datum 1979",1979,7022,"Replaced by 1987 adjustment."
-6231,"European Datum 1987",1987,7022,
-6159,"European Libyan Datum 1979",1979,7022,
-6258,"European Terrestrial Reference System 1989",1989,7019,"The distinction in usage between ETRF89 and ETRS89 is confused: although in principle conceptually different in practice both are used for the realisation."
-5129,"European Vertical Reference Frame 2000",2000,,"Realised by geopotential numbers and Normal heights of the United European Levelling Network. Replaced by EVRF2007 (datum code 5215)."
-5215,"European Vertical Reference Frame 2007",2007,,"Realised by geopotential numbers and Normal heights of the United European Levelling Network. Replaces EVRF2000 (datum code 5129)."
-6232,"Fahud",,7012,"Replaced by PSD93 (code 6134)."
-1028,"Fao 1979",1979,,"Levelling network established by Polservice consortium.  Replaces Fao (datum code 5149) in Iraq."
-6741,"Faroe Datum 1954",1954,7022,"Replaced by ED50 in late 1970's for all purposes other than cadastre. Replaced by fk89 for cadastre."
-1059,"Faroe Islands Vertical Reference 2009",2009,,"Mean Tidal Height System."
-6688,"Fatu Iva 72",1972,7022,"Recomputed by IGN in 1972 using origin and observations of 1953-1955 Mission Hydrographique des Establissements Francais d'Oceanie (MHEFO 55). Replaced by RGPF (datum code 6687)."
-1078,"Fehmarnbelt Datum 2010",2010,7019,"Defined through coordinates of four permanant GNSS stations."
-6721,"Fiji 1956",1956,7022,"For topographic mapping replaces Viti Levu 1912 and Vanua Levu 1915. Replaced by Fiji Geodetic Datum 1986."
-6720,"Fiji Geodetic Datum 1986",1986,7043,"Replaces Viti Levu 1912, Vanua Levu 1915 and Fiji 1956."
-6132,"Final Datum 1958",,7012,"Network included in Nahrwan 1967 adjustment."
-6753,"fk89",1989,7022,"Replaces FD54 for cadastre."
-6621,"Fort Marigot",,7022,"Replaced by RRAF 1991 (datum code 1047)."
-6684,"Gan 1970",1970,7022,"In some references incorrectly named ""Gandajika 1970"". See datum code 6685."
-6685,"Gandajika",1953,7022,"In some references incorrectly attributed to the Maldives. See datum code 6684."
-6233,"Gandajika 1970",1970,7022,
-6197,"Garoua",,7012,
-6234,"Garoua",,7011,"The intent of the Bukavu 1953 conference was to adopt the Clarke 1880 (RGS) ellipsoid (code 7012) but in practice this datum has used the IGN version."
-1056,"Geocentric Datum Brunei Darussalam 2009",2009,7019,"Replaces use of Timbalai from July 2009."
-6283,"Geocentric Datum of Australia 1994",1994,7019,"Coincident with WGS84 to within 1 metre."
-6737,"Geocentric datum of Korea",2002,7019,
-6300,"Geodetic Datum of 1965",1975,7002,"Differences from the 1965 adjustment (datum code 6299) are: average difference in Eastings 0.092m; average difference in Northings 0.108m; maximum vector difference 0.548m."
-6742,"Geodetic Datum of Malaysia 2000",2000,7019,"Replaces all older Malaysian datums."
-6723,"Grand Cayman Geodetic Datum 1959",1959,7008,"Replaced by CIGD11 (datum code 1100)."
-6646,"Grand Comoros",,7022,
-6120,"Greek",,7004,"See geodetic datum alias 6404.  Used as basis of topographic mapping based on Hatt projection. Replaced by GGRS87 (code 6121)."
-6815,"Greek (Athens)",,7004,"See geodetic datum alias 6404.  Used as basis of topographic mapping based on Hatt projection."
-6121,"Greek Geodetic Reference System 1987",1987,7019,"Replaced (old) Greek datum.  Oil industry work based on ED50."
-6747,"Greenland 1996",1996,7019,"Replaces Ammassalik 1958, Qornoq 1927 and Scoresbysund 1952."
-6603,"Grenada 1953",1953,7012,
-6622,"Guadeloupe 1948",1948,7022,"Replaced by RRAF 1991 (datum code 1047)."
-6675,"Guam 1963",1963,7008,"Replaced by NAD83(HARN)"
-6682,"Gulshan 303",1995,7015,"Network of more than 140 control points observed and adjusted in 1995 by Japan International Cooperation Agency (JICA)."
-6613,"Gunung Segara",,7004,
-6820,"Gunung Segara (Jakarta)",,7004,
-6235,"Guyane Francaise",,7022,
-5125,"Ha Tien 1960",1960,,"In Vietnam replaced by Hon Dau in 1992."
-6147,"Hanoi 1972",1972,7024,
-6148,"Hartebeesthoek94",1994,7030,"Replaces Cape datum (code 6222)."
-6660,"Helle 1954",1954,7022,
-5116,"Helsinki 1960",1960,,"Uses orthometric heights. Replaced by N2000 (datum code 1030)."
-6255,"Herat North",,7022,
-6254,"Hito XVIII 1963",1963,7022,"Used in Tierra del Fuego."
-6658,"Hjorsey 1955",1955,7022,
-5126,"Hon Dau 1992",1992,,"Replaces Ha Tien in Vietnam."
-6738,"Hong Kong 1963",1963,7007,"Replaced by Hong Kong 1963(67) for military purposes only in 1967.  Replaced by Hong Kong 1980."
-6739,"Hong Kong 1963(67)",1967,7022,"Replaces Hong Kong 1963 for military purposes only in 1967.  Replaced by Hong Kong 1980."
-6611,"Hong Kong 1980",1980,7022,"Replaces Hong Kong 1963 and Hong Kong 1963(67)."
-6236,"Hu Tzu Shan 1950",1950,7022,
-5200,"Huahine SAU 2001",2001,,"Included as part of NGPF - see datum code 5195."
-1024,"Hungarian Datum 1909",1909,7004,"Replaced earlier HD1863 adjustment also on Bessel ellipsoid. Both HD1863 and HD1909 were originally on Ferro Prime Meridian but subsequently converted to Greenwich. Replaced by HD72 (datum code 6237)."
-6237,"Hungarian Datum 1972",1972,7036,"Replaced Hungarian Datum 1909 (EPSG datum code 1024)."
-6697,"IGC 1962 Arc of the 6th Parallel South",1962,7012,
-6698,"IGN 1962 Kerguelen",1949,7022,
-6700,"IGN Astro 1960",1960,7012,"Observed during 1959-1960. Independent points not connected through a network. Relative accuracy estimated at 50-100m. Replaced by Mauritania 1999 (datum code 6702)."
-6641,"IGN53 Mare",1953,7022,
-6633,"IGN56 Lifou",1956,7022,
-6689,"IGN63 Hiva Oa",1963,7022,"Replaced by RGPF (datum code 6687)."
-6634,"IGN72 Grande Terre",1972,7022,
-6630,"IGN72 Nuku Hiva",1972,7022,"Replaced by RGPF (datum code 6687)."
-6239,"Indian 1954",1954,7015,
-6131,"Indian 1960",,7015,"Also known as Indian (DMA Reduced)."
-6240,"Indian 1975",1975,7015,
-6238,"Indonesian Datum 1974",1974,7021,"Replaced by DGN95."
-6701,"Institut Geographique du Congo Belge 1955",1955,7012,"Replaced by IGC 1962 Arc of the 6th Parallel South, except for oil industry activities."
-6647,"International Terrestrial Reference Frame 1988",1988,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1988.0. Replaced by ITRF89 (code 6648)."
-6648,"International Terrestrial Reference Frame 1989",1989,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1989.0. Replaces ITRF88 (code 6647). Replaced by ITRF90 (code 6649)."
-6649,"International Terrestrial Reference Frame 1990",1990,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1990.0. Replaces ITRF89 (code 6648). Replaced by ITRF91 (code 6650)."
-6650,"International Terrestrial Reference Frame 1991",1991,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1991.0. Replaces ITRF90 (code 6649). Replaced by ITRF92 (code 6651)."
-6651,"International Terrestrial Reference Frame 1992",1992,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1992.0. Replaces ITRF91 (code 6650). Replaced by ITRF93 (code 6652)."
-6652,"International Terrestrial Reference Frame 1993",1993,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1993.0. Replaces ITRF92 (code 6651). Replaced by ITRF94 (code 6653)."
-6653,"International Terrestrial Reference Frame 1994",1994,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1994.0. Replaces ITRF93 (code 6652). Replaced by ITRF96 (code 6654)."
-6654,"International Terrestrial Reference Frame 1996",1996,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1996.0. Replaces ITRF94 (code 6653). Replaced by ITRF97 (code 6655)."
-6655,"International Terrestrial Reference Frame 1997",1997,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1997.0. Replaces ITRF96 (code 6654). Replaced by ITRF2000 (code 6656)."
-6656,"International Terrestrial Reference Frame 2000",2000,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 2000.0. Replaces ITRF97 (code 6655). Replaced by ITRF2005 (code 6896)."
-6896,"International Terrestrial Reference Frame 2005",2005,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 2005.0. Replaces ITRF2000 (code 6656). Replaced by ITRF2008 (datum code 1061)."
-1061,"International Terrestrial Reference Frame 2008",2008,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 2008.0. Replaces ITRF2005 (code 6896)."
-6667,"Iraq-Kuwait Boundary Datum 1992",1992,7030,
-1029,"Iraqi Geospatial Reference System",2000,7019,
-6173,"IRENET95",1995,7019,"Densification of ETRS89"
-6659,"Islands Net 1993",1996,7019,"Replaced by ISN2004 (datum code 1060)."
-1060,"Islands Net 2004",2004,7019,"Replaces ISN93 (datum code 6659)."
-6141,"Israel",,7019,
-6670,"Istituto Geografico Militaire 1995",1995,7030,
-6709,"Iwo Jima 1945",1945,7022,
-6241,"Jamaica 1875",1875,7034,
-6242,"Jamaica 1969",1969,7008,
-6758,"Jamaica 2001",2001,7030,
-6612,"Japanese Geodetic Datum 2000",2000,7019,"Instigated under amendment to the Japanese Surveying Law with effect from April 2002. Replaces Tokyo datum (code 6301)."
-5122,"Japanese Standard Levelling Datum 1949",1949,,
-6725,"Johnston Island 1961",1961,7022,
-6679,"Jouik 1961",1961,7012,"Replaced by Mauritania 1999 (datum code 6702)."
-6631,"K0 1949",1949,7022,
-6243,"Kalianpur 1880",1880,7042,"Includes 1916 extension into Burma (Myanmar).  Replaced by 1937 adjustment."
-6144,"Kalianpur 1937",1937,7015,"Replaces 1880 adjustment except for topographic mapping.  Replaced in Bangladesh and Pakistan by 1962 metrication conversion and in India by 1975 metrication conversion."
-6145,"Kalianpur 1962",1962,7044,"1937 adjustment rescaled by ratio metric conversions of Indian foot (1937) to Indian foot (1962)."
-6146,"Kalianpur 1975",1975,7045,"1937 adjustment rescaled by ratio metric conversions of Indian foot (1937) to Indian foot (1975)."
-6244,"Kandawala",1930,7015,
-6743,"Karbala 1979",1979,7012,"National geodetic network established by Polservice consortium."
-6123,"Kartastokoordinaattijarjestelma (1966)",1966,7022,"Adopted in 1970."
-6696,"Kasai 1953",1955,7012,"Replaced by IGC 1962 Arc of the 6th Parallel South."
-6695,"Katanga 1955",1955,7008,"Replaces earlier adjustments."
-6751,"Kertau (RSO)",1969,7056,"Adopts metric conversion of 0.914398 metres per yard exactly. This is a truncation of the Sears 1922 ratio."
-6245,"Kertau 1968",1968,7018,"Replaces MRT48 and earlier adjustments. Adopts metric conversion of 39.370113 inches per metre. Not used for 1969 metrication of RSO grid - see Kertau (RSO) (code 6751)."
-5188,"KOC Construction Datum",1952,,"Approximately 1.52m below MSL. Created for the construction of the Mina al Ahmadi refinery."
-5187,"KOC Well Datum",1937,,"Approximately 3.22m above MSL."
-6162,"Korean Datum 1985",1985,7004,"Replaces Tokyo 1918 (datum code 6301). Replaced by Korea 2000 (datum code 6737)."
-6166,"Korean Datum 1995",1995,7030,
-6198,"Kousseri",,7012,
-6735,"Kusaie 1951",1951,7022,
-6246,"Kuwait Oil Company",1952,7012,
-5186,"Kuwait PWD",,,"Approximately 1.03m below MSL."
-6319,"Kuwait Utility",,7019,
-6247,"La Canoa",,7022,"Origin and network incorporated within PSAD56 (datum code 6248)."
-5194,"Lagos 1955",1955,,
-6249,"Lake",,7022,
-5128,"Landeshohennetz 1995",1995,,"Orthometric heights. For scientific purposes only, replaces LN02."
-5127,"Landesnivellement 1902",1902,,"Levelling observations not corrected for gravity field. For scientific purposes, replaced by LHHN95."
-6677,"Lao 1993",1993,7024,"Replaces Vientiane 1982. Replaced by Lao 1997"
-6678,"Lao National Datum 1997",1997,7024,"Replaces Lao 1993."
-6661,"Latvia 1992",1992,7019,"Densification of ETRS89 during the 1992 Baltic campaign."
-6699,"Le Pouce 1934",1934,7012,
-6250,"Leigon",,7012,"Replaced Accra datum (code 6168) from 1978.  Coordinates at Leigon fundamental point defined as Accra datum values for that point."
-5140,"Lerwick",,,"Orthometric heights."
-6251,"Liberia 1964",1964,7012,
-6754,"Libyan Geodetic Datum 2006",2006,7022,"Replaces ELD79."
-6666,"Lisbon 1890",1937,7004,"Replaced by Lisbon 1937 adjustment (which uses International 1924 ellipsoid)."
-6904,"Lisbon 1890 (Lisbon)",1937,7004,"Replaced by Lisbon 1937 adjustment (which uses International 1924 ellipsoid)."
-6207,"Lisbon 1937",1937,7022,"Replaces Lisbon 1890 adjustment (which used Bessel 1841 ellipsoid)."
-6803,"Lisbon 1937 (Lisbon)",1937,7022,"Replaces Lisbon 1890 adjustment (which used Bessel 1841 ellipsoid)."
-6126,"Lithuania 1994 (ETRS89)",1994,7019,"Densification of ETRS89 during the 1992 Baltic campaign."
-1098,"Little Cayman Vertical Datum 1961",1961,,
-6142,"Locodjo 1965",1965,7012,
-6288,"Loma Quintana",,7022,"Replaced by La Canoa (code 6247)."
-6252,"Lome",,7011,
-6181,"Luxembourg 1930",1930,7022,
-6253,"Luzon 1911",1911,7008,"Replaced by Philippine Reference system of 1992 (datum code 6683)."
-6266,"M'poraloko",,7011,
-6185,"Madeira 1936",1936,7022,
-6903,"Madrid 1870 (Madrid)",1870,7028,
-6128,"Madzansua",,7008,"Replaced by transformation to Tete datum (datum code 6127)."
-6256,"Mahe 1971",1971,7012,
-6257,"Makassar",,7004,
-6804,"Makassar (Jakarta)",,7004,
-6259,"Malongo 1987",1987,7022,"Replaced Mhast (offshore) (code 6705) in 1987. Origin coordinates constrained to those of Mhast (offshore) but other station coordinates differ. References to ""Mhast"" since 1987 often should have stated ""Malongo 1987""."
-6260,"Manoca",,7012,
-6193,"Manoca 1962",1962,7011,"The intent of the Bukavu 1953 conference was to adopt the Clarke 1880 (RGS) ellipsoid (code 7012) but in practice this datum has used the IGN version.  Replaces Douala 1948 (code 6192)."
-6686,"Marco Geocentrico Nacional de Referencia",2004,7019,"Densification of SIRGAS 1995 within Colombia. Replaces Bogota 1975 (datum code 6218)."
-1063,"Marco Geodesico Nacional",2007,7019,"Densification of SIRGAS 1995 within Bolivia. Replaces PSAD56 (datum code 6248) in Bolivia."
-6711,"Marcus Island 1952",1952,7022,
-6732,"Marshall Islands 1960",1960,7053,
-6625,"Martinique 1938",1938,7022,"Replaced by RRAF 1991 (datum code 1047)."
-5192,"Martinique 1955",1955,,"Orthometric heights. Replaced by Martinique 1987 (datum code 5154)."
-5154,"Martinique 1987",1987,,"Orthometric heights. Replaces Martinique 1955 (datum code 5192)."
-6262,"Massawa",,7004,
-6692,"Maupiti 83",1983,7022,"Replaced by RGPF (datum code 6687)."
-5199,"Maupiti SAU 2001",2001,,"Included as part of NGPF - see datum code 5195."
-6681,"Mauritania 1999",1999,7012,"A network of 36 GPS stations tied to ITRF96, 8 of which are IGN astronomic points."
-6702,"Mauritania 1999",1999,7019,"A network of 36 GPS stations tied to ITRF96, 8 of which are IGN 1962 astronomic points."
-6261,"Merchich",1922,7011,
-1042,"Mexican Datum of 1993",1993,7019,"Realised by a frame of 15 active GPS stations observed and adjusted in the ITRF1992. Includes ties to tide gauges. Replaces NAD27 (code 6267)."
-1031,"MGI 1901",1901,7004,"The longitude of the datum origin equates to the Albrecht 1902 value for the Ferro meridian of 17°39'46.02"" west of Greenwich. Densified in 1948."
-6264,"Mhast",,7022,
-6705,"Mhast (offshore)",1979,7022,"Origin coordinates determined by Transit single point position using 32 passes and transformed from WGS72BE using transformation code 15790. Differs from Mhast (onshore) by approximately 10m. Replaced in 1987 by Malongo 1987 (code 6259)."
-6704,"Mhast (onshore)",,7022,"Adopted by oil industry with intention of being Mhast 1951 (code 6703) but incorrectly (for Mhast 1951) used the International 1924 ellipsoid. This datum differs by about 400 metres from the Portuguese Mhast 1951 and Camacupa datums."
-6727,"Midway 1961",1961,7022,
-6312,"Militar-Geographische Institut",1901,7004,"The longitude of the datum origin equates to a value for the Ferro meridian of 17°40' exactly west of Greenwich."
-6805,"Militar-Geographische Institut (Ferro)",1901,7004,"Replaced by MGI in Austria and MGI 1901 in former Yugoslavia."
-6263,"Minna",,7012,
-6703,"Missao Hidrografico Angola y Sao Tome 1951",1951,7012,"A variation of this datum has been adopted by the oil industry but incorrectly using the International 1924 ellipsoid and not tied to the official Portuguese triangulation - see Mhast (onshore) and Mhast (offshore) (codes 6704 and 6705)."
-1032,"MOLDREF99",1999,7019,
-6265,"Monte Mario",1940,7022,"Replaced Genova datum, Bessel 1841 ellipsoid, from 1940."
-6806,"Monte Mario (Rome)",,7022,"Replaced Genova datum, Bessel 1841 ellipsoid, from 1940."
-6604,"Montserrat 1958",1958,7012,
-6691,"Moorea 87",1987,7022,"Replaces Tahiti 52 (datum code 6628) in Moorea. Replaced by RGPF (datum code 6687)."
-6639,"MOP78",1978,7022,
-5162,"Moturiki 1953",1953,,
-6157,"Mount Dillon",,7007,
-6130,"Moznet (ITRF94)",,7030,
-6268,"NAD27 Michigan",,7009,"Ellipsoid taken to be 800ft above the NAD27 reference ellipsoid."
-6152,"NAD83 (High Accuracy Reference Network)",,7019,
-6759,"NAD83 (National Spatial Reference System 2007)",2007,7019,
-6140,"NAD83 Canadian Spatial Reference System",1998,7019,
-6744,"Nahrwan 1934",1934,7012,"This adjustment later discovered to have a significant orientation error. In Iran replaced by FD58. In Iraq, replaced by Nahrwan 1967."
-6270,"Nahrwan 1967",1967,7012,"In Iraq, replaces Nahrwan 1934."
-6693,"Nakhl-e Ghanem",2005,7030,
-6158,"Naparima 1955",1955,7022,"Naparima 1972 is an extension of the Naparima 1955 network of Trinidad to include Tobago."
-6271,"Naparima 1972",1972,7022,"Naparima 1972 is an extension of the Naparima 1955 network of Trinidad to include Tobago."
-6318,"National Geodetic Network",1993,7030,"Replaces 1984 adjustment which used the WGS72 ellipsoid."
-6644,"NEA74 Noumea",1974,7022,
-5164,"Nelson 1955",1955,,
-1045,"New Beijing",1982,7024,"From 1982 replaces Beijing 1954."
-6272,"New Zealand Geodetic Datum 1949",1949,7022,"Replaced by New Zealand Geodetic Datum 2000 (code 6167) from March 2000."
-6167,"New Zealand Geodetic Datum 2000",2000,7019,"Replaces New Zealand Geodetic Datum 1949 (code 6272) and Chatham Islands Datum 1979 (code 6673) from March 2000."
-6273,"NGO 1948",1948,7005,
-6817,"NGO 1948 (Oslo)",1948,7005,
-6902,"Nord de Guerre (Paris)",,7027,
-6307,"Nord Sahara 1959",1959,7012,"Adjustment includes Morocco and Tunisia but use only in Algeria. Within Algeria the adjustment is north of 32°N but use has been extended southwards in many disconnected projects, some based on independent astro stations rather than the geodetic network."
-6819,"Nord Sahara 1959 (Paris)",1959,7012,
-6267,"North American Datum 1927",1927,7008,"In United States (USA) and Canada, replaced by North American Datum 1983 (NAD83) (code 6269) ; in Mexico, replaced by Mexican Datum of 1993 (code 1042)."
-6608,"North American Datum 1927 (1976)",1976,7008,"NAD27(76) used in Ontario for all maps at scale 1/20 000 and larger; elsewhere in Canada for selected purposes."
-6609,"North American Datum 1927 (CGQ77)",1977,7008,"NAD27 (CGQ77) used in Quebec for all maps at scale 1/20 000 and larger; generally for maps issued by the Quebec cartography office whose reference system is CGQ77."
-6269,"North American Datum 1983",1986,7019,"Although the 1986 adjustment included connections to Greenland and Mexico, it has not been adopted there. In Canada and US, replaced NAD27."
-6680,"Nouakchott 1965",1965,7012,"Triangulation limited to environs of Nouakchott. Extended in 1982 by satellite translocation from a single station ""Ruines"" to support Syledis chain for offshore operations. Replaced by Mauritania 1999 (datum code 6602)."
-6275,"Nouvelle Triangulation Francaise",1895,7011,
-6807,"Nouvelle Triangulation Francaise (Paris)",1895,7011,
-6276,"NSWC 9Z-2",,7025,"Transit precise ephemeris before 1991."
-6129,"Observatario",,7008,"Replaced by transformation to Tete datum (datum code 6127)."
-1070,"Ocotepeque 1935",1935,7008,"Replaced in Costa Rica by Costa Rica 2005 (CR05) from March 2007 and replaced in El Salvador by SIRGAS_ES2007 from August 2007."
-6135,"Old Hawaiian",,7008,"Hawaiian Islands were never on NAD27 but rather on Old Hawaiian Datum.  NADCON conversion program provides transformation from Old Hawaiian Datum to NAD83 (original 1986 realization) but making the transformation appear to user as if from NAD27."
-6279,"OS (SN) 1980",1980,7001,
-6277,"OSGB 1936",1936,7001,"The average accuracy of OSTN02 compared to the old triangulation network (down to 3rd order) is 0.1m."
-6278,"OSGB 1970 (SN)",1970,7001,
-6188,"OSNI 1952",1952,7001,"Replaced by Geodetic Datum of 1965 alias 1975 Mapping Adjustment or TM75 (datum code 6300)."
-6280,"Padang 1884",1884,7004,
-6808,"Padang 1884 (Jakarta)",1884,7004,
-6281,"Palestine 1923",1923,7010,
-6161,"Pampa del Castillo",0,7022,"Used in Comodoro Rivadavia area.  Replaced by Campo Inchauspe (code 6221)."
-1072,"Panama-Colon 1911",1911,7008,"Reports of the existence of an Ancon datum are probably erroneous, considering that the origin of the Panamá-Colón Datum of 1911 is at Balboa Hill and the access road up the hill is from the town of Ancon, Canal Zone."
-1076,"Papua New Guinea Geodetic Datum 1994",1994,7019,"Adopted 1996. Coincident with WGS 84 in 1994 but rapidly divergent due to significant tectonic motion in PNG."
-6740,"Parametrop Zemp 1990",1990,7054,"Derived through satellite tracking techniques. EPSG's PZ-90 datum has been the then current realisation. No distinction is made between the original PZ-90 frame and the PZ-90.02 improvement which was introduced in 2007."
-6134,"PDO Survey Datum 1993",1993,7012,"Replaces Fahud datum (code 6232). Maximum differences to Fahud adjustment are 20 metres."
-1067,"Peru96",1996,7019,"Densification of SIRGAS 1995 within Peru. Replaces PSAD56 (datum code 6248) in Peru."
-6636,"Petrels 1972",1972,7022,
-6683,"Philippine Reference System 1992",1992,7008,"Replaces Luzon 1911 datum (code 6253)."
-6716,"Phoenix Islands 1966",1966,7022,
-6728,"Pico de las Nieves 1984",,7022,"Replaces Pico de las Nieves 1968 (PN68). Replaced by REGCAN95."
-6729,"Pitcairn 1967",1967,7022,"Replaced by Pitcairn 2006."
-6763,"Pitcairn 2006",2006,7030,"Replaces Pitcairn 1967."
-6620,"Point 58",1969,7012,"Used as the basis for computation of the 12th Parallel traverse conducted 1966-70 from Senegal to Chad and connecting to the Adindan triangulation in Sudan."
-6637,"Pointe Geologie Perroud 1950",1950,7022,
-6055,"Popular Visualisation Datum",,7059,"Not recognised by geodetic authorities."
-6615,"Porto Santo 1936",1936,7022,"Replaced by 1995 adjustment (datum code 6663). For Selvagens see Selvagem Grande (code 6616)."
-6663,"Porto Santo 1995",1995,7022,"Classical and GPS observations. Replaces 1936 adjustment (datum code 6615). For Selvagens see Selvagem Grande (datum code 6616)."
-6172,"Posiciones Geodesicas Argentinas",1994,7019,"Una red geodésica de 127 puntos materializados en el terreno que definen el Sistema Geodésico Nacional.  [A geodetic network of 127 points defining the National Geodetic System.] Replaced by POSGAR98 (code 6190)."
-6694,"Posiciones Geodesicas Argentinas 1994",1994,7030,"Technically, but not legally, replaced by POSGAR 98 (code 6190) until May 2009, when POSGAR 2007 was officially accepted and officially replaced POSGAR 94."
-6190,"Posiciones Geodesicas Argentinas 1998",1998,7019,"Technically, but not legally, this datum replaced the 1994 POSGAR adjustment (code 6694) until adoption of the 2007 POSGAR adjustment (code 1062) in May 2009."
-1062,"Posiciones Geodesicas Argentinas 2007",2009,7019,"POSGAR 07 has been adopted by order of the Director of the National Geographic Institute on May 15, 2009, as the new National Geodetic Reference Frame and replaces the pre-existing POSGAR 94."
-6746,"Potsdam Datum/83",1990,7004,"PD/83 is the realisation of DHDN in Thuringen. It is the resultant of applying a transformation derived at 13 points on the border between East and West Germany to Pulkovo 1942/83 points in Thuringen."
-1046,"Principe",,7022,
-6248,"Provisional South American Datum 1956",1956,7022,"Same origin as La Canoa datum."
-6139,"Puerto Rico",1901,7008,"NADCON conversion program provides transformation from Puerto Rico Datum to NAD83 (original 1986 realization) but making the transformation appear to user as if from NAD27."
-6284,"Pulkovo 1942",1942,7024,
-6179,"Pulkovo 1942(58)",1956,7024,"1956 international adjustment of Uniform Astro-Geodetic Network of countries of central and eastern Europe. Locally densified during 1957 and 1958."
-6178,"Pulkovo 1942(83)",1983,7024,"1983 international adjustment of Uniform Astro-Geodetic Network of countries of central and eastern Europe."
-6200,"Pulkovo 1995",1995,7024,
-6286,"Qatar 1948",1948,7020,
-6285,"Qatar 1974",1974,7022,
-6614,"Qatar National Datum 1995",1995,7022,
-6287,"Qornoq",1927,7022,
-6194,"Qornoq 1927",1927,7022,
-6153,"Rassadiran",1998,7022,
-6745,"Rauenberg Datum/83",1990,7004,"RD/83 is the realisation of DHDN in Saxony. It is the resultant of applying a transformation derived at 106 points throughout former East Germany to Pulkovo 1942/83 points in Saxony."
-1035,"Red Geodesica de Canarias 1995",1995,7019,"Replaces Pico de las Nieves 1984 (PN84)."
-6189,"Red Geodesica Venezolana",2000,7019,
-1047,"Reseau de Reference des Antilles Francaises 1991",1991,7019,"Replaces Fort Marigot and Sainte Anne (datum codes 6621-22) in Guadeloupe and Fort Desaix (datum code 6625) in Martinique. Replaced by Reseau Geodesique des Antilles Francaises 2009 (datum code 1073)."
-6640,"Reseau de Reference des Antilles Francaises 1991",1991,7030,"Replaces Fort Marigot and Sainte Anne (datum codes 6621-22) in Guadeloupe and Fort Desaix (datum code 6625) in Martinique."
-6687,"Reseau Geodesique de la Polynesie Francaise",1993,7019,"Replaces Tahaa 54 (datum code 6629), IGN 63 Hiva Oa (6689), IGN 72 Nuku Hiva (6630), Maupiti 83 (6692), MHEFO 55 (6688), Moorea 87 (6691) and Tahiti 79 (6690)."
-1033,"Reseau Geodesique de la RDC 2005",2005,7019,
-6627,"Reseau Geodesique de la Reunion 1992",1992,7019,"Replaces Piton des Neiges (code 6626)."
-1036,"Reseau Geodesique de Mayotte 2004",2004,7019,"Replaces Combani 1950 (datum code 6632) except for cadastral purposes. (Cadastre 1997 (datum code 1037) used for cadastral purposes)."
-6749,"Reseau Geodesique de Nouvelle Caledonie 91-93",1989,7019,
-1038,"Reseau Geodesique de Saint Pierre et Miquelon 2006",2006,7019,"Replaces Saint Pierre et Miquelon 1950 (datum code 6638)."
-1073,"Reseau Geodesique des Antilles Francaises 2009",2009,7019,"Replaces RRAF91 in Martinique and Guadeloupe."
-6171,"Reseau Geodesique Francais 1993",1993,7019,
-6624,"Reseau Geodesique Francais Guyane 1995",1995,7019,"Replaces CSG67 (datum code 6623)."
-6645,"Reseau Geodesique Nouvelle Caledonie 1991",1989,7022,
-6215,"Reseau National Belge 1950",1950,7022,
-6809,"Reseau National Belge 1950 (Brussels)",1950,7022,
-6313,"Reseau National Belge 1972",1972,7022,
-6626,"Reunion 1947",1947,7022,"Replaced by RGR92 (datum code 6627)."
-6657,"Reykjavik 1900",1900,7051,
-6124,"Rikets koordinatsystem 1990",1982,7004,"Replaces RT38 adjustment (datum code 6308)"
-6764,"Ross Sea Region Geodetic Datum 2000",2000,7019,
-6638,"Saint Pierre et Miquelon 1950",1950,7008,"Replaced by RGSPM06 (datum code 1038)."
-6125,"Samboja",0,7004,
-6730,"Santo 1965",1965,7022,"Datum covers all the major islands of Vanuatu in two different adjustment blocks, but practical usage is as given in the area of use."
-1044,"Sao Tome",,7022,
-6292,"Sapper Hill 1943",1943,7022,
-6293,"Schwarzeck",,7046,
-6195,"Scoresbysund 1952",1952,7022,
-6294,"Segora",,7004,
-9315,"Seismic bin grid datum",,,
-6616,"Selvagem Grande",,7022,
-1034,"Serbian Reference Network 1998",1998,7019,"Observed 1998-2003."
-6295,"Serindung",,7004,
-1071,"Sibun Gorge 1922",1922,7007,
-6175,"Sierra Leone 1968",1968,7012,"Extension and readjustment with additional observations of 1960 network.  Coordinates of 1960 stations change by less than 3 metres."
-6174,"Sierra Leone Colony 1924",1924,7029,
-1069,"SIRGAS_ES2007.8",2007,7019,"SIRGAS-ES2007.8 is the national SIRGAS densification."
-1064,"SIRGAS-Chile",2007,7019,"Densification of SIRGAS 2000 within Chile. Replaces PSAD56 (datum code 6248) in Chile, replaces HITO XVIII (datum code 6254) in Chilean Tierra del Fuego and replaces Easter Island 1967 (datum code 6719)  in Easter Island."
-1068,"SIRGAS-ROU98",1998,7030,"Densification of SIRGAS 1995 within Uruguay. Replaces Yacare (datum code 6309) in Uruguay. Uruguay documentation clearly states use of WGS 84 reference ellipsoid."
-6170,"Sistema de Referencia Geocentrico para America del Sur 1995",1995,7019,"Realised by a frame of 58 stations observed in 1995 and adjusted in the ITRF94. Replaced by SIRGAS 2000."
-6674,"Sistema de Referencia Geocentrico para las AmericaS 2000",2000,7019,"Realised by a frame of 184 stations observed in 2000 and adjusted in the ITRF2000. Includes ties to tide gauges. Replaces SIRGAS 1995 system for South America; expands SIRGAS to Central America.  Name changed in 2001 for use in all of Latin America."
-1066,"Sistema Geodesico Nacional de Panama MACARIO SOLIS",0,7019,
-6726,"Sister Islands Geodetic Datum 1961",1961,7008,"Replaced by CIGD11 (datum code 1100)."
-6765,"Slovenia Geodetic Datum 1996",1996,7019,
-6718,"Solomon 1968",1968,7022,
-6291,"South American Datum 1969",1969,7036,"SAD69 uses GRS67 ellipsoid with 1/f to exactly 2 decimal places.  Precision of ellipsoid entry increased from 2 to 5 dp with change id 97.252.  Error introduced if not using the truncated precision is 0 to 31mm."
-6618,"South American Datum 1969",1969,7050,"SAD69 uses GRS 1967 ellipsoid but with 1/f to exactly 2 decimal places. In Brazil only, replaced by SAD69(96) (datum code 1075)."
-1075,"South American Datum 1969(96)",1996,7050,"SAD69 uses GRS 1967 ellipsoid but with 1/f to exactly 2 decimal places. Replaces original 1969 adjustment (datum code 6618) in Brazil."
-6722,"South Georgia 1968",1968,7022,
-6164,"South Yemen",0,7024,
-1053,"Sri Lanka Datum 1999",1999,7015,"Introduced in 2000."
-6138,"St. George Island",0,7008,"Many Alaskan islands were never on NAD27 but rather on independent datums.  NADCON conversion program provides transformation from St. George Island Datum to NAD83 (original 1986 realization) - making the transformation appear to user as if from NAD27."
-6710,"St. Helena 1971",1971,7022,
-6605,"St. Kitts 1955",1955,7012,
-6136,"St. Lawrence Island",0,7008,"Many Alaskan islands were never on NAD27 but rather on independent datums.  NADCON conversion program provides transformation from St. Lawrence Island Datum to NAD83 (original 1986 realization) - making the transformation appear to user as if from NAD27."
-6606,"St. Lucia 1955",1955,7012,
-6137,"St. Paul Island",0,7008,"Many Alaskan islands were never on NAD27 but rather on independent datums.  NADCON conversion program provides transformation from St. Paul Island Datum to NAD83 (original 1986 realization) - making the transformation appear to user as if from NAD27."
-6607,"St. Vincent 1945",1945,7012,
-6643,"ST71 Belep",1971,7022,
-6642,"ST84 Ile des Pins",1984,7022,
-6635,"ST87 Ouvea",1987,7022,
-6750,"ST87 Ouvea",1987,7030,
-5170,"Stewart Island 1977",1977,,
-6308,"Stockholm 1938",1938,7004,"Replaced by RT90 adjustment (datum code 6124)"
-6814,"Stockholm 1938 (Stockholm)",1938,7004,"Replaced by RT90 adjustment (datum code 6124)"
-5144,"Stornoway",,,"Orthometric heights."
-6296,"sudan", 0,  7011, ""
-6757,"SVY21",2004,7030,"Replaces Kertau 1968 for cadastral purposes from August 2004."
-6619,"SWEREF99",1999,7019,"The solution was calculated in ITRF 97 epoch 1999.5, and has subsequently been corrected to ETRS 89 in accordance with guidelines given by EUREF."
-6151,"Swiss Terrestrial Reference Frame 1995",1995,7019,
-6156,"System Jednotne Trigonometricke Site Katastralni",,7004,"S-JTSK = System of the Unified Trigonometrical Cadastral Network."
-6818,"System Jednotne Trigonometricke Site Katastralni (Ferro)",1920,7004,"S-JTSK = System of the Unified Trigonometrical Cadastral Network."
-1052,"System Jednotne Trigonometricke Site Katastralni/05",2009,7004,"S-JTSK = System of the Unified Trigonometrical Cadastral Network."
-1055,"System Jednotne Trigonometricke Site Katastralni/05 (Ferro)",2009,7004,"S-JTSK = System of the Unified Trigonometrical Cadastral Network."
-6629,"Tahaa 54",1954,7022,"Replaced by RGPF (datum code 6687)."
-5201,"Tahaa SAU 2001",2001,,"Included as part of NGPF - see datum code 5195."
-6628,"Tahiti 52",1952,7022,"Replaced by Tahiti 79 (datum code 6690) in Tahiti and Moorea 87 (code 6691) in Moorea."
-6690,"Tahiti 79",1979,7022,"Replaces Tahiti 52 (datum code 6628) in Tahiti. Replaced by RGPF (datum code 6687)."
-1025,"Taiwan Datum 1967",1967,7050,"Adopted in 1980. TWD67 uses the GRS 1967 ellipsoid but with 1/f to exactly 2 decimal places."
-1026,"Taiwan Datum 1997",1997,7019,"Adopted in 1998."
-6297,"Tananarive 1925",2025,7022,
-6810,"Tananarive 1925 (Paris)",1925,7022,
-6707,"Tern Island 1961",1961,7022,"Two independent astronomic determinations considered to be consistent through adoption of common transformation to WGS 84 (see tfm code 15795)."
-6127,"Tete",,7008,
-6298,"Timbalai 1948",1948,7016,"In 1968, the original adjustment was densified in Sarawak and extended to Sabah."
-6299,"TM65",1965,7002,"Differences between OSNI 1952 and TM65 at these stations are RMS 0.25m east, 0.23m north, maximum vector 0.57m. TM65 replaced by and not to be confused with Geodetic Datum of 1965 alias 1975 Mapping Adjustment or TM75 (datum code 6300)."
-6301,"Tokyo",1918,7004,"In Japan, replaces Tokyo 1892 (code 1048) and replaced by Japanese Geodetic Datum 2000 (code 6611). In Korea used only for geodetic applications before being replaced by Korean 1985 (code 6162)."
-1048,"Tokyo 1892",1892,7004,"Extended from Japan to Korea in 1898. In Japan replaced by Tokyo 1918 (datum code 6301). In South Korea replaced by Tokyo 1918 (code 6301) only for geodetic purposes; for all other purposes replaced by Korean 1985 (code 6162)."
-9314,"Tombak LNG plant",,,
-1095,"Tonga Geodetic Datum 2005",2000,7019,
-6302,"Trinidad 1903",1903,7007,
-6734,"Tristan 1968",1968,7022,
-6303,"Trucial Coast 1948",1948,7020,
-1057,"Turkish National Reference Frame",2005,7019,
-1077,"Ukraine 2000",2005,7024,""
-6748,"Vanua Levu 1915",1915,7055,"For topographic mapping, replaced by Fiji 1956. For other purposes, replaced by Fiji 1986."
-6676,"Vientiane 1982",1982,7024,"Replaced by Lao 1993."
-6756,"Vietnam 2000",2000,7030,"Replaces Hanoi 1972."
-6752,"Viti Levu 1912",1912,7055,"For topographic mapping, replaced by Fiji 1956. For other purposes, replaced by Fiji 1986."
-6731,"Viti Levu 1916",1916,7012, ""
-6304,"Voirol 1875",1875,7011,"Replaced by Voirol 1879 (code 6671)."
-6811,"Voirol 1875 (Paris)",1875,7011,
-6671,"Voirol 1879",1879,7011,"Replaces Voirol 1875 (code 6304)."
-6821,"Voirol 1879 (Paris)",1879,7011,"Replaces Voirol 1875 (Paris) (code 6811)."
-6733,"Wake Island 1952",1952,7022,
-6324,"wgs72Ephemeris",1972,7043,"WGS 72 Transit Broadcast Ephemeris. Alleged datum for use with Transit broadcast ephemeris prior to 1989. Relationship to WGS 72 has changed over time."
-6760,"wgs1966", 1966, 7025, "World Geodetic System 1966. A worldwide 5° × 5° mean free air gravity anomaly field provided the basic data for producing the WGS 66 gravimetric geoid. Replaced by WGS 72."
-6322,"wgs1972", 1972, 7043, "World Geodetic System 1972. Used by GPS before 1987. For Transit satellite positioning see also WGS 72BE."
-6326,"wgs1984", 1984, 7030, "EPSG's WGS 84 datum has been the then current realisation. No distinction is made between the original WGS 84 frame, WGS 84 (G730), WGS 84 (G873) and WGS 84 (G1150). Since 1997, WGS 84 has been maintained within 10cm of the then current ITRF."
-6610,"Xian 1980",1980,7049,
-6309,"Yacare",,7022,
-6163,"Yemen National Geodetic Network 1996",1996,7030,
-6310,"Yoff",,7011, ""
-6311,"zanderij",  0,  7022, ""
+# Format: epsg, shortname, name, epoch, ellipsoid, comment
+6143, "abidjan",  "Abidjan 1987", 1987, 7012, ""
+6168, "accra",    "Accra",       0,    7029, "Replaced in 1978 by Leigon datum (code 6250)."
+6201, "adindan",  "Adindan",     0,    7012, "The 12th parallel traverse of 1966-70 (Point 58 datum, code 6620) is connected to the Adindan network in western Sudan. This has given rise to misconceptions that the Adindan network is used in west Africa."
+6205, "afgooye",  "Afgooye",     0,    7024, ""
+6206, "agadez",   "Agadez",      0,    7011, ""
+6204, "ainelabd", "Ain El Abd 1970",1970, 7022, ""
+6191, "albanian", "Albanian 1987",1987, 7024, ""
+6169, "americanSamoa", "American Samoa 1962", 1962, 7008, ""
+6289, "amersfoort", "Amersfoort",  0,    7004, ""
+6196, "ammassalik", "Ammassalik 1958",1958,7022,  ""
+6901, "atf",      "Ancienne Triangulation Francaise",  0,  7027, "Uses the RGS value for the Paris meridian.  In Alsace, data suspected to be transformation of German network into ATF. Replaced by Nouvelle Triangulation Francaise (Paris) (code 6807) which uses the 1936 IGN value for the Paris meridian."
+6600, "anguilla", "Anguilla 1957",1957, 7012,  ""
+6601, "antigua",  "Antigua 1943", 1943, 7012, ""
+6208, "aratu",    "Aratu",       0,    7022, ""
+6209, "arc1950",  "ARC 1950",     1950, 7013, ""
+6210, "arc1960",  "ARC 1960",     1960, 7012, ""
+6712, "ascension", "Ascension Island 1958",1958,7022, ""
+6176, "australian1998", "Australian Antarctic 1998", 1998, 7019,
+6202, "agd66", "Australian Geodetic Datum 1966",  1966, 7003,
+6203, "agd84", "Australian Geodetic Datum 1984",  1984, 7003, "Uses all data from 1966 adjustment with additional observations, improved software and a geoid model."
+1041, "arp",      "Autonomous Regions of Portugal 2008",1994,7019,"Replaces older classical datums for Azores and Madeira archipelagos."
+6122, "ats",      "Average Terrestrial System 1977",     1977, 7041, "Average Terrestrial System 1977. In use from 1979.  To be phased out in late 1990's."
+6713, "ayabelle", "Ayabelle Lighthouse",  0,  7012, ""
+6183, "azores1948", "Azores Central Islands 1948",    1948, 7022, "Replaced by 1995 adjustment (datum code 6665)."
+6665, "azores1995", "Azores Central Islands 1995",    1948, 7022, "Classical and GPS observations. Replaces 1948 adjustment (datum code 6183)."
+6182, "azores1939", "Azores Occidental Islands 1939", 1939, 7022, ""
+6184, "azores1940", "Azores Oriental Islands 1940",   1940, 7022, "Replaced by 1995 adjustment (datum code 6664)."
+6664, "azores1995", "Azores Oriental Islands 1995",   1940, 7022, "Classical and GPS observations. Replaces 1940 adjustment (datum code 6184)."
+6212, "barbados", "Barbados 1938",   1938, 7012, ""
+6211, "batavia",  "Batavia",          0,  7004, ""
+6813, "bataviaJakarta", "Batavia Jakarta",   0,  7004, ""
+6213, "beduaram",   "Beduaram",         0,  7011, ""
+6214, "beijing",    "Beijing 1954",     1954, 7024, "Scale determined through three baselines in northeast China. Discontinuities at boundaries of adjustment blocks. From 1982 replaced by Xian 1980 and New Beijing."
+6714, "bellevue",   "Bellevue",  1960, 7022, "Datum covers all the major islands of Vanuatu in two different adjustment blocks, but practical usage is as given in the area of use."
+6216, "bermuda1957", "Bermuda 1957",1957,7008, ""
+6762, "bermuda2000", "Bermuda 2000",2000,7030, ""
+6306, "bern",       "Bern 1938",  1938, 7004, "This redetermination of the coordinates of fundamental point is used for scientific purposes and as the graticule overprinted on topographic maps constructed on the CH1903 / LV03 projected CS (code 21781)."
+1058, "bhutan",     "Bhutan National",2000,7019,  "Bhutan National Geodetic Datum"
+6165, "bissau",     "Bissau",    0,  7022, ""
+6218, "bogota",     "Bogota 1975",1975,7022,"Colombia - mainland and offshore Caribbean. Replaces 1951 adjustment. Replaced by MAGNA-SIRGAS (datum code 6685)."
+6802, "bogotaOnshore", "Bogota 1975 (Bogota)",1975,7022, "Colombia - mainland onshore"
+6219, "bukit",      "Bukit Rimpah",  0,7004,
+1037, "cadastre",   "Cadastre 1997",1997,7022,"Derived by adjustment of GPS-observed network which was constrained to Combani 1950 coordinates of one station."
+6220, "camacupa",   "Camacupa",1948,7012,
+6715, "astro",      "Camp Area Astro",   0,  7022,
+6221, "inchauspe",  "Campo Inchauspe",  0,  7022,
+6222, "cape",       "Cape",  0,  7013,
+6717, "canaveral",  "Cape Canaveral",1963,7008,
+6223, "carthage",    "Carthage",1925,7011,"Fundamental point astronomic coordinates determined in 1878."
+6816, "carthageParis", "Carthage (Paris)",1925,7011,"Fundamental point astronomic coordinates determined in 1878."
+1100, "cayman",     "Cayman Islands 2011",     2011, 7019, "Cayman Islands Geodetic Datum 2011. Replaces GCGD59 (datum code 6723) and SIGD61 (datum code 6726)."
+6623, "guyanais",   "Centre Spatial Guyanais", 1967, 7022,"Centre Spatial Guyanais 1967. Replaced by RGFG95 (code 6624)."
+6149, "ch1903",     "CH 1903",    1903, 7004,
+6801, "ch1903Bern", "CH 1903 Bern",1903, 7004,
+6150, "ch1903+",    "CH 1903+",   0,    7004,
+6672, "chatham1971", "Chatham Islands 1971",1971,7022,"Replaced by Chatham Islands Datum 1979 (code 6673)."
+6673, "chatham1979", "Chatham Islands 1979",1979,7022,"Replaces Chatham Islands Datum 1971 (code 6672). Replaced by New Zealand Geodetic Datum 2000 (code 6167) from March 2000."
+1043, "china",       "China 2000", 2000, 1024, "Combined adjustment of astro-geodetic observations as used for Xian 1980 and GPS control network observed 2000-2003. Adopted July 2008."
+6160, "chosMalal",   "Chos Malal 1914",1914,7022,"Also known as Quini-Huao.  Replaced by Campo Inchauspe (code 6221)."
+6224, "chua",        "Chua",,7022,"The Chua origin and associated network is in Brazil with a connecting traverse through northern Paraguay. It was used in Brazil only as input into the Corrego Allegre adjustment and for government work in Distrito Federal."
+6708, "cocos",       "Cocos Islands 1965",1965,7003,
+6632, "combani",     "Combani 1950",1950,7022,"Replaced by RGM04 and Cadastre 1997 (datum codes 1036-37)."
+6315, "conakry",     "Conakry 1905",1905,7011,
+6282, "congo",       "Congo 1960 Pointe Noire",1960,7011,
+1074, "corregoAlegre1961", "Corrego Alegre 1961",1961,7022,"Replaced by Corrego Alegre 1970-72 (datum code 6225). NIMA gives coordinates of origin as latitude: 19°50'15.14 S, longitude: 48°57'42.75 W."
+6225, "corregoAlegre1970", "Corrego Alegre 1970-72",1972,7022,"Replaces 1961 adjustment (datum code 1074). NIMA gives coordinates of origin as latitude: 19°50'15.14 S, longitude: 48°57'42.75 W; these may refer to 1961 adjustment."
+1065, "costaRica", "Costa Rica 2005",2005,7030,"Replaces Ocotepeque (datum code 1070) in Costa Rica from March 2007."
+6226, "coteDIvoire", "Cote d'Ivoire",,7011,
+6761, "croatian", "Croatian Terrestrial Reference System",1996,7019,"Based on 78 control points with coordinates determined in ETRS89."
+6155, "dabola", "Dabola 1981",1981,7011,
+6274, "datum73", "Datum 73",1964,7022,
+6755, "dgn1995", "Datum Geodesi Nasional 1995",1995,7030,"Replaces ID74 and all older datums."
+6316, "dealulPiscului1939", "Dealul Piscului 1930",1930,7022,"Replaced by Pulkovo 1942(58) (datum code 6179)"
+6317, "dealulPiscului1970", "Dealul Piscului 1970",1970,7024,"Replaces 1933 adjustment (datum code 6316)"
+6736, "deceptionIsland", "Deception Island",,7012,
+6227, "deirEzZor", "Deir ez Zor",,7011,
+1081, "db", "Deutsche Bahn Reference System",,7004,
+6314, "hauptdreiecksnetz", "Deutsches Hauptdreiecksnetz",,7004,
+6724, "diegoGarcia", "Diego Garcia 1969",1969,7022,
+6602, "dominica", "Dominica 1945",1945,7012,
+6228, "douala", "Douala",,7011,
+6192, "douala1948", "Douala 1948",1948,7022,"Replaced  by Manoca 1962 datum (code 6193)."
+6719, "easterIsland", "Easter Island 1967",1967,7022,
+1027, "egm2008", "EGM2008 geoid",2008,,
+5203, "egm84", "EGM84 geoid",1984,,
+5171, "egm96", "EGM96 geoid",1996,,
+6229, "egypt1907", "Egypt 1907",1907,7020,
+6199, "egypt1930", "Egypt 1930",1930,7022,"Note that Egypt 1930 uses the International 1924 ellipsoid, unlike the Egypt 1907 datum (code 6229) which uses the Helmert ellipsoid. Oil industry references to the Egypt 1930 datum name and the Helmert ellipsoid probably mean Egypt 1907 datum."
+6706, "egypt1980", "Egypt Gulf of Suez S-650 TL",1980,7020,"A coherent set of stations bordering the Gulf of Suez coordinated by Transit translocation (""TL"") between 1980 and 1984. Based on incorrect Egypt 1907 values for origin station S-650. Differs from true Egypt 1907 by approximately 20m."
+6133, "estonia1992", "Estonia 1992",1992,7019,"Based on ETRS89 as established during the 1992 Baltic campaign. Replaced by Estonia 1997 adjustment (code 6180)."
+6180, "estonia1997", "Estonia 1997",1997,7019,"Replaces Estonia 1992 adjustment (code 6133)."
+6230, "ed1950", "European Datum 1950",1950,7022,
+6154, "ed1977", "European Datum 1950(1977)",1977,7022,"Sometimes referred to as ED50-ED77."
+6668, "ed1979", "European Datum 1979",1979,7022,"Replaced by 1987 adjustment."
+6231, "ed1987", "European Datum 1987",1987,7022,
+6159, "libyan", "European Libyan Datum 1979",1979,7022,
+6258, "etrs", "European Terrestrial Reference System 1989",1989,7019,"The distinction in usage between ETRF89 and ETRS89 is confused: although in principle conceptually different in practice both are used for the realisation."
+6232, "fahud", "Fahud",,7012,"Replaced by PSD93 (code 6134)."
+1028, "fao", "Fao 1979",1979,,"Levelling network established by Polservice consortium.  Replaces Fao (datum code 5149) in Iraq."
+6741, "faroe1954", "Faroe Datum 1954",1954,7022,"Replaced by ED50 in late 1970's for all purposes other than cadastre. Replaced by fk89 for cadastre."
+6688, "fatuIva", "Fatu Iva 72",1972,7022,"Recomputed by IGN in 1972 using origin and observations of 1953-1955 Mission Hydrographique des Establissements Francais d'Oceanie (MHEFO 55). Replaced by RGPF (datum code 6687)."
+1078, "fehmarnbelt", "Fehmarnbelt Datum 2010",2010,7019,"Defined through coordinates of four permanant GNSS stations."
+6721, "fiji1956", "Fiji 1956",1956,7022,"For topographic mapping replaces Viti Levu 1912 and Vanua Levu 1915. Replaced by Fiji Geodetic Datum 1986."
+6720, "fiji1986", "Fiji Geodetic Datum 1986",1986,7043,"Replaces Viti Levu 1912, Vanua Levu 1915 and Fiji 1956."
+6132, "final1958", "Final Datum 1958",,7012,"Network included in Nahrwan 1967 adjustment."
+6753, "fk89", "fk89",1989,7022,"Replaces FD54 for cadastre."
+6621, "marigot", "Fort Marigot",,7022,"Replaced by RRAF 1991 (datum code 1047)."
+6684, "gan", "Gan 1970",1970,7022,"In some references incorrectly named ""Gandajika 1970"". See datum code 6685."
+6685, "gandajika1953", "Gandajika",1953,7022,"In some references incorrectly attributed to the Maldives. See datum code 6684."
+6233, "gandajika1970", "Gandajika 1970",1970,7022,
+6197, "garoua", "Garoua",,7012,
+6234, "garoua1953", "Garoua",,7011,"The intent of the Bukavu 1953 conference was to adopt the Clarke 1880 (RGS) ellipsoid (code 7012) but in practice this datum has used the IGN version."
+1056, "brunei", "Geocentric Datum Brunei Darussalam 2009",2009,7019,"Replaces use of Timbalai from July 2009."
+6283, "gda94", "Geocentric Datum of Australia 1994",1994,7019,"Coincident with WGS84 to within 1 metre."
+6737, "korea", "Geocentric datum of Korea",2002,7019,
+6300, "gd1965", "Geodetic Datum of 1965",1975,7002,"Differences from the 1965 adjustment (datum code 6299) are: average difference in Eastings 0.092m; average difference in Northings 0.108m; maximum vector difference 0.548m."
+6742, "malaysia2000", "Geodetic Datum of Malaysia 2000",2000,7019,"Replaces all older Malaysian datums."
+6723, "grandCayman", "Grand Cayman Geodetic Datum 1959",1959,7008,"Replaced by CIGD11 (datum code 1100)."
+6646, "grandComoros", "Grand Comoros",,7022,
+6120, "greek", "Greek",,7004,"See geodetic datum alias 6404.  Used as basis of topographic mapping based on Hatt projection. Replaced by GGRS87 (code 6121)."
+6815, "greekAthens", "Greek (Athens)",,7004,"See geodetic datum alias 6404.  Used as basis of topographic mapping based on Hatt projection."
+6121, "greek1987", "Greek Geodetic Reference System 1987",1987,7019,"Replaced (old) Greek datum.  Oil industry work based on ED50."
+6747, "greenland", "Greenland 1996",1996,7019,"Replaces Ammassalik 1958, Qornoq 1927 and Scoresbysund 1952."
+6603, "grenada", "Grenada 1953",1953,7012,
+6622, "guadeloupe", "Guadeloupe 1948",1948,7022,"Replaced by RRAF 1991 (datum code 1047)."
+6675, "guam", "Guam 1963",1963,7008,"Replaced by NAD83(HARN)"
+6682, "gulshan", "Gulshan 303",1995,7015,"Network of more than 140 control points observed and adjusted in 1995 by Japan International Cooperation Agency (JICA)."
+6613, "gunung", "Gunung Segara",,7004,
+6820, "gunungJakarta", "Gunung Segara (Jakarta)",,7004,
+6235, "guyane", "Guyane Francaise",,7022,
+5125, "haTien", "Ha Tien 1960",1960,,"In Vietnam replaced by Hon Dau in 1992."
+6147, "hanoi", "Hanoi 1972",1972,7024,
+6148, "hartebeesthoek94", "Hartebeesthoek94",1994,7030,"Replaces Cape datum (code 6222)."
+6660, "helle", "Helle 1954",1954,7022,
+5116, "helsinki", "Helsinki 1960",1960,,"Uses orthometric heights. Replaced by N2000 (datum code 1030)."
+6255, "heratNorth", "Herat North",,7022,
+6254, "hito", "Hito XVIII 1963",1963,7022,"Used in Tierra del Fuego."
+6658, "hjorsey", "Hjorsey 1955",1955,7022,
+5126, "hondau", "Hon Dau 1992",1992,,"Replaces Ha Tien in Vietnam."
+6738, "hongkong1963", "Hong Kong 1963",1963,7007,"Replaced by Hong Kong 1963(67) for military purposes only in 1967.  Replaced by Hong Kong 1980."
+6739, "hongkong1967", "Hong Kong 1963(67)",1967,7022,"Replaces Hong Kong 1963 for military purposes only in 1967.  Replaced by Hong Kong 1980."
+6611, "hongkong1980", "Hong Kong 1980",1980,7022,"Replaces Hong Kong 1963 and Hong Kong 1963(67)."
+6236, "huTzuShan", "Hu Tzu Shan 1950",1950,7022,
+5200, "huahine", "Huahine SAU 2001",2001,,"Included as part of NGPF - see datum code 5195."
+1024, "hungarian1909", "Hungarian Datum 1909",1909,7004,"Replaced earlier HD1863 adjustment also on Bessel ellipsoid. Both HD1863 and HD1909 were originally on Ferro Prime Meridian but subsequently converted to Greenwich. Replaced by HD72 (datum code 6237)."
+6237, "hungarian1972", "Hungarian Datum 1972",1972,7036,"Replaced Hungarian Datum 1909 (EPSG datum code 1024)."
+6697, "igc1962", "IGC 1962 Arc of the 6th Parallel South",1962,7012,
+6698, "ign1962", "IGN 1962 Kerguelen",1949,7022,
+6700, "ign1960", "IGN Astro 1960",1960,7012,"Observed during 1959-1960. Independent points not connected through a network. Relative accuracy estimated at 50-100m. Replaced by Mauritania 1999 (datum code 6702)."
+6641, "ign53", "IGN53 Mare",1953,7022,
+6633, "ign56", "IGN56 Lifou",1956,7022,
+6689, "ign63", "IGN63 Hiva Oa",1963,7022,"Replaced by RGPF (datum code 6687)."
+6634, "ign72", "IGN72 Grande Terre",1972,7022,
+6630, "ign72nukuHiva", "IGN72 Nuku Hiva",1972,7022,"Replaced by RGPF (datum code 6687)."
+6239, "indian1954", "Indian 1954",1954,7015,
+6131, "indian1960", "Indian 1960",,7015,"Also known as Indian (DMA Reduced)."
+6240, "indian1975", "Indian 1975",1975,7015,
+6238, "indonesian1974", "Indonesian Datum 1974",1974,7021,"Replaced by DGN95."
+6701, "igc1955", "Institut Geographique du Congo Belge 1955",1955,7012,"Replaced by IGC 1962 Arc of the 6th Parallel South, except for oil industry activities."
+6647, "itrf1988", "International Terrestrial Reference Frame 1988",1988,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1988.0. Replaced by ITRF89 (code 6648)."
+6648, "itrf1989", "International Terrestrial Reference Frame 1989",1989,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1989.0. Replaces ITRF88 (code 6647). Replaced by ITRF90 (code 6649)."
+6649, "itrf1990", "International Terrestrial Reference Frame 1990",1990,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1990.0. Replaces ITRF89 (code 6648). Replaced by ITRF91 (code 6650)."
+6650, "itrf1991", "International Terrestrial Reference Frame 1991",1991,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1991.0. Replaces ITRF90 (code 6649). Replaced by ITRF92 (code 6651)."
+6651, "itrf1992", "International Terrestrial Reference Frame 1992",1992,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1992.0. Replaces ITRF91 (code 6650). Replaced by ITRF93 (code 6652)."
+6652, "itrf1993", "International Terrestrial Reference Frame 1993",1993,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1993.0. Replaces ITRF92 (code 6651). Replaced by ITRF94 (code 6653)."
+6653, "itrf1994", "International Terrestrial Reference Frame 1994",1994,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1994.0. Replaces ITRF93 (code 6652). Replaced by ITRF96 (code 6654)."
+6654, "itrf1996", "International Terrestrial Reference Frame 1996",1996,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1996.0. Replaces ITRF94 (code 6653). Replaced by ITRF97 (code 6655)."
+6655, "itrf1997", "International Terrestrial Reference Frame 1997",1997,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 1997.0. Replaces ITRF96 (code 6654). Replaced by ITRF2000 (code 6656)."
+6656, "itrf2000", "International Terrestrial Reference Frame 2000",2000,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 2000.0. Replaces ITRF97 (code 6655). Replaced by ITRF2005 (code 6896)."
+6896, "itrf2005", "International Terrestrial Reference Frame 2005",2005,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 2005.0. Replaces ITRF2000 (code 6656). Replaced by ITRF2008 (datum code 1061)."
+1061, "itrf2008", "International Terrestrial Reference Frame 2008",2008,7019,"Realisation of the IERS Terrestrial Reference System (ITRS) at epoch 2008.0. Replaces ITRF2005 (code 6896)."
+6667, "iraqKuwait", "Iraq-Kuwait Boundary Datum 1992",1992,7030,
+1029, "iraq", "Iraqi Geospatial Reference System",2000,7019,
+6173, "irenet", "IRENET95",1995,7019,"Densification of ETRS89"
+6659, "isn1993", "Islands Net 1993",1996,7019,"Replaced by ISN2004 (datum code 1060)."
+1060, "isn2004", "Islands Net 2004",2004,7019,"Replaces ISN93 (datum code 6659)."
+6141, "israel", "Israel",,7019,
+6670, "igm1995", "Istituto Geografico Militaire 1995",1995,7030,
+6709, "iwoJima", "Iwo Jima 1945",1945,7022,
+6241, "jamaica1875", "Jamaica 1875",1875,7034,
+6242, "jamaica1969", "Jamaica 1969",1969,7008,
+6758, "jamaica2001", "Jamaica 2001",2001,7030,
+6612, "jgd2000", "Japanese Geodetic Datum 2000",2000,7019,"Instigated under amendment to the Japanese Surveying Law with effect from April 2002. Replaces Tokyo datum (code 6301)."
+6725, "johnston", "Johnston Island 1961",1961,7022,
+6679, "jouik", "Jouik 1961",1961,7012,"Replaced by Mauritania 1999 (datum code 6702)."
+6631, "k0", "K0 1949",1949,7022,
+6243, "kalianpur1880", "Kalianpur 1880",1880,7042,"Includes 1916 extension into Burma (Myanmar).  Replaced by 1937 adjustment."
+6144, "kalianpur1937", "Kalianpur 1937",1937,7015,"Replaces 1880 adjustment except for topographic mapping.  Replaced in Bangladesh and Pakistan by 1962 metrication conversion and in India by 1975 metrication conversion."
+6145, "kalianpur1962", "Kalianpur 1962",1962,7044,"1937 adjustment rescaled by ratio metric conversions of Indian foot (1937) to Indian foot (1962)."
+6146, "kalianpur1975", "Kalianpur 1975",1975,7045,"1937 adjustment rescaled by ratio metric conversions of Indian foot (1937) to Indian foot (1975)."
+6244, "Kandawala", "Kandawala",1930,7015,
+6743, "karbala", "Karbala 1979",1979,7012,"National geodetic network established by Polservice consortium."
+6123, "kartastokoordinaattijarjestelma", "Kartastokoordinaattijarjestelma (1966)",1966,7022,"Adopted in 1970."
+6696, "kasai", "Kasai 1953",1955,7012,"Replaced by IGC 1962 Arc of the 6th Parallel South."
+6695, "katanga", "Katanga 1955",1955,7008,"Replaces earlier adjustments."
+6751, "kertauRSO", "Kertau (RSO)",1969,7056,"Adopts metric conversion of 0.914398 metres per yard exactly. This is a truncation of the Sears 1922 ratio."
+6245, "kertau", "Kertau 1968",1968,7018,"Replaces MRT48 and earlier adjustments. Adopts metric conversion of 39.370113 inches per metre. Not used for 1969 metrication of RSO grid - see Kertau (RSO) (code 6751)."
+6162, "korean1985", "Korean Datum 1985",1985,7004,"Replaces Tokyo 1918 (datum code 6301). Replaced by Korea 2000 (datum code 6737)."
+6166, "korean1995", "Korean Datum 1995",1995,7030,
+6198, "kousseri", "Kousseri",,7012,
+6735, "kusaie", "Kusaie 1951",1951,7022,
+6246, "koc", "Kuwait Oil Company",1952,7012,
+6319, "kuwait", "Kuwait Utility",,7019,
+6247, "canoa", "La Canoa",,7022,"Origin and network incorporated within PSAD56 (datum code 6248)."
+5194, "lagos", "Lagos 1955",1955,,
+6249, "lake", "Lake",,7022,
+6677, "lao1993", "Lao 1993",1993,7024,"Replaces Vientiane 1982. Replaced by Lao 1997"
+6678, "lao1997", "Lao National Datum 1997",1997,7024,"Replaces Lao 1993."
+6661, "latvia", "Latvia 1992",1992,7019,"Densification of ETRS89 during the 1992 Baltic campaign."
+6699, "lepouce", "Le Pouce 1934",1934,7012,
+6250, "leigon", "Leigon",,7012,"Replaced Accra datum (code 6168) from 1978.  Coordinates at Leigon fundamental point defined as Accra datum values for that point."
+5140, "lerwick", "Lerwick",,,"Orthometric heights."
+6251, "liberia", "Liberia 1964",1964,7012,
+6754, "lgs2006", "Libyan Geodetic Datum 2006",2006,7022,"Replaces ELD79."
+6666, "lisbon1890", "Lisbon 1890",1937,7004,"Replaced by Lisbon 1937 adjustment (which uses International 1924 ellipsoid)."
+6904, "lisbon1890lisbon", "Lisbon 1890 (Lisbon)",1937,7004,"Replaced by Lisbon 1937 adjustment (which uses International 1924 ellipsoid)."
+6207, "lisbon1937", "Lisbon 1937",1937,7022,"Replaces Lisbon 1890 adjustment (which used Bessel 1841 ellipsoid)."
+6803, "lisbon1937lisbon", "Lisbon 1937 (Lisbon)",1937,7022,"Replaces Lisbon 1890 adjustment (which used Bessel 1841 ellipsoid)."
+6126, "lithuania", "Lithuania 1994 (ETRS89)",1994,7019,"Densification of ETRS89 during the 1992 Baltic campaign."
+6142, "locodjo", "Locodjo 1965",1965,7012,
+6288, "lomaQuintana", "Loma Quintana",,7022,"Replaced by La Canoa (code 6247)."
+6252, "lome", "Lome",,7011,
+6181, "luxembourg", "Luxembourg 1930",1930,7022,
+6253, "luzon", "Luzon 1911",1911,7008,"Replaced by Philippine Reference system of 1992 (datum code 6683)."
+6266, "mporaloko", "M'poraloko",,7011,
+6185, "madeira", "Madeira 1936",1936,7022,
+6903, "madrid", "Madrid 1870 (Madrid)",1870,7028,
+6128, "madzansua", "Madzansua",,7008,"Replaced by transformation to Tete datum (datum code 6127)."
+6256, "mahe", "Mahe 1971",1971,7012,
+6257, "makassar", "Makassar",,7004,
+6804, "makassarJakarta", "Makassar (Jakarta)",,7004,
+6259, "malongo", "Malongo 1987",1987,7022,"Replaced Mhast (offshore) (code 6705) in 1987. Origin coordinates constrained to those of Mhast (offshore) but other station coordinates differ. References to ""Mhast"" since 1987 often should have stated ""Malongo 1987""."
+6260, "manoca", "Manoca",,7012,
+6193, "manoca1962", "Manoca 1962",1962,7011,"The intent of the Bukavu 1953 conference was to adopt the Clarke 1880 (RGS) ellipsoid (code 7012) but in practice this datum has used the IGN version.  Replaces Douala 1948 (code 6192)."
+6686, "mgn2004", "Marco Geocentrico Nacional de Referencia",2004,7019,"Densification of SIRGAS 1995 within Colombia. Replaces Bogota 1975 (datum code 6218)."
+1063, "mgn2007", "Marco Geodesico Nacional",2007,7019,"Densification of SIRGAS 1995 within Bolivia. Replaces PSAD56 (datum code 6248) in Bolivia."
+6711, "marcus1952", "Marcus Island 1952",1952,7022,
+6732, "marshall", "Marshall Islands 1960",1960,7053,
+6625, "martinique1938", "Martinique 1938",1938,7022,"Replaced by RRAF 1991 (datum code 1047)."
+5192, "martinique1955", "Martinique 1955",1955,,"Orthometric heights. Replaced by Martinique 1987 (datum code 5154)."
+5154, "martinique1987", "Martinique 1987",1987,,"Orthometric heights. Replaces Martinique 1955 (datum code 5192)."
+6262, "massawa", "Massawa",,7004,
+6692, "maupiti1983", "Maupiti 83",1983,7022,"Replaced by RGPF (datum code 6687)."
+5199, "maupiti2001", "Maupiti SAU 2001",2001,,"Included as part of NGPF - see datum code 5195."
+6681, "mauritania1999", "Mauritania 1999",1999,7012,"A network of 36 GPS stations tied to ITRF96, 8 of which are IGN astronomic points."
+6702, "mauritania1999", "Mauritania 1999",1999,7019,"A network of 36 GPS stations tied to ITRF96, 8 of which are IGN 1962 astronomic points."
+6261, "merchich", "Merchich",1922,7011,
+1042, "mexican1993", "Mexican Datum of 1993",1993,7019,"Realised by a frame of 15 active GPS stations observed and adjusted in the ITRF1992. Includes ties to tide gauges. Replaces NAD27 (code 6267)."
+1031, "mgi1901", "MGI 1901",1901,7004,"The longitude of the datum origin equates to the Albrecht 1902 value for the Ferro meridian of 17°39'46.02"" west of Greenwich. Densified in 1948."
+6264, "mhast", "Missao Hidrografico Angola y Sao Tome",,7022,
+6705, "mhastOffshore", "Missao Hidrografico Angola y Sao Tome (offshore)",1979,7022,"Origin coordinates determined by Transit single point position using 32 passes and transformed from WGS72BE using transformation code 15790. Differs from Mhast (onshore) by approximately 10m. Replaced in 1987 by Malongo 1987 (code 6259)."
+6704, "mhastOnshore", "Missao Hidrografico Angola y Sao Tome (onshore)",,7022,"Adopted by oil industry with intention of being Mhast 1951 (code 6703) but incorrectly (for Mhast 1951) used the International 1924 ellipsoid. This datum differs by about 400 metres from the Portuguese Mhast 1951 and Camacupa datums."
+6727, "midway", "Midway 1961",1961,7022,
+6312, "mgi1901", "Militar-Geographische Institut",1901,7004,"The longitude of the datum origin equates to a value for the Ferro meridian of 17°40' exactly west of Greenwich."
+6805, "mgiFerro", "Militar-Geographische Institut (Ferro)",1901,7004,"Replaced by MGI in Austria and MGI 1901 in former Yugoslavia."
+6263, "minna", "Minna",,7012,
+6703, "mhast1951", "Missao Hidrografico Angola y Sao Tome 1951",1951,7012,"A variation of this datum has been adopted by the oil industry but incorrectly using the International 1924 ellipsoid and not tied to the official Portuguese triangulation - see Mhast (onshore) and Mhast (offshore) (codes 6704 and 6705)."
+1032, "moldref1999", "MOLDREF99",1999,7019,
+6265, "monteMario1940", "Monte Mario",1940,7022,"Replaced Genova datum, Bessel 1841 ellipsoid, from 1940."
+6806, "monteMarioRome", "Monte Mario (Rome)",,7022,"Replaced Genova datum, Bessel 1841 ellipsoid, from 1940."
+6604, "montserrat", "Montserrat 1958",1958,7012,
+6691, "moorea", "Moorea 87",1987,7022,"Replaces Tahiti 52 (datum code 6628) in Moorea. Replaced by RGPF (datum code 6687)."
+6639, "mop78", "MOP78",1978,7022,
+5162, "moturiki", "Moturiki 1953",1953,,
+6157, "dillon", "Mount Dillon",,7007,
+6130, "moznet", "Moznet (ITRF94)",,7030,
+6268, "nad27", "NAD27 Michigan",,7009,"Ellipsoid taken to be 800ft above the NAD27 reference ellipsoid."
+6152, "nad83", "NAD83 (High Accuracy Reference Network)",,7019,
+6759, "nad83-2007", "NAD83 (National Spatial Reference System 2007)",2007,7019,
+6140, "nad83-1998", "NAD83 Canadian Spatial Reference System",1998,7019,
+6744, "nahrwan1934", "Nahrwan 1934",1934,7012,"This adjustment later discovered to have a significant orientation error. In Iran replaced by FD58. In Iraq, replaced by Nahrwan 1967."
+6270, "nahrwan1967", "Nahrwan 1967",1967,7012,"In Iraq, replaces Nahrwan 1934."
+6693, "ghanem", "Nakhl e Ghanem",2005,7030,
+6158, "naparima1955", "Naparima 1955",1955,7022,"Naparima 1972 is an extension of the Naparima 1955 network of Trinidad to include Tobago."
+6271, "naparima1972", "Naparima 1972",1972,7022,"Naparima 1972 is an extension of the Naparima 1955 network of Trinidad to include Tobago."
+6318, "ngn", "National Geodetic Network",1993,7030,"Replaces 1984 adjustment which used the WGS72 ellipsoid."
+6644, "nea74", "NEA74 Noumea",1974,7022,
+5164, "nelson1955", "Nelson 1955",1955,,
+1045, "beijing1982", "New Beijing",1982,7024,"From 1982 replaces Beijing 1954."
+6272, "nzgd1949", "New Zealand Geodetic Datum 1949",1949,7022,"Replaced by New Zealand Geodetic Datum 2000 (code 6167) from March 2000."
+6167, "nzgd2000", "New Zealand Geodetic Datum 2000",2000,7019,"Replaces New Zealand Geodetic Datum 1949 (code 6272) and Chatham Islands Datum 1979 (code 6673) from March 2000."
+6273, "ngo1948", "NGO 1948",1948,7005,
+6817, "ngo1948Oslo", "NGO 1948 (Oslo)",1948,7005,
+6902, "guerreParis", "Nord de Guerre (Paris)",,7027,
+6307, "sahara1959", "Nord Sahara 1959",1959,7012,"Adjustment includes Morocco and Tunisia but use only in Algeria. Within Algeria the adjustment is north of 32°N but use has been extended southwards in many disconnected projects, some based on independent astro stations rather than the geodetic network."
+6819, "sahara1959Paris", "Nord Sahara 1959 (Paris)",1959,7012,
+6267, "nad27", "North American Datum 1927",1927,7008,"In United States (USA) and Canada, replaced by North American Datum 1983 (NAD83) (code 6269) ; in Mexico, replaced by Mexican Datum of 1993 (code 1042)."
+6608, "nad27-1976", "North American Datum 1927 (1976)",1976,7008,"NAD27(76) used in Ontario for all maps at scale 1/20 000 and larger; elsewhere in Canada for selected purposes."
+6609, "nad27-1977", "North American Datum 1927 (CGQ77)",1977,7008,"NAD27 (CGQ77) used in Quebec for all maps at scale 1/20 000 and larger; generally for maps issued by the Quebec cartography office whose reference system is CGQ77."
+6269, "nad83-1986", "North American Datum 1983",1986,7019,"Although the 1986 adjustment included connections to Greenland and Mexico, it has not been adopted there. In Canada and US, replaced NAD27."
+6680, "nouakchott", "Nouakchott 1965",1965,7012,"Triangulation limited to environs of Nouakchott. Extended in 1982 by satellite translocation from a single station ""Ruines"" to support Syledis chain for offshore operations. Replaced by Mauritania 1999 (datum code 6602)."
+6275, "ntf1895", "Nouvelle Triangulation Francaise",1895,7011,
+6807, "ntf1895Paris", "Nouvelle Triangulation Francaise (Paris)",1895,7011,
+6276, "nswc", "NSWC 9Z-2",,7025,"Transit precise ephemeris before 1991."
+6129, "observatorio", "Observatario",,7008,"Replaced by transformation to Tete datum (datum code 6127)."
+1070, "ocotepeque", "Ocotepeque 1935",1935,7008,"Replaced in Costa Rica by Costa Rica 2005 (CR05) from March 2007 and replaced in El Salvador by SIRGAS_ES2007 from August 2007."
+6135, "oldHawaiian", "Old Hawaiian",,7008,"Hawaiian Islands were never on NAD27 but rather on Old Hawaiian Datum.  NADCON conversion program provides transformation from Old Hawaiian Datum to NAD83 (original 1986 realization) but making the transformation appear to user as if from NAD27."
+6279, "os1980", "OS (SN) 1980",1980,7001,
+6277, "osgb1970", "OSGB 1936",1936,7001,"The average accuracy of OSTN02 compared to the old triangulation network (down to 3rd order) is 0.1m."
+6278, "osgb1970SN", "OSGB 1970 (SN)",1970,7001,
+6188, "osni1952", "OSNI 1952",1952,7001,"Replaced by Geodetic Datum of 1965 alias 1975 Mapping Adjustment or TM75 (datum code 6300)."
+6280, "padang1884", "Padang 1884",1884,7004,
+6808, "padangJakarta", "Padang 1884 (Jakarta)",1884,7004,
+6281, "palestine", "Palestine 1923",1923,7010,
+6161, "castillo", "Pampa del Castillo",0,7022,"Used in Comodoro Rivadavia area.  Replaced by Campo Inchauspe (code 6221)."
+1072, "panama", "Panama Colon 1911",1911,7008,"Reports of the existence of an Ancon datum are probably erroneous, considering that the origin of the Panamá-Colón Datum of 1911 is at Balboa Hill and the access road up the hill is from the town of Ancon, Canal Zone."
+1076, "png1994", "Papua New Guinea Geodetic Datum 1994",1994,7019,"Adopted 1996. Coincident with WGS 84 in 1994 but rapidly divergent due to significant tectonic motion in PNG."
+6740, "pz90", "Parametrop Zemp 1990",1990,7054,"Derived through satellite tracking techniques. EPSG's PZ-90 datum has been the then current realisation. No distinction is made between the original PZ-90 frame and the PZ-90.02 improvement which was introduced in 2007."
+6134, "pdo1993", "PDO Survey Datum 1993",1993,7012,"Replaces Fahud datum (code 6232). Maximum differences to Fahud adjustment are 20 metres."
+1067, "peru", "Peru 1996",1996,7019,"Densification of SIRGAS 1995 within Peru. Replaces PSAD56 (datum code 6248) in Peru."
+6636, "petrels", "Petrels 1972",1972,7022,
+6683, "prs1992", "Philippine Reference System 1992",1992,7008,"Replaces Luzon 1911 datum (code 6253)."
+6716, "phoenix1966", "Phoenix Islands 1966",1966,7022,
+6728, "pn84", "Pico de las Nieves 1984",,7022,"Replaces Pico de las Nieves 1968 (PN68). Replaced by REGCAN95."
+6729, "pitcairn1967", "Pitcairn 1967",1967,7022,"Replaced by Pitcairn 2006."
+6763, "pitcairn2006", "Pitcairn 2006",2006,7030,"Replaces Pitcairn 1967."
+6620, "point58", "Point 58",1969,7012,"Used as the basis for computation of the 12th Parallel traverse conducted 1966-70 from Senegal to Chad and connecting to the Adindan triangulation in Sudan."
+6637, "pgp1950", "Pointe Geologie Perroud 1950",1950,7022,
+6055, "pvd", "Popular Visualisation Datum",,7059,"Not recognised by geodetic authorities."
+6615, "portoSanto1936", "Porto Santo 1936",1936,7022,"Replaced by 1995 adjustment (datum code 6663). For Selvagens see Selvagem Grande (code 6616)."
+6663, "portoSanto1995", "Porto Santo 1995",1995,7022,"Classical and GPS observations. Replaces 1936 adjustment (datum code 6615). For Selvagens see Selvagem Grande (datum code 6616)."
+6172, "posgar", "Posiciones Geodesicas Argentinas",1994,7019,"Una red geodésica de 127 puntos materializados en el terreno que definen el Sistema Geodésico Nacional.  [A geodetic network of 127 points defining the National Geodetic System.] Replaced by POSGAR98 (code 6190)."
+6694, "posgar1994", "Posiciones Geodesicas Argentinas 1994",1994,7030,"Technically, but not legally, replaced by POSGAR 98 (code 6190) until May 2009, when POSGAR 2007 was officially accepted and officially replaced POSGAR 94."
+6190, "posgar1998", "Posiciones Geodesicas Argentinas 1998",1998,7019,"Technically, but not legally, this datum replaced the 1994 POSGAR adjustment (code 6694) until adoption of the 2007 POSGAR adjustment (code 1062) in May 2009."
+1062, "posgar2007", "Posiciones Geodesicas Argentinas 2007",2009,7019,"POSGAR 07 has been adopted by order of the Director of the National Geographic Institute on May 15, 2009, as the new National Geodetic Reference Frame and replaces the pre-existing POSGAR 94."
+6746, "potsdam1983", "Potsdam Datum/83",1990,7004,"PD/83 is the realisation of DHDN in Thuringen. It is the resultant of applying a transformation derived at 13 points on the border between East and West Germany to Pulkovo 1942/83 points in Thuringen."
+1046, "principe", "Principe",,7022,
+6248, "southAmerican", "Provisional South American Datum 1956",1956,7022,"Same origin as La Canoa datum."
+6139, "puertoRico", "Puerto Rico",1901,7008,"NADCON conversion program provides transformation from Puerto Rico Datum to NAD83 (original 1986 realization) but making the transformation appear to user as if from NAD27."
+6284, "pulkovo1942", "Pulkovo 1942",1942,7024,
+6179, "pulkovo1958", "Pulkovo 1942(58)",1956,7024,"1956 international adjustment of Uniform Astro-Geodetic Network of countries of central and eastern Europe. Locally densified during 1957 and 1958."
+6178, "pulkovo1983", "Pulkovo 1942(83)",1983,7024,"1983 international adjustment of Uniform Astro-Geodetic Network of countries of central and eastern Europe."
+6200, "pulkovo1995", "Pulkovo 1995",1995,7024,
+6286, "qatar1948", "Qatar 1948",1948,7020,
+6285, "qatar1974", "Qatar 1974",1974,7022,
+6614, "qatar1995", "Qatar National Datum 1995",1995,7022,
+6287, "qornoq", "Qornoq",1927,7022,
+6194, "qornoq1927", "Qornoq 1927",1927,7022,
+6153, "rassadiran", "Rassadiran",1998,7022,
+6745, "rauenberg", "Rauenberg Datum/83",1990,7004,"RD/83 is the realisation of DHDN in Saxony. It is the resultant of applying a transformation derived at 106 points throughout former East Germany to Pulkovo 1942/83 points in Saxony."
+1035, "redCanarias", "Red Geodesica de Canarias 1995",1995,7019,"Replaces Pico de las Nieves 1984 (PN84)."
+6189, "redVenezolana", "Red Geodesica Venezolana",2000,7019,
+1047, "rraf", "Reseau de Reference des Antilles Francaises 1991",1991,7019,"Replaces Fort Marigot and Sainte Anne (datum codes 6621-22) in Guadeloupe and Fort Desaix (datum code 6625) in Martinique. Replaced by Reseau Geodesique des Antilles Francaises 2009 (datum code 1073)."
+6640, "rraf91", "Reseau de Reference des Antilles Francaises 1991",1991,7030,"Replaces Fort Marigot and Sainte Anne (datum codes 6621-22) in Guadeloupe and Fort Desaix (datum code 6625) in Martinique."
+6687, "rgpf93", "Reseau Geodesique de la Polynesie Francaise",1993,7019,"Replaces Tahaa 54 (datum code 6629), IGN 63 Hiva Oa (6689), IGN 72 Nuku Hiva (6630), Maupiti 83 (6692), MHEFO 55 (6688), Moorea 87 (6691) and Tahiti 79 (6690)."
+1033, "rdc05", "Reseau Geodesique de la RDC 2005",2005,7019,
+6627, "rgr92", "Reseau Geodesique de la Reunion 1992",1992,7019,"Replaces Piton des Neiges (code 6626)."
+1036, "rgm04", "Reseau Geodesique de Mayotte 2004",2004,7019,"Replaces Combani 1950 (datum code 6632) except for cadastral purposes. (Cadastre 1997 (datum code 1037) used for cadastral purposes)."
+6749, "rgc91", "Reseau Geodesique de Nouvelle Caledonie 91-93",1989,7019,
+1038, "rgspm06", "Reseau Geodesique de Saint Pierre et Miquelon 2006",2006,7019,"Replaces Saint Pierre et Miquelon 1950 (datum code 6638)."
+1073, "rgaf09", "Reseau Geodesique des Antilles Francaises 2009",2009,7019,"Replaces RRAF91 in Martinique and Guadeloupe."
+6171, "rgf1993", "Reseau Geodesique Francais 1993",1993,7019,
+6624, "rgfg1995", "Reseau Geodesique Francais Guyane 1995",1995,7019,"Replaces CSG67 (datum code 6623)."
+6645, "rgnf1991", "Reseau Geodesique Nouvelle Caledonie 1991",1989,7022,
+6215, "rnb1950", "Reseau National Belge 1950",1950,7022,
+6809, "rnb1950Brussels", "Reseau National Belge 1950 (Brussels)",1950,7022,
+6313, "rnb1972", "Reseau National Belge 1972",1972,7022,
+6626, "reunion47", "Reunion 1947",1947,7022,"Replaced by RGR92 (datum code 6627)."
+6657, "reykjavik", "Reykjavik 1900",1900,7051,
+6124, "rk90", "Rikets koordinatsystem 1990",1982,7004,"Replaces RT38 adjustment (datum code 6308)"
+6764, "rsr2000", "Ross Sea Region Geodetic Datum 2000",2000,7019,
+6638, "spm50", "Saint Pierre et Miquelon 1950",1950,7008,"Replaced by RGSPM06 (datum code 1038)."
+6125, "samboja", "Samboja",0,7004,
+6730, "santo", "Santo 1965",1965,7022,"Datum covers all the major islands of Vanuatu in two different adjustment blocks, but practical usage is as given in the area of use."
+1044, "saoTome", "Sao Tome",,7022,
+6292, "sapper", "Sapper Hill 1943",1943,7022,
+6293, "schwarzeck", "Schwarzeck",,7046,
+6195, "scoresbysund", "Scoresbysund 1952",1952,7022,
+6294, "segora", "Segora",,7004,
+6616, "selvagem", "Selvagem Grande",,7022,
+1034, "serbian1998", "Serbian Reference Network 1998",1998,7019,"Observed 1998-2003."
+6295, "serindung", "Serindung",,7004,
+1071, "sibunGorge", "Sibun Gorge 1922",1922,7007,
+6175, "sierraLeone68", "Sierra Leone 1968",1968,7012,"Extension and readjustment with additional observations of 1960 network.  Coordinates of 1960 stations change by less than 3 metres."
+6174, "sierraLeone24", "Sierra Leone Colony 1924",1924,7029,
+1069, "sirgasES", "SIRGAS_ES2007.8",2007,7019,"SIRGAS-ES2007.8 is the national SIRGAS densification."
+1064, "sirgasChile", "SIRGAS-Chile",2007,7019,"Densification of SIRGAS 2000 within Chile. Replaces PSAD56 (datum code 6248) in Chile, replaces HITO XVIII (datum code 6254) in Chilean Tierra del Fuego and replaces Easter Island 1967 (datum code 6719)  in Easter Island."
+1068, "sirgasROU", "SIRGAS-ROU98",1998,7030,"Densification of SIRGAS 1995 within Uruguay. Replaces Yacare (datum code 6309) in Uruguay. Uruguay documentation clearly states use of WGS 84 reference ellipsoid."
+6170, "sirgas1995", "Sistema de Referencia Geocentrico para America del Sur 1995",1995,7019,"Realised by a frame of 58 stations observed in 1995 and adjusted in the ITRF94. Replaced by SIRGAS 2000."
+6674, "sirgas2000", "Sistema de Referencia Geocentrico para las AmericaS 2000",2000,7019,"Realised by a frame of 184 stations observed in 2000 and adjusted in the ITRF2000. Includes ties to tide gauges. Replaces SIRGAS 1995 system for South America; expands SIRGAS to Central America.  Name changed in 2001 for use in all of Latin America."
+1066, "panama", "Sistema Geodesico Nacional de Panama MACARIO SOLIS",0,7019,
+6726, "sisterIsland", "Sister Islands Geodetic Datum 1961",1961,7008,"Replaced by CIGD11 (datum code 1100)."
+6765, "slovenia", "Slovenia Geodetic Datum 1996",1996,7019,
+6718, "solomon", "Solomon 1968",1968,7022,
+6291, "sad1969", "South American Datum 1969",1969,7036,"SAD69 uses GRS67 ellipsoid with 1/f to exactly 2 decimal places.  Precision of ellipsoid entry increased from 2 to 5 dp with change id 97.252.  Error introduced if not using the truncated precision is 0 to 31mm."
+6618, "sad1969Brazil", "South American Datum 1969",1969,7050,"SAD69 uses GRS 1967 ellipsoid but with 1/f to exactly 2 decimal places. In Brazil only, replaced by SAD69(96) (datum code 1075)."
+1075, "sad1996", "South American Datum 1969(96)",1996,7050,"SAD69 uses GRS 1967 ellipsoid but with 1/f to exactly 2 decimal places. Replaces original 1969 adjustment (datum code 6618) in Brazil."
+6722, "georgia", "South Georgia 1968",1968,7022,
+6164, "yemen", "South Yemen",0,7024,
+1053, "srilanka", "Sri Lanka Datum 1999",1999,7015,"Introduced in 2000."
+6138, "saintGeorgeIsland", "Saint George Island",0,7008,"Many Alaskan islands were never on NAD27 but rather on independent datums.  NADCON conversion program provides transformation from St. George Island Datum to NAD83 (original 1986 realization) - making the transformation appear to user as if from NAD27."
+6710, "saintHelena", "Saint Helena 1971",1971,7022,
+6605, "saintKitts", "Saint Kitts 1955",1955,7012,
+6136, "saintLawrence", "Saint Lawrence Island",0,7008,"Many Alaskan islands were never on NAD27 but rather on independent datums.  NADCON conversion program provides transformation from St. Lawrence Island Datum to NAD83 (original 1986 realization) - making the transformation appear to user as if from NAD27."
+6606, "saintLucia", "Saint Lucia 1955",1955,7012,
+6137, "saintPaulIsland", "Saint Paul Island",0,7008,"Many Alaskan islands were never on NAD27 but rather on independent datums.  NADCON conversion program provides transformation from St. Paul Island Datum to NAD83 (original 1986 realization) - making the transformation appear to user as if from NAD27."
+6607, "saintVincent", "Saint Vincent 1945",1945,7012,
+6643, "st71", "ST71 Belep",1971,7022,
+6642, "st84", "ST84 Ile des Pins",1984,7022,
+6635, "st87Ouvea", "ST87 Ouvea",1987,7022,
+6750, "st87", "ST87 Ouvea",1987,7030,
+5170, "stewartIsland", "Stewart Island 1977",1977,,
+6308, "stockholm38", "Stockholm 1938",1938,7004,"Replaced by RT90 adjustment (datum code 6124)"
+6814, "stockholm", "Stockholm 1938 (Stockholm)",1938,7004,"Replaced by RT90 adjustment (datum code 6124)"
+6296, "sudan", "Sudan", 0,  7011, ""
+6757, "svy21", "SVY21",2004,7030,"Replaces Kertau 1968 for cadastral purposes from August 2004."
+6619, "sweref99", "SWEREF99",1999,7019,"The solution was calculated in ITRF 97 epoch 1999.5, and has subsequently been corrected to ETRS 89 in accordance with guidelines given by EUREF."
+6151, "strf95", "Swiss Terrestrial Reference Frame 1995",1995,7019,
+6156, "sjtsk", "System Jednotne Trigonometricke Site Katastralni",,7004,"S-JTSK = System of the Unified Trigonometrical Cadastral Network."
+6818, "sjtskFerro", "System Jednotne Trigonometricke Site Katastralni (Ferro)",1920,7004,"S-JTSK = System of the Unified Trigonometrical Cadastral Network."
+1052, "sjtsk09", "System Jednotne Trigonometricke Site Katastralni/05",2009,7004,"S-JTSK = System of the Unified Trigonometrical Cadastral Network."
+1055, "sjtsk09Ferro", "System Jednotne Trigonometricke Site Katastralni/05 (Ferro)",2009,7004,"S-JTSK = System of the Unified Trigonometrical Cadastral Network."
+6629, "tahaa54", "Tahaa 54",1954,7022,"Replaced by RGPF (datum code 6687)."
+5201, "tahaa01", "Tahaa SAU 2001",2001,,"Included as part of NGPF - see datum code 5195."
+6628, "tahiti52", "Tahiti 52",1952,7022,"Replaced by Tahiti 79 (datum code 6690) in Tahiti and Moorea 87 (code 6691) in Moorea."
+6690, "tahiti79", "Tahiti 79",1979,7022,"Replaces Tahiti 52 (datum code 6628) in Tahiti. Replaced by RGPF (datum code 6687)."
+1025, "taiwan67", "Taiwan Datum 1967",1967,7050,"Adopted in 1980. TWD67 uses the GRS 1967 ellipsoid but with 1/f to exactly 2 decimal places."
+1026, "taiwan97", "Taiwan Datum 1997",1997,7019,"Adopted in 1998."
+6297, "tanarive25", "Tananarive 1925",2025,7022,
+6810, "tanarive25Paris", "Tananarive 1925 (Paris)",1925,7022,
+6707, "tern", "Tern Island 1961",1961,7022,"Two independent astronomic determinations considered to be consistent through adoption of common transformation to WGS 84 (see tfm code 15795)."
+6127, "tete", "Tete",,7008,
+6298, "timbalai", "Timbalai 1948",1948,7016,"In 1968, the original adjustment was densified in Sarawak and extended to Sabah."
+6299, "tm65", "TM65",1965,7002,"Differences between OSNI 1952 and TM65 at these stations are RMS 0.25m east, 0.23m north, maximum vector 0.57m. TM65 replaced by and not to be confused with Geodetic Datum of 1965 alias 1975 Mapping Adjustment or TM75 (datum code 6300)."
+6301, "tokyo1918", "Tokyo",1918,7004,"In Japan, replaces Tokyo 1892 (code 1048) and replaced by Japanese Geodetic Datum 2000 (code 6611). In Korea used only for geodetic applications before being replaced by Korean 1985 (code 6162)."
+1048, "tokyo1892", "Tokyo 1892",1892,7004,"Extended from Japan to Korea in 1898. In Japan replaced by Tokyo 1918 (datum code 6301). In South Korea replaced by Tokyo 1918 (code 6301) only for geodetic purposes; for all other purposes replaced by Korean 1985 (code 6162)."
+1095, "tonga", "Tonga Geodetic Datum 2005",2000,7019,
+6302, "trinidad1903", "Trinidad 1903",1903,7007,
+6734, "tristan1968", "Tristan 1968",1968,7022,
+6303, "trucial", "Trucial Coast 1948",1948,7020,
+1057, "turkish", "Turkish National Reference Frame",2005,7019,
+1077, "ukraine", "Ukraine 2000",2005,7024,""
+6748, "vanuaLevu", "Vanua Levu 1915",1915,7055,"For topographic mapping, replaced by Fiji 1956. For other purposes, replaced by Fiji 1986."
+6676, "vientiane", "Vientiane 1982",1982,7024,"Replaced by Lao 1993."
+6756, "vietnam2000", "Vietnam 2000",2000,7030,"Replaces Hanoi 1972."
+6752, "vitiLevu12", "Viti Levu 1912",1912,7055,"For topographic mapping, replaced by Fiji 1956. For other purposes, replaced by Fiji 1986."
+6731, "vitiLevu16", "Viti Levu 1916",1916,7012, ""
+6304, "voirol1875", "Voirol 1875",1875,7011,"Replaced by Voirol 1879 (code 6671)."
+6811, "voirol1875Paris", "Voirol 1875 (Paris)",1875,7011,
+6671, "voirol1879", "Voirol 1879",1879,7011,"Replaces Voirol 1875 (code 6304)."
+6821, "voirol1879Paris", "Voirol 1879 (Paris)",1879,7011,"Replaces Voirol 1875 (Paris) (code 6811)."
+6733, "wakeIsland", "Wake Island 1952",1952,7022,
+6324, "wgs72Ephemeris", "WGS 72 Ephemeris",1972,7043,"WGS 72 Transit Broadcast Ephemeris. Alleged datum for use with Transit broadcast ephemeris prior to 1989. Relationship to WGS 72 has changed over time."
+6760, "wgs66", "World Geodetic System 1966", 1966, 7025, "World Geodetic System 1966. A worldwide 5° × 5° mean free air gravity anomaly field provided the basic data for producing the WGS 66 gravimetric geoid. Replaced by WGS 72."
+6322, "wgs72", "World Geodetic System 1972", 1972, 7043, "World Geodetic System 1972. Used by GPS before 1987. For Transit satellite positioning see also WGS 72BE."
+6326, "wgs84", "World Geodetic System 1984", 1984, 7030, "EPSG's WGS 84 datum has been the then current realisation. No distinction is made between the original WGS 84 frame, WGS 84 (G730), WGS 84 (G873) and WGS 84 (G1150). Since 1997, WGS 84 has been maintained within 10cm of the then current ITRF."
+1153, "wgs84(G730)", "World Geodetic System 1984 (G730)", 1994, 7030, "Defined through coordinates of 10 GPS tracking stations adjusted to a subset of ITRF92 stations at epoch 1994.0. The reference epoch for ITRF92 is 1988.0; the ITRF92 station coordinates were transformed to 1994.0 using the NNR-NUVEL1 plate motion model."
+1153, "wgs84(G873)", "World Geodetic System 1984 (G873)", 1997, 7030, "Defined through coordinates of 15 GPS tracking stations adjusted to a subset of ITRF92 stations at epoch 1997.0. The reference epoch for ITRF92 is 1988.0; the ITRF92 station coordinates were transformed to 1997.0 using the NNR-NUVEL1A plate motion model."
+1154, "wgs84(G1150)", "World Geodetic System 1984 (G1674)", 2001, 7030, "Defined through coordinates of 17 GPS tracking stations adjusted to a subset of 49 IGS stations. Observations made in February 2001. The reference epoch for ITRF2000 is 1997.0; station coordinates were transformed to 2001.0 using IERS station velocities."
+1155, "wgs84(G1674)", "World Geodetic System 1984 (G1674)", 2005, 7030, "Defined through coordinates of 15 GPS tracking stations adjusted to a subset of IGS stations at epoch 2005.0. The IGS station coordinates are considered to be equivalent to ITRF2008."
+1156, "wgs84(G1762)", "World Geodetic System 1984 (G1762)", 2005, 7030, "Defined through coordinates of 19 GPS tracking stations adjusted to a subset of IGb08 stations at epoch 2005.0 using observatiions made in May 2013. The IGb08 station coordinates are considered to be equivalent to ITRF2008."
+6610, "xian", "Xian 1980",1980,7049,
+6309, "yacare", "Yacare",,7022,
+6163, "yngn96", "Yemen National Geodetic Network 1996",1996,7030,
+6310, "yoff", "Yoff",,7011, ""
+6311, "zanderij", "zanderij",  0,  7022, ""
