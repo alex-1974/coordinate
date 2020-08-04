@@ -53,25 +53,25 @@ struct Ellipsoid {
     this._comment = comment;
   }
   /** Get short name **/
-  const string shortname () { return this._shortname; }
+  const string shortname () pure nothrow @safe @nogc { return this._shortname; }
   /** Get name **/
-  const string name () { return this._name; }
+  const string name () pure nothrow @safe @nogc { return this._name; }
   /** Get comment **/
-  const string comment () { return this._comment; }
+  const string comment () pure nothrow @safe @nogc { return this._comment; }
   /** Get semi-minor-axis **/
-  const real a () { return _a; }
+  const real a () pure nothrow @safe @nogc { return _a; }
 
   /** Get inverse flattening 1/f **/
-  const real f () { return (!_f.isNaN)? 1 / _f:1 / (_a-_b)/_a; }
+  const real f () pure nothrow @safe @nogc { return (!_f.isNaN)? 1 / _f:1 / (_a-_b)/_a; }
 
   /** Get semi-minor-axis **/
-  const real b () { return (!_b.isNaN)? _b:_a * (1-_f); }
+  const real b () pure nothrow @safe @nogc { return (!_b.isNaN)? _b:_a * (1-_f); }
 
   /** Get first eccentricity squared **/
-  const real e () { return 1 / (_f * (2 - _f)); }
+  const real e () pure nothrow @safe @nogc { return 1 / (_f * (2 - _f)); }
 
   /** Get second eccentricity squared **/
-  const real e2 () { import std.math: pow; return _f * (2-_f) / (1-_f).pow(2); }
+  const real e2 () pure nothrow @safe @nogc { import std.math: pow; return _f * (2-_f) / (1-_f).pow(2); }
 
   void toString(scope void delegate(const(char)[]) sink) const {
     import std.conv: to;
@@ -81,15 +81,15 @@ struct Ellipsoid {
     if (!_b.isNaN) sink(" b: " ~ _b.to!string);
     if (!_f.isNaN) sink(" 1/f: " ~ _f.to!string);
   }
-  static auto opDispatch (string s) () {
-    return geoEllipsoid[ellipsoidLUT[s]];
+  static auto opDispatch (string s) (string file = __FILE__, size_t line = __LINE__) {
+    return Ellipsoid.name(s, file, line);
   }
-  static auto name (string shortname) {
-    return geoEllipsoid[ellipsoidLUT[shortname]];
+  static auto name (string shortname, string file = __FILE__, size_t line = __LINE__) {
+    return Ellipsoid.epsg(ellipsoidLookUp(shortname, file, line));
   }
-  static auto epsg (long epsg) {
+  static auto epsg (long epsg, string file = __FILE__, size_t line = __LINE__) {
     import std.conv: to;
-    return geoEllipsoid[epsg.to!long];
+    return geoEllipsoid[epsg];
   }
 }
 /** **/
@@ -114,13 +114,13 @@ struct Datum {
     this._comment = comment;
   }
   /** Get short name **/
-  string shortname () { return this._shortname; }
+  const string shortname () pure nothrow @safe @nogc { return this._shortname; }
   /** Get name **/
-  string name () { return this._name; }
+  const string name () pure nothrow @safe @nogc { return this._name; }
   /** Get comment **/
-  string comment () { return this._comment; }
+  const string comment () pure nothrow @safe @nogc { return this._comment; }
   /** Get the reference ellipsoid **/
-  Ellipsoid ellipsoid () { return geoEllipsoid[_ellipsoid]; }
+  Ellipsoid ellipsoid () pure nothrow @safe { return Ellipsoid.epsg(_ellipsoid); }
   /** **/
   void toString(scope void delegate(const(char)[]) sink) const {
     import std.conv: to;
@@ -129,18 +129,39 @@ struct Datum {
     if (this._epoch != 0) sink(" epoch: " ~ this._epoch.to!string);
     sink(" ellipsoid: " ~ Ellipsoid.epsg(this._ellipsoid)._shortname ~ " (epsg:" ~ this._ellipsoid.to!string ~ ")");
   }
-  /** Get datum by shortname (ufcs) **/
-  static auto opDispatch (string s) () {
-    return geoDatum[datumLUT[s]];
+  /** Get datum by shortname (ufcs)
+
+      Params:
+        s = Short name of datum
+      Returns: Datum
+      Throws: Throws DatumException if datum was not found.
+  **/
+  static auto opDispatch (string s) (string file = __FILE__, size_t line = __LINE__) {
+    return Datum.name(s, file, line);
   }
-  /** Get datum by shortname **/
-  static auto name (string shortname) {
+  /** Get datum by shortname
+
+      Params:
+        shortname = Short name of datum
+      Returns: Datum
+      Throws: Throws DatumException if datum was not found.
+  **/
+  static auto name (string shortname, string file = __FILE__, size_t line = __LINE__) {
+    import std.exception: enforce;
+    enforce!DatumException(shortname in datumLUT, "Datum not found!", file, line);
     return geoDatum[datumLUT[shortname]];
   }
-  /** Get datum by epsg code **/
-  static auto epsg (long epsg) {
-    import std.conv: to;
-    return geoDatum[epsg.to!long];
+  /** Get datum by epsg code
+
+    Params:
+      epsg = The epsg code of the datum
+    Returns: Datum
+    Throws: Throws DatumException if datum was not found.
+  **/
+  static auto epsg (long epsg, string file = __FILE__, size_t line = __LINE__) {
+    import std.exception: enforce;
+    enforce!DatumException(epsg in geoDatum, "Ellipsoid not found!", file, line);
+    return geoDatum[epsg];
   }
 }
 /** **/
@@ -152,8 +173,14 @@ unittest {
 
 const Datum defaultDatum;
 
-/** Get epsg code of an ellipsoid by its name **/
-size_t ellipsoidLookUp (string shortname, string file = __FILE__, size_t line = __LINE__) {
+/** Get epsg code of an ellipsoid by its name
+
+    Params:
+      shortname = Short name of ellipsoid
+    Returns: The epsg code of the ellipsoid
+    Throws: Throws DatumException if name was not found.
+**/
+long ellipsoidLookUp (string shortname, string file = __FILE__, size_t line = __LINE__) {
   import std.exception;
   long* epsg = (shortname in ellipsoidLUT);
   enforce!DatumException(epsg !is null, "Name of ellipsoid not found in lookup table!", file, line);
@@ -165,21 +192,7 @@ immutable Datum[long] geoDatum;          /// Datums indexed by epsg
 private long[string] ellipsoidLUT;      /// Ellipsoid epsg indexed by name
 private long[string] datumLUT;          /// Datum epsg indexed by name
 
-/** Get a Datum
-
-  Params:
-    name = Name of the datum
-    epsg = Epsg Code of the datum
-  Returns: Datum
-**/
-deprecated Datum getDatum (string name) {
-  return getDatum(datumLUT[name]);
-}
-/** ditto **/
-deprecated Datum getDatum (long epsg) {
-  return geoDatum[epsg];
-}
-
+// Read csv files at module start
 shared static this() {
   import std.exception : assumeUnique;
   import std.array;
@@ -188,183 +201,43 @@ shared static this() {
   import std.csv;
   import std.range;
   import std.conv;
-  static long idxEllipsoid = 0;
-  static long idxDatum = 0;
+  static long idxEllipsoid = 0; // counter for ellipsoids without epsg code
+  static long idxDatum = 0;     // counter for datums without epsg code
+  // Ellipsoid
   Ellipsoid[long] tmpEllipsoid;
-  //ellipsoidLUT["wgs1984"] = 0;
-  //tmpEllipsoid[0] = Ellipsoid("wgs1984", 0, 0, 0, "");
   foreach (eLines;import("ellipsoid.csv").parseCSV) {
-    //writefln ("line %s", eLines);
-
-    auto fields = eLines.convertCSV!(long, string, string, real, real, real, string);
-    if (fields[0] <= 0) fields[0] = idxEllipsoid--;
-    //writefln ("\nfields: %s %s", fields[0], fields[1]);
-    ellipsoidLUT[fields[1]] = fields[0];
-    tmpEllipsoid[fields[0]] = Ellipsoid(fields[1], fields[2], fields[3], fields[4], fields[5], fields[6]);
+    try {
+      auto fields = eLines.convertCSV!(long, string, string, real, real, real, string);
+      if (fields[0] <= 0) fields[0] = idxEllipsoid--;
+      ellipsoidLUT[fields[1]] = fields[0];
+      tmpEllipsoid[fields[0]] = Ellipsoid(fields[1], fields[2], fields[3], fields[4], fields[5], fields[6]);
+    } catch (Exception e) {
+      writefln("Failed to convert! " ~ e.msg);
+    }
   }
   tmpEllipsoid.rehash;
   geoEllipsoid = assumeUnique(tmpEllipsoid);
-  //foreach (e; geoEllipsoid) writefln("geoEllipsoid: %s", e);
-  writefln ("ellipsoidLUT %s", ellipsoidLUT);
 
+  // Datums
   Datum[long] tmpDatum;
-  //datumLUT["wgs1984"] = 0;
-  //tmpDatum[0] = Datum("wgs1984", ellipsoidLookUp("wgs1984", __FILE__, __LINE__), 0, "");
   foreach (eDatum;import("datum.csv").parseCSV) {
-    //writefln ("try converting %s", eDatum);
     try {
       auto fields = eDatum.convertCSV!(long, string, string, ulong, long,string);
       if (fields[0] <= 0) fields[0] = idxDatum--;
       datumLUT[fields[1]] = fields[0];
       tmpDatum[fields[0]] = Datum(fields[1], fields[2], fields[3], fields[4], fields[5]);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       writefln("Failed to convert! " ~ e.msg);
     }
   }
+  // Check if reference ellipsoids are valid
   foreach (d; tmpDatum) {
     assert((d._ellipsoid in geoEllipsoid) != null, "Can't find an ellipsoid with the epsg code " ~ d._ellipsoid.to!string ~ " in datum " ~ d.name);
   }
   tmpDatum.rehash;
   geoDatum = assumeUnique(tmpDatum);
-  //writefln ("datumLUT %s", datumLUT);
 
   defaultDatum = Datum.epsg(6326);
-  /++
-  Ellipsoid undefinedEllipsoid = Ellipsoid(real.nan, real.nan, real.nan, 0);
-  Ellipsoid[string] tmpEllipsoid = [
-  "undefined":      Ellipsoid(real.nan, real.nan, real.nan, 0),    // undefined ellipsoid
-  "grs1980authalic":  Ellipsoid(6370997.0, 6370997.0, real.nan, 7048),  // GRS 1980 authalic sphere (r=6370997)
-  // --- A ---
-  "airy1830":       Ellipsoid(6377563.396, 6356256.909, 1/299.3249646, 7001), // Airy 1830
-  "airyModified":   Ellipsoid(6377340.189, 6356034.448, 1/299.3249646, 7002), // Modified Airy
-  "andrae":         Ellipsoid(6377104.43, real.nan, 1/300.0, 0), // Andrae 1876 (Den., Iclnd.)
-  "apl4.9":         Ellipsoid(6378137.0, real.nan, 1/298.25, 0), // Appl. Physics. 1965
-  "ats1977":        Ellipsoid(6378135.0, real.nan, 1/298.257, 7041),  // Average Terrestrial System of 1977
-  "australian":     Ellipsoid(6378160, real.nan, 1/298.25, 7003), // Australian National & S. Amer. 1969
-  // --- B ---
-  "bessel1841":     Ellipsoid(6377397.155, 6356078.962818, 1/299.1528128, 7004),
-  "besselMod":      Ellipsoid(6377492.018, real.nan, 1/299.1528128, 7005),  // Bessel Modified
-  "besselNamibia":  Ellipsoid(6377483.865, real.nan, 1/299.1528128, 7046),  // Bessel Namibia (GLM)
-  // --- C ---
-  "clarke1858":     Ellipsoid(6378293.639, real.nan, 1/294.2606764, 7007),
-  "clarke1866":     Ellipsoid(6378206.4, 6356583.8, real.nan, 7008),
-  "clarke1880":     Ellipsoid(6378249.145, real.nan, 1/293.465, 7034),  // Clarke 1880
-  "clarke1880mod":  Ellipsoid(6378249.145, real.nan, 1/293.4663, 7012), // Clarke 1880 mod (Clarke 1880 RGS)
-  "clarke1980ign":  Ellipsoid(6378249.2, real.nan, 1/293.4660212936269, 7011),  // Clarke 1880 (IGN).
-  "cpm1799":        Ellipsoid(6375738.7, real.nan, 1/334.29, 0),  // Comm. des Poids et Mesures 1799
-  // --- D ---
-  "danish":         Ellipsoid(6377019.2563, real.nan, 1/300.0, 7051), // Andrae 1876 (Denmark, Iceland)
-  "delmbr":         Ellipsoid(6376428, real.nan, 1/311.5, 0),  // Delambre 1810 (Belgium)
-  // --- E ---
-  "engelis":        Ellipsoid(6378136.05, real.nan, 1/298.2566, 0),  // Engelis 1985
-  "everest1830":    Ellipsoid(6377276.345, real.nan, 1/300.8017, 7042),  // Everest 1830 Definition
-  "everest1830mod": Ellipsoid(6377304.063, real.nan, 1/300.8017, 7018), // Everest 1830 Modified
-  "everest1937":    Ellipsoid(6377276.345, real.nan, 1/300.8017, 7015), // Everest 1830 (1937 Adjustement) India
-  "everest1962":    Ellipsoid(6377301.243, real.nan, 1/300.8017255, 7044), // Everest 1830 (1962 Definition) Pakistan
-  "everest1967":    Ellipsoid(6377298.556, real.nan, 1/300.8017, 7016), // Everest 1830 (1967 Definition Sabah & Sarawak)
-  "everest1969":    Ellipsoid(6377295.664, real.nan, 1/300.8017, 7056), // Everest 1830 RSO 1969 (Modified 1969) Malaysia
-  "everest1975":    Ellipsoid(6377299.151, real.nan, 1/300.8017255, 7045),  // Everest definition 1975
-  // --- F ---
-  "fischer1960":    Ellipsoid(6378166, real.nan, 1/298.3, 107002),  // Fischer (Mercury Datum) 1960
-  "fischer1960mod": Ellipsoid(6378155, real.nan, 1/298.3, 0),  // Modified Fischer 1960
-  "fischer1968":    Ellipsoid(6378150, real.nan, 1/298.3, 107003),  // Fischer 1968
-  // --- G ---
-  "gem10c":         Ellipsoid(6378137, real.nan, 1/298.257223563, 7031),  // Goddard Earth Model (Gravitational field models) Used for GEM 10C Gravity Potential Model
-  "grs1967":        Ellipsoid(6378160, real.nan, 1/298.247167427, 7036),  // grs1967 = intl1967
-  "grs1967trunc":   Ellipsoid(6378160, real.nan, 1/298.25, 107036), // grs 1967 truncated
-  "grs1980":        Ellipsoid(6378137.0, real.nan, 1/298.257222101, 7019),  // GRS 1980(IUGG, 1980)
-  "gsk2011":        Ellipsoid(6378136.5, real.nan, 1/298.2564151, 1025),
-  // --- H ---
-  "helmert1906":    Ellipsoid(6378200, real.nan, 1/298.3, 7020),
-  "hough1960":      Ellipsoid(6378270, real.nan, 1/297, 7053),
-  // --- I ---
-  "iau1976":        Ellipsoid(6378140.0, real.nan, 1/298.257, 0),  // IAU 1976
-  "indonesianNational": Ellipsoid(6378160, real.nan, 1/298.247, 7021),  // Indonesian 1974
-  "intl1924":       Ellipsoid(6378388.0, 6356911.946, 1/297, 7022), // International 1924
-  "intl1967":       Ellipsoid(6378160.0, real.nan, 1/298.25, 7023),  // International 1967
-  // --- K ---
-  "kaula":          Ellipsoid(6378163, real.nan, 1/298.24, 0),  // Kaula 1961
-  "krassowsky1940": Ellipsoid(6378245.0, 6356750.5, 1/298.3, 7024), // Krassovsky 1942
-  // --- L ---
-  "lerch":          Ellipsoid(6378139, real.nan, 1/298.257, 0),  // Lerch 1979
-  // --- M ---
-  "maupertius":     Ellipsoid(6397300, real.nan, 1/191, 0),  // Maupertius 1738
-  "merit":          Ellipsoid(6378137.0, real.nan, 1/298.257, 0),  // Merit 1983
-  // --- N ---
-  "nwl9d":          Ellipsoid(6378145.0, real.nan, 1/298.25, 7025), // Naval Weapons Lab., 1965
-  // --- O ---
-  "osu1986":        Ellipsoid(6378136.2, real.nan, 1/298.25722, 7032),  // OSU 86 geoidal model
-  "osu1991":        Ellipsoid(6378136.3, real.nan, 1/298.25722, 7033),  // OSU 91 geoidal model
-  // --- P ---
-  "plessis1817":    Ellipsoid(6376523, real.nan, 1/308.64, 7027),
-  "pz90":           Ellipsoid(6378136.0, real.nan, 1/298.25784, 7054),  // PZ-90
-  // --- S ---
-  "seasia":         Ellipsoid(6378155.0, 6356773.3205, real.nan, 0), // Southeast Asia
-  "sgs1985":        Ellipsoid(6378136.0, real.nan, 1/298.257, 0),  // Soviet Geodetic System 1985
-  "struve1860":     Ellipsoid(6378298.3, real.nan, 1/294.73, 7028),
-  // --- W ---
-  "walbeck":        Ellipsoid(6376896, real.nan, 1/302.78, 107007),
-  "wgs1960":        Ellipsoid(6378165.0, real.nan, 1/298.3, 0),
-  "wgs1966":        Ellipsoid(6378145, real.nan, 1/298.25, 107001),
-  "wgs1972":        Ellipsoid(6378135.0, real.nan, 1/298.26, 7043),
-  "wgs1984":        Ellipsoid(6378137.0, real.nan, 1/298.257223563, 7030),
-
-  ];
-  ++/
-
-
-
-  /++
-  Datum[string] tmpDatum = [
-  "osgb36":     Datum(6277, geoEllipsoid["airy1830"],     [-446.448, 125.157,-542.060, -0.1502,-0.2470,-0.8421, 20.4894]),
-  "irl1975":    Datum(0, geoEllipsoid["airyModified"], [-482.530,130.596,-564.557, -1.042,-0.214,-0.631, -8.150]),
-  "tokyoJapan": Datum(0, geoEllipsoid["bessel1841"],   [148.0,-507.0,-685.0, 0.0,0.0,0.0, 0.0]),
-    // --- A ---
-    "adindan":    Datum(6201, geoEllipsoid["clarke1880"],   [-165.0,-11.0,206.0,0.0,0.0,0.0,0.0]),
-    "afgooye":    Datum(6205, geoEllipsoid["krassowsky1940"],[-43.0,-163.0,45.0,0.0,0.0,0.0,0.0]),
-    "agadez":     Datum(6206, geoEllipsoid["clarke1880"], []),
-    "ainelabd":   Datum(0, geoEllipsoid["intl1924"], []),
-    "australianGeod1966":     Datum(6202, geoEllipsoid["australian"], [-124.133,-42.003,137.4,-0.008,-0.557,-0.178,-0.3824149507821167]),
-    "australianGeod1984":     Datum(6203, geoEllipsoid["australian"], [-117.763,-51.51,139.061,0.292,-0.443,-0.277,-0.03939657799319541]),
-    "alaskanIslands":     Datum(0, geoEllipsoid["clarke1866"], []),
-    "americanSamoa1962":  Datum(0, geoEllipsoid["clarke1866"], []),
-    "amersfoort":     Datum(0, geoEllipsoid["bessel1841"], []),
-    "anguilla1957":     Datum(0, geoEllipsoid["clarke1880"], []),
-    "anna1965":     Datum(0, geoEllipsoid["australian"], []),
-    "antigua1943":     Datum(0, geoEllipsoid["clarke1880"], []),
-    "aratu":     Datum(0, geoEllipsoid["intl1924"], []),
-    "arc1950":     Datum(6209, geoEllipsoid["clarke1880"], [-138.0,-105.0,-289.0,0.0,0.0,0.0,0.0]),
-    "arc1960":     Datum(6210, geoEllipsoid["clarke1880"], [-157.0,-2.0,-299.0,0.0,0.0,0.0,0.0]),
-    "ascensionIsland1958":     Datum(0, geoEllipsoid["intl1924"], []),
-    "astro1952":     Datum(0, geoEllipsoid["intl1924"], []),
-    "ayabelle":     Datum(6713, geoEllipsoid["clarke1880"], [-79,-129,145,0,0,0,0]),  // Ayabelle_Lighthouse
-    // --- B ---
-    // --- E ---
-    "ed1950":       Datum(0, geoEllipsoid["intl1924"],     [89.5,93.8,123.1, 0.0,0.0,0.156, -1.2]),
-    "ed1977":       Datum(0, geoEllipsoid["intl1924"],     []),
-    "ed1987":       Datum(0, geoEllipsoid["intl1924"],     []),
-
-    "etrf1989":     Datum(0, geoEllipsoid["wgs1984"], []),
-    "european1979":     Datum(0, geoEllipsoid["intl1924"], []),
-    "europeanLibyan1979":    Datum(0, geoEllipsoid["intl1924"], []),
-    "everestBangladesh":     Datum(0, geoEllipsoid["everest1830"], []),
-    "everestIndiaNepal":     Datum(0, geoEllipsoid["everest1975"], []),
-    // --- N ---
-    "nad1927":      Datum(0, geoEllipsoid["clarke1866"],   [8.0,-160.0,-176.0, 0.0,0.0,0.0, 0.0]),
-    "nad1983":      Datum(0, geoEllipsoid["grs1980"],        [1.004,-1.910,-0.515, 0.0267,0.00034,0.011, -0.0015]),
-    // --- W ---
-    "wgs1972":      Datum(0, geoEllipsoid["wgs1972"],        [0.0,0.0,-4.5, 0.0,0.0,0.554, -0.22]),
-    "wgs1984":      Datum(0, geoEllipsoid["wgs1984"],        [0.0,0.0,0.0, 0.0,0.0,0.0, 0.0])
-  ];
-
-  tmpDatum.rehash;
-  geoDatum = assumeUnique(tmpDatum);
-  ++/
-}
-unittest {
-  //writefln ("Ellipsoid list %s", geoEllipsoid);
-  //writefln ("Datum list %s", geoDatum);
 }
 
 /** Reads unformatted csv string
@@ -387,13 +260,13 @@ unittest {
 
   Throws: If number of fields differ.
 **/
-auto parseCSV (string csv) {
+private auto parseCSV (string csv) {
   enum char commaChar = 0x002c; // ,
   enum char eolChar = 0x000a;   // newline
   return parseCSV(csv, commaChar, eolChar);
 }
 /** ditto **/
-auto parseCSV (string csv, char fieldSeparator, char lineSeparator) {
+private auto parseCSV (string csv, char fieldSeparator, char lineSeparator) {
   import std.string: strip, stripLeft, stripRight, splitLines;
   import std.algorithm: map, filter, splitter, canFind, countUntil, substitute;
   import std.array: empty, split;
@@ -415,7 +288,7 @@ unittest{
   assert(csv.parseCSV.array == [["steven", "15", "male"],["maria", "20", "female"],["snoopy","15",""]]);
 }
 /** Parses a line of csv fields **/
-string[] parseCSVImpl (string csv, char fieldSeparator, string[] fields = []) {
+private string[] parseCSVImpl (string csv, char fieldSeparator, string[] fields = []) {
   import std.range;
   import std.algorithm;
   import std.conv;
@@ -493,7 +366,7 @@ unittest {
   writefln ("ct csv %s", r);
 }
 **/
-auto convertCSV (T...) (string[] fields) {
+private auto convertCSV (T...) (string[] fields) {
   import std.typecons;
   import std.conv;
   import std.array;
