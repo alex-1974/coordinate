@@ -457,7 +457,7 @@ struct CodeArea {
   GEO center () {
     import std.algorithm: min;
     import coordinate: GEO, LAT, LON, geo;
-    return geo(centerLatitude, centerLongitude, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, getDatum(6326));
+    return geo(centerLatitude, centerLongitude, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, Datum.epsg(6326));
   }
   LAT centerLatitude () {
     return LAT((_min[0] + _max[0]) / 2.0); }    // The center latitude coordinate in decimal degrees.

@@ -1,4 +1,6 @@
-# Format: epsg, shortname, name, epoch, ellipsoid, comment
+# Format: epsg, shortname, name, epoch (in decimal year), ellipsoid (epsg), comment
+0,    "undefined","Undefined datum", 0, 0, "Undefined datum"
+0,    "ellipsoidOnly", "Ellipsoid only datum", 0, 0, ""
 6143, "abidjan",  "Abidjan 1987", 1987, 7012, ""
 6168, "accra",    "Accra",       0,    7029, "Replaced in 1978 by Leigon datum (code 6250)."
 6201, "adindan",  "Adindan",     0,    7012, "The 12th parallel traverse of 1966-70 (Point 58 datum, code 6620) is connected to the Adindan network in western Sudan. This has given rise to misconceptions that the Adindan network is used in west Africa."

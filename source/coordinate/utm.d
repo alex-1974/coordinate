@@ -184,7 +184,7 @@ MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing,
 }
 /** **/
 MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing, string file = __FILE__, size_t line = __LINE__) {
-  return mgrs(zone, band, grid, easting, northing, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, getDatum("wgs84"));
+  return mgrs(zone, band, grid, easting, northing, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, Datum.wgs84);
 }
 /** **/
 unittest {

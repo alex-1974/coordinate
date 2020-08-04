@@ -363,13 +363,13 @@ unittest {
 string toOpenLocationCode (GEO geo) {
   import std.exception: enforce;
   import coordinate.exceptions: OLCException;
-  enforce!OLCException(geo.datum == getDatum(6326), "Open location codes must be in wgs1984 (epsg:6326) datum");
+  enforce!OLCException(geo.datum == Datum.epsg(6326), "Open location codes must be in wgs1984 (epsg:6326) datum");
   return encode(geo.lat, geo.lon);
 }
 /** ditto **/
 string toOpenLocationCode (GEO geo, int codeLength) {
   import std.exception: enforce;
   import coordinate.exceptions: OLCException;
-  enforce!OLCException(geo.datum == getDatum(6326), "Open location codes must be in wgs1984 (epsg:6326) datum");
+  enforce!OLCException(geo.datum == Datum.epsg(6326), "Open location codes must be in wgs1984 (epsg:6326) datum");
   return encode(geo.lat, geo.lon, codeLength);
 }

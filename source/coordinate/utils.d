@@ -16,3 +16,15 @@ mixin template ExtendCoordinate () {
   AccuracyType altitudeAccuracy = AccuracyType.nan; /// Altitude accuracy in meters
   Datum datum;                              /// [Datum](datums.html#Datum)
 }
+mixin template CoordinateAltitude () {
+  AltitudeType altitude = AltitudeType.nan;         /// Altitude in meters
+}
+
+mixin template CoordinateAccuracies () {
+  AccuracyType accuracy = AccuracyType.nan;         /// Accuracy in meters
+  AccuracyType altitudeAccuracy = AccuracyType.nan; /// Altitude accuracy in meters
+}
+mixin template CoordinateDatum () {
+  import coordinate.datums: Datum;
+  Datum datum;                              /// [Datum](datums.html#Datum)
+}

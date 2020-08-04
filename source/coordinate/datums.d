@@ -1,70 +1,76 @@
-/** Definitions of geographic datums **/
+/** Definitions of geographic datums and ellipsoids
+
+**/
+
 module coordinate.datums;
 
 import std.math: isNaN;
-
+import coordinate.exceptions: DatumException;
 debug import std.stdio;
-
 
 /** Ellipsoid parameters
 
-    An ellipsoid is defined by its semi-major axis (*a*), semi-minor axis (*b*), and flattening (*f*).
+  An ellipsoid is defined by its semi-major axis (*a*), semi-minor axis (*b*), and flattening (*f*).
 
-    <math xmlns = "http://www.w3.org/1998/Math/MathML"><mrow>
-      <mtext>Semi minor axis:</mtext><mspace width="3ex"/>
-      <mi>b</mi><mo> = </mo><mi>a</mi><mo>&times;</mo><mo>(</mo><mn>1</mn><mo>-</mo><mi>f</mi><mo>)</mo>
-    </mrow></math>
+  <math xmlns = "http://www.w3.org/1998/Math/MathML"><mrow>
+    <mtext>Semi minor axis:</mtext><mspace width="3ex"/>
+    <mi>b</mi><mo> = </mo><mi>a</mi><mo>&times;</mo><mo>(</mo><mn>1</mn><mo>-</mo><mi>f</mi><mo>)</mo>
+  </mrow></math>
 
-    <math xmlns = "http://www.w3.org/1998/Math/MathML"><mrow>
-      <mtext>Flattening:</mtext><mspace width="3ex"/>
-      <mi>f</mi><mo> = </mo>
-      <mfrac bevelled="true"><mrow><mo>(</mo><mi>a</mi><mo>-</mo><mi>b</mi><mo>)</mo></mrow><mi>a</mi></mfrac>
-    </mrow></math>
+  <math xmlns = "http://www.w3.org/1998/Math/MathML"><mrow>
+    <mtext>Flattening:</mtext><mspace width="3ex"/>
+    <mi>f</mi><mo> = </mo>
+    <mfrac bevelled="true"><mrow><mo>(</mo><mi>a</mi><mo>-</mo><mi>b</mi><mo>)</mo></mrow><mi>a</mi></mfrac>
+  </mrow></math>
 
-    <math xmlns = "http://www.w3.org/1998/Math/MathML"><mrow>
-      <mtext>Eccentricity squared:</mtext><mspace width="3ex"/>
-      <msup><mi>e</mi><mn>2</mn></msup><mo> = </mo><mn>1</mn><mo>-</mo>
-      <mfrac><msup><mi>b</mi><mn>2</mn></msup><msup><mi>a</mi><mn>2</mn></msup></mfrac>
-      <mo> = </mo><mrow><mi>f</mi><mo>&times;</mo><mo>(</mo><mn>2</mn><mo>-</mo><mi>f</mi><mo>)</mo></mrow>
-    </mrow></math>
+  <math xmlns = "http://www.w3.org/1998/Math/MathML"><mrow>
+    <mtext>Eccentricity squared:</mtext><mspace width="3ex"/>
+    <msup><mi>e</mi><mn>2</mn></msup><mo> = </mo><mn>1</mn><mo>-</mo>
+    <mfrac><msup><mi>b</mi><mn>2</mn></msup><msup><mi>a</mi><mn>2</mn></msup></mfrac>
+    <mo> = </mo><mrow><mi>f</mi><mo>&times;</mo><mo>(</mo><mn>2</mn><mo>-</mo><mi>f</mi><mo>)</mo></mrow>
+  </mrow></math>
 
-    <math xmlns = "http://www.w3.org/1998/Math/MathML"><mrow>
-      <mtext>Second eccentricity squared:</mtext><mspace width="3ex"/>
-      <msup><mi>e</mi><mrow><mo>&prime;</mo><mn>2</mn></mrow></msup>
-      <mo> = </mo><mfrac><msup><mi>a</mi><mn>2</mn></msup><msup><mi>b</mi><mn>2</mn></msup></mfrac><mo>-</mo><mn>1</mn>
-      <mo> = </mo><mfrac><mrow><mi>f</mi><mo>&times;</mo><mo>(</mo><mn>2</mn><mo>-</mo><mi>f</mi><mo>)</mo></mrow><msup><mrow><mo>(</mo><mn>1</mn><mo>-</mo><mi>f</mi><mo>)</mo></mrow><mn>2</mn></mfrac>
-    </mrow></math>
-
+  <math xmlns = "http://www.w3.org/1998/Math/MathML"><mrow>
+    <mtext>Second eccentricity squared:</mtext><mspace width="3ex"/>
+    <msup><mi>e</mi><mrow><mo>&prime;</mo><mn>2</mn></mrow></msup>
+    <mo> = </mo><mfrac><msup><mi>a</mi><mn>2</mn></msup><msup><mi>b</mi><mn>2</mn></msup></mfrac><mo>-</mo><mn>1</mn>
+    <mo> = </mo><mfrac><mrow><mi>f</mi><mo>&times;</mo><mo>(</mo><mn>2</mn><mo>-</mo><mi>f</mi><mo>)</mo></mrow><msup><mrow><mo>(</mo><mn>1</mn><mo>-</mo><mi>f</mi><mo>)</mo></mrow><mn>2</mn></mfrac>
+  </mrow></math>
 **/
 struct Ellipsoid {
-  string shortname;
-   string name;
-   real _a; // Semi-major axis
-   real _b; // Semi-minor axis
-   real _f; // Flattening
-   string comment;
+  private string _shortname;
+  private string _name;
+  private real _a; // Semi-major axis
+  private real _b; // Semi-minor axis
+  private real _f; // Flattening
+  private string _comment;
   this (string shortname, string name, const real a, const real b, const real f, string comment) {
-    this.shortname = shortname;
-    this.name = name;
+    this._shortname = shortname;
+    this._name = name;
     this._a = a;
     this._b = b;
     this._f = f;
-    this.comment = comment;
+    this._comment = comment;
   }
-
-  /** Semi-minor-axis **/
+  /** Get short name **/
+  const string shortname () { return this._shortname; }
+  /** Get name **/
+  const string name () { return this._name; }
+  /** Get comment **/
+  const string comment () { return this._comment; }
+  /** Get semi-minor-axis **/
   const real a () { return _a; }
 
-  /** Inverse flattening 1/f **/
+  /** Get inverse flattening 1/f **/
   const real f () { return (!_f.isNaN)? 1 / _f:1 / (_a-_b)/_a; }
 
-  /** Semi-minor-axis **/
+  /** Get semi-minor-axis **/
   const real b () { return (!_b.isNaN)? _b:_a * (1-_f); }
 
-  /** First eccentricity squared **/
+  /** Get first eccentricity squared **/
   const real e () { return 1 / (_f * (2 - _f)); }
 
-  /** Second eccentricity squared **/
+  /** Get second eccentricity squared **/
   const real e2 () { import std.math: pow; return _f * (2-_f) / (1-_f).pow(2); }
 
   void toString(scope void delegate(const(char)[]) sink) const {
@@ -76,82 +82,88 @@ struct Ellipsoid {
     if (!_f.isNaN) sink(" 1/f: " ~ _f.to!string);
   }
   static auto opDispatch (string s) () {
-    return getEllipsoid(s);
+    return geoEllipsoid[ellipsoidLUT[s]];
   }
-  static auto opDispatch (string s) (size_t epsg) if (s == "epsg"){
+  static auto name (string shortname) {
+    return geoEllipsoid[ellipsoidLUT[shortname]];
+  }
+  static auto epsg (long epsg) {
     import std.conv: to;
-    return geoEllipsoid[epsg.to!size_t];
+    return geoEllipsoid[epsg.to!long];
   }
 }
 /** **/
 unittest {
   writefln("wgs84 %s", Ellipsoid.epsg(7030));
+  writefln("wgs84 %s", Ellipsoid.name("wgs84"));
   writefln("wgs84 %s", Ellipsoid.wgs84);
 }
 /** Datums with associated ellipsoid
  **/
 struct Datum {
-  string shortname;
-  string name;  /// Name of datum
-  size_t epoch; /// Epoch of datum
-  private size_t _ellipsoid;  /// epsg of reference ellipsoid
-  string comment; /// Comment
-  this(string shortname, string name, size_t epoch, size_t ellipsoid, string comment) {
-    this.shortname = shortname;
-    this.name = name;
-    this.epoch = epoch;
+  private string _shortname;
+  private string _name;  /// Name of datum
+  private size_t _epoch; /// Epoch of datum
+  private long _ellipsoid;  /// epsg of reference ellipsoid
+  private string _comment; /// Comment
+  this(string shortname, string name, size_t epoch, long ellipsoid, string comment) {
+    this._shortname = shortname;
+    this._name = name;
+    this._epoch = epoch;
     this._ellipsoid = ellipsoid;
-    this.comment = comment;
+    this._comment = comment;
   }
+  /** Get short name **/
+  string shortname () { return this._shortname; }
+  /** Get name **/
+  string name () { return this._name; }
+  /** Get comment **/
+  string comment () { return this._comment; }
   /** Get the reference ellipsoid **/
   Ellipsoid ellipsoid () { return geoEllipsoid[_ellipsoid]; }
   /** **/
   void toString(scope void delegate(const(char)[]) sink) const {
     import std.conv: to;
     import std.uni: toUpper;
-    sink("shortname: " ~ this.shortname ~ " name: " ~ this.name );
-    if (epoch != 0) sink(" epoch: " ~ epoch.to!string);
-    sink(" ellipsoid: " ~ getEllipsoid(this._ellipsoid).shortname);
+    sink("shortname: " ~ this._shortname ~ " name: " ~ this._name );
+    if (this._epoch != 0) sink(" epoch: " ~ this._epoch.to!string);
+    sink(" ellipsoid: " ~ Ellipsoid.epsg(this._ellipsoid)._shortname ~ " (epsg:" ~ this._ellipsoid.to!string ~ ")");
   }
+  /** Get datum by shortname (ufcs) **/
   static auto opDispatch (string s) () {
-    return getDatum(s);
+    return geoDatum[datumLUT[s]];
   }
-  static auto opDispatch (string s) (size_t epsg) if (s == "epsg"){
+  /** Get datum by shortname **/
+  static auto name (string shortname) {
+    return geoDatum[datumLUT[shortname]];
+  }
+  /** Get datum by epsg code **/
+  static auto epsg (long epsg) {
     import std.conv: to;
-    return geoDatum[epsg.to!size_t];
+    return geoDatum[epsg.to!long];
   }
 }
 /** **/
 unittest {
   writefln("wgs84 %s", Datum.epsg(6326));
-  //writefln("wgs84 %s", Ellipsoid.wgs84);
+  writefln("wgs84 %s", Datum.name("wgs84"));
+  writefln("wgs84 %s", Datum.wgs84);
 }
 
 const Datum defaultDatum;
-/** Get ellipsoid by name or epsg code
 
-  Params:
-    name = Name of the ellipsoid
-    epsg = Epsg Code of the ellipsoid
-  Returns: Ellipsoid
-**/
-Ellipsoid getEllipsoid (string shortname) {
-  return getEllipsoid(ellipsoidLUT[shortname]);
-}
-/** ditto **/
-Ellipsoid getEllipsoid (size_t epsg) {
-  return geoEllipsoid[epsg];
-}
+/** Get epsg code of an ellipsoid by its name **/
 size_t ellipsoidLookUp (string shortname, string file = __FILE__, size_t line = __LINE__) {
   import std.exception;
-  size_t* epsg = (shortname in ellipsoidLUT);
-  enforce!Exception(epsg !is null, "Name of ellipsoid not found in lookup table!", file, line);
+  long* epsg = (shortname in ellipsoidLUT);
+  enforce!DatumException(epsg !is null, "Name of ellipsoid not found in lookup table!", file, line);
   return *epsg;
 }
-immutable Ellipsoid[size_t] geoEllipsoid;  /// Ellipsoids indexed by epsg
-immutable Datum[size_t] geoDatum;          /// Datums indexed by epsg
-private size_t[string] ellipsoidLUT;      /// Ellipsoid epsg indexed by name
-private size_t[string] datumLUT;          /// Datum epsg indexed by name
+
+immutable Ellipsoid[long] geoEllipsoid;  /// Ellipsoids indexed by epsg
+immutable Datum[long] geoDatum;          /// Datums indexed by epsg
+private long[string] ellipsoidLUT;      /// Ellipsoid epsg indexed by name
+private long[string] datumLUT;          /// Datum epsg indexed by name
 
 /** Get a Datum
 
@@ -160,11 +172,11 @@ private size_t[string] datumLUT;          /// Datum epsg indexed by name
     epsg = Epsg Code of the datum
   Returns: Datum
 **/
-Datum getDatum (string name) {
+deprecated Datum getDatum (string name) {
   return getDatum(datumLUT[name]);
 }
 /** ditto **/
-Datum getDatum (size_t epsg) {
+deprecated Datum getDatum (long epsg) {
   return geoDatum[epsg];
 }
 
@@ -176,34 +188,38 @@ shared static this() {
   import std.csv;
   import std.range;
   import std.conv;
-  Ellipsoid[size_t] tmpEllipsoid;
+  static long idxEllipsoid = 0;
+  static long idxDatum = 0;
+  Ellipsoid[long] tmpEllipsoid;
   //ellipsoidLUT["wgs1984"] = 0;
   //tmpEllipsoid[0] = Ellipsoid("wgs1984", 0, 0, 0, "");
   foreach (eLines;import("ellipsoid.csv").parseCSV) {
     //writefln ("line %s", eLines);
 
-    auto fields = eLines.convertCSV!(ulong, string, string, real, real, real, string);
+    auto fields = eLines.convertCSV!(long, string, string, real, real, real, string);
+    if (fields[0] <= 0) fields[0] = idxEllipsoid--;
     //writefln ("\nfields: %s %s", fields[0], fields[1]);
     ellipsoidLUT[fields[1]] = fields[0];
     tmpEllipsoid[fields[0]] = Ellipsoid(fields[1], fields[2], fields[3], fields[4], fields[5], fields[6]);
   }
   tmpEllipsoid.rehash;
   geoEllipsoid = assumeUnique(tmpEllipsoid);
-  foreach (e; geoEllipsoid) writefln("geoEllipsoid: %s", e);
-  //writefln ("ellipsoidLUT %s", ellipsoidLUT);
+  //foreach (e; geoEllipsoid) writefln("geoEllipsoid: %s", e);
+  writefln ("ellipsoidLUT %s", ellipsoidLUT);
 
-  Datum[size_t] tmpDatum;
+  Datum[long] tmpDatum;
   //datumLUT["wgs1984"] = 0;
   //tmpDatum[0] = Datum("wgs1984", ellipsoidLookUp("wgs1984", __FILE__, __LINE__), 0, "");
   foreach (eDatum;import("datum.csv").parseCSV) {
     //writefln ("try converting %s", eDatum);
     try {
-      auto fields = eDatum.convertCSV!(ulong, string, string, ulong, ulong,string);
+      auto fields = eDatum.convertCSV!(long, string, string, ulong, long,string);
+      if (fields[0] <= 0) fields[0] = idxDatum--;
       datumLUT[fields[1]] = fields[0];
       tmpDatum[fields[0]] = Datum(fields[1], fields[2], fields[3], fields[4], fields[5]);
     }
     catch (Exception e) {
-      //writefln("Failed to convert!");
+      writefln("Failed to convert! " ~ e.msg);
     }
   }
   foreach (d; tmpDatum) {
@@ -211,6 +227,7 @@ shared static this() {
   }
   tmpDatum.rehash;
   geoDatum = assumeUnique(tmpDatum);
+  //writefln ("datumLUT %s", datumLUT);
 
   defaultDatum = Datum.epsg(6326);
   /++
@@ -480,13 +497,17 @@ auto convertCSV (T...) (string[] fields) {
   import std.typecons;
   import std.conv;
   import std.array;
+  import std.exception: enforce;
   alias Line = Tuple!T;
   Line line;
   //writefln("convertCSV %s", csv);
   if (!fields.length) return line;
-  assert(T.length == fields.length, "Number of types doesn't match number of fields! " ~ fields.join(", "));
+  enforce!DatumException(T.length == fields.length, "Number of types doesn't match number of fields! " ~ fields.join(", "));
   static foreach (i; 0..T.length) {
-    line[i] = fields[i].to!(T[i]);
+    try {
+      if (fields[i].empty) line[i] = T[i].init;
+      else line[i] = fields[i].to!(T[i]);
+    } catch (Exception e) { throw new DatumException("Failed to convert! " ~ fields[i] ~ " " ~ e.msg); }
   }
   return line;
 }

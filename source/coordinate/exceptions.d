@@ -43,3 +43,9 @@ final class OLCException : CoordException {
       super("Invalid open location code! " ~ msg, file, line);
   }
 }
+/** Exceptions for the [datums](datums.html) module **/
+final class DatumException : CoordException {
+  this(string msg, string file = __FILE__, size_t line = __LINE__) {
+      super("Invalid datum! " ~ msg, file, line);
+  }
+}
