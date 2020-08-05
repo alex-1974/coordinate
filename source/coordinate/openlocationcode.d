@@ -50,7 +50,7 @@ import std.conv: to;
 import std.algorithm: map, min, max;
 import std.array: array;
 import coordinate.mathematics;
-import coordinate: GEO, LAT, LON;
+import coordinate.latlon: GEO, LAT, LON;
 import coordinate.exceptions: OLCException;
 import coordinate.utils: AltitudeType, AccuracyType;
 import coordinate.datums;
@@ -189,7 +189,11 @@ private double computeLatitudePrecision(int codeLength) {
 }
 
 /** **/
-auto encode (double latitude, double longitude, int codeLength = pairCodeLength, string file = __FILE__, size_t line = __LINE__) {
+package auto encode (double latitude, double longitude, string file = __FILE__, size_t line = __LINE__) {
+  return encode (latitude, longitude, pairCodeLength, file, line);
+}
+/** ditto **/
+package auto encode (double latitude, double longitude, int codeLength, string file = __FILE__, size_t line = __LINE__) {
   import std.math: round;
   import std.algorithm: reverse;
   codeLength = min(codeLength, maxDigitCount);
@@ -247,7 +251,7 @@ unittest {
 }
 
 /** **/
-CodeArea decode (string code, string file = __FILE__, size_t line = __LINE__) {
+package CodeArea decode (string code, string file = __FILE__, size_t line = __LINE__) {
   import std.algorithm: min;
   if (!code.isFull) throw new OLCException("Passed Open Location Code is not a valid full code", file, line);
   string codeDigits = code.trimCode;
@@ -424,9 +428,27 @@ bool isPadded (string code) {
 }
 
 /** **/
-struct OLC {
+struct PlusCode {
   import coordinate.utils: ExtendCoordinate;
   string code;            ///
+  alias code this;
+  mixin ExtendCoordinate; ///
+  this (string pluscode, AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy) {
+    this.code = pluscode;
+    this.altitude = altitude;
+    this.accuracy = accuracy;
+    this.altitudeAccuracy = altitudeAccuracy;
+  }
+}
+/** **/
+auto pluscode (string code,
+              AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy,
+              string file = __FILE__, size_t line = __LINE__) {
+  return PlusCode(code, altitude, accuracy, altitudeAccuracy);
+}
+/** **/
+auto pluscode (string code, string file = __FILE__, size_t line = __LINE__) {
+  return pluscode(code, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, file, line);
 }
 /** **/
 struct CodeArea {
@@ -459,9 +481,11 @@ struct CodeArea {
     import coordinate: GEO, LAT, LON, geo;
     return geo(centerLatitude, centerLongitude, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, Datum.epsg(6326));
   }
-  LAT centerLatitude () {
-    return LAT((_min[0] + _max[0]) / 2.0); }    // The center latitude coordinate in decimal degrees.
-  LON centerLongitude () { return LON((_min[1] + _max[1]) / 2); }  // The center longitude coordinate in decimal degrees.
+  /** The center latitude coordinate in decimal degrees. **/
+  private LAT centerLatitude () {
+    return LAT((_min[0] + _max[0]) / 2.0); }
+  /** The center longitude coordinate in decimal degrees. **/
+  private LON centerLongitude () { return LON((_min[1] + _max[1]) / 2); }
 
   /** Check if this geo area contains the provided point **/
   bool contains (GEO point) {

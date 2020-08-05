@@ -20,6 +20,8 @@
 module coordinate.geohash;
 
 //import coordinate: GEO;
+import coordinate.utils: AltitudeType, AccuracyType;
+import coordinate.datums: Datum, defaultDatum;
 import coordinate.mathematics;
 debug import std.stdio;
 
@@ -29,6 +31,22 @@ struct GeoHash {
   import coordinate.utils;
   string geohash; ///
   mixin ExtendCoordinate; ///
+  mixin ExtendDatum; ///
+  this (string hash, AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum) {
+    this.geohash = hash;
+    this.altitude = altitude;
+    this.accuracy = accuracy;
+    this.altitudeAccuracy = altitudeAccuracy;
+    this.datum = datum;
+  }
+}
+GeoHash geohash (string hash,
+                 AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy,
+                 Datum datum) {
+  return GeoHash(hash, altitude, accuracy, altitudeAccuracy, datum);
+}
+GeoHash geohash (string hash) {
+  return geohash(hash, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, defaultDatum);
 }
 
 

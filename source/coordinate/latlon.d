@@ -88,6 +88,7 @@ struct GEO {
   LAT lat;                          /// [Latitude](#Lat)
   LON lon;                          /// [Longitude](#Lon)
   mixin ExtendCoordinate; ///
+  mixin ExtendDatum; ///
   /** **/
   this(LAT lat, LON lon, AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum) {
     this.lat = lat;

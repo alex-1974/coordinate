@@ -44,12 +44,13 @@ package const real falseNorthing = 10000e3; /// false northing
 
 /** **/
 struct UTM {
-  import coordinate.utils: ExtendCoordinate;
+  import coordinate.utils: ExtendCoordinate, ExtendDatum;
   char hemisphere; /// Hemisphere
   uint zone;       /// UTM zone
   UTMType easting;   /// Easting
   UTMType northing;  /// Northing
   mixin ExtendCoordinate; ///
+  mixin ExtendDatum; ///
   /** Constructor
 
     Params:
@@ -106,17 +107,20 @@ auto band (UTM utm) {
     altitude = Altitude in meters
     accuracy = Accuracy in meters
     altitudeAccuracy = Accuracy of altitude in meters
+    datum = Datum of projection
   Returns: UTM
 **/
 auto utm (alias string Type, T, U, V, X, Y) (T zone, U band, V easting, V northing,
-          X altitude, Y accuracy, Y altitudeAccuracy, string file = __FILE__, size_t line = __LINE__)
+          X altitude, Y accuracy, Y altitudeAccuracy, Datum datum, string file = __FILE__, size_t line = __LINE__)
           if (Type == "band" && isSomeChar!U && isNumeric!T && isNumeric!V && isNumeric!X && isNumeric!Y) {
   const char hemisphere = (band.toUpper >= 'N') ? 'N' : 'S';
-  return utm!"hemisphere"(zone, hemisphere, easting, northing, file, line);
+  return utm!"hemisphere"(zone, hemisphere, easting, northing,
+                          altitude, accuracy, altitudeAccuracy,
+                          datum, file, line);
 }
 /** ditto **/
 auto utm (alias string Type = "hemisphere", T, U, V, X, Y) (T zone, U hemisphere, V easting, V northing,
-          X altitude, Y accuracy, Y altitudeAccuracy, string file = __FILE__, size_t line = __LINE__)
+          X altitude, Y accuracy, Y altitudeAccuracy, Datum datum = defaultDatum, string file = __FILE__, size_t line = __LINE__)
           if (Type != "band" && isSomeChar!U && isNumeric!T && isNumeric!V && isNumeric!X && isNumeric!Y) {
   import std.exception: enforce;
   import std.math: isNaN;
@@ -126,7 +130,7 @@ auto utm (alias string Type = "hemisphere", T, U, V, X, Y) (T zone, U hemisphere
   enforce!UTMException(hemisphere.toUpper == 'N' || hemisphere.toUpper == 'S', "Wrong hemisphere [N, S]!", file, line);
   enforce!UTMException(0 <= zone && zone <= 60, "Zone number out of range [0..60]!", file, line);
   return UTM(cast(uint)zone, cast(char)hemisphere.toUpper, cast(UTMType)easting, cast(UTMType)northing,
-          cast(AltitudeType)altitude, cast(AccuracyType)accuracy, cast(AccuracyType)altitudeAccuracy);
+          cast(AltitudeType)altitude, cast(AccuracyType)accuracy, cast(AccuracyType)altitudeAccuracy, datum);
 }
 /** ditto **/
 auto utm (alias string Type, T, U, V) (T zone, U band, V easting, V northing, string file = __FILE__, size_t line = __LINE__)
@@ -139,7 +143,12 @@ auto utm (alias string Type, T, U, V) (T zone, U band, V easting, V northing, st
 auto utm (alias string Type = "hemisphere", T,U,V) (T zone, U hemisphere, V easting, V northing, string file = __FILE__, size_t line = __LINE__)
   if (Type != "band" && isSomeChar!U && isNumeric!T && isNumeric!V) {
   static if (Type != "hemisphere")  static assert(0, "Type not valid!");
-  return utm(zone, hemisphere, easting, northing, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, file, line);
+  return utm(zone, hemisphere, easting, northing, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, defaultDatum, file, line);
+}
+/** **/
+unittest {
+  auto london = utm(30, 'N', 699327.190, 5710155.503);         // call with hemisphere (default)
+  auto berlin = utm!"band"(33, 'U', 390676.879, 5819766.930);  // call with band
 }
 /**
 
@@ -150,27 +159,23 @@ auto utm (alias string Type) (string coord, string file = __FILE__, size_t line 
   if (Type == "band") {
   import std.uni: toUpper;
   import std.exception: enforce;
-  //enforce!UTMException(band.toUpper == 'N' || band.toUpper == 'S', "Wrong band!", file, line);
   uint zone; char band; UTMType easting, northing;
-  parseUTM(coord, zone, band, easting, northing, file, line);
+  coord.parseUTM(zone, band, easting, northing, file, line);
   const char hemisphere = (band.toUpper >= 'N') ? 'N' : 'S';
   return utm(zone, hemisphere, easting, northing, file, line);
-}
-/** **/
-unittest {
-  //writefln ("utm band %s", utm!"band"(15, 'S', 580817, 4251205));
 }
 /** ditto **/
 UTM utm (alias string Type = "hemisphere") (string coord, string file = __FILE__, size_t line = __LINE__)
   if (Type != "band") {
   static if (Type != "hemisphere")  static assert(0, "Type not valid!");
   uint zone; char hemisphere; UTMType easting, northing;
-  parseUTM(coord, zone, hemisphere, easting, northing, file, line);
-  return utm(zone, hemisphere, easting, northing);
+  coord.parseUTM(zone, hemisphere, easting, northing, file, line);
+  return utm(zone, hemisphere, easting, northing, file, line);
 }
 /** **/
 unittest {
-  writefln("utm %s", utm("32 N 461344 5481745"));
+  //auto capetown = utm!"band"("10T 384085.536 4480405.310");
+  auto sydney = utm("56S 335003.521 6252510.623");
 }
 
 /** **/
@@ -187,7 +192,7 @@ private void parseUTM (string coord, out uint zone, out char hemisphere, out UTM
   auto m = matchFirst(coord.strip, ct);
   if (m.empty) throw new UTMException("Failed to parse coordinates!", file, line);
   zone = m[1].to!uint;
-  hemisphere = m[2].asUpperCase.byCodeUnit.front.to!char; // hemisphere
+  hemisphere = m[2].asUpperCase.byCodeUnit.front.to!char; // hemisphere or band
   easting = m[3].strip.substitute(',', '.').to!UTMType; // easting
   northing = m[4].strip.substitute(',', '.').to!UTMType; // northing
 }
@@ -199,13 +204,14 @@ private void parseUTM (string coord, out uint zone, out char hemisphere, out UTM
   and northing inside this grid (in metres); e.g. ‘31U DQ 48251 11932’.
 **/
 struct MGRS {
-  import coordinate.utils: ExtendCoordinate;
+  import coordinate.utils: ExtendCoordinate, ExtendDatum;
   uint zone;      /// 6° UTM longitudinal zone (1..60 covering 180°W..180°E)
   char band;      /// 8° latitudinal band (C..X covering 80°S..84°N)
   char[2] grid;   /// 100km grid square ([east, north])
   UTMType easting;   /// Easting in metres within 100km grid square
   UTMType northing;  /// Northing in metres within 100km grid square
   mixin ExtendCoordinate; ///
+  mixin ExtendDatum; ///
   /** Constructor
 
     Params:
@@ -257,11 +263,13 @@ struct MGRS {
       datum = Datum of projection
 **/
 MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing,
-           AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum, string file = __FILE__, size_t line = __LINE__) {
+           AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy,
+           Datum datum, string file = __FILE__, size_t line = __LINE__) {
   return MGRS(zone, band, grid, easting, northing, altitude, accuracy, altitudeAccuracy, datum);
 }
 /** ditto **/
-MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing, string file = __FILE__, size_t line = __LINE__) {
+MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing,
+           string file = __FILE__, size_t line = __LINE__) {
   return mgrs(zone, band, grid, easting, northing, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, Datum.wgs84);
 }
 /** **/
