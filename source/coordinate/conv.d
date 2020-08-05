@@ -21,11 +21,10 @@ debug import std.stdio;
 GEO toLatLon (UTM utm) {
   import std.math;
   import coordinate.mathematics;
-
+  import coordinate.utm: falseEasting, falseNorthing;
   const real a = utm.datum.ellipsoid.a;
   const real f = utm.datum.ellipsoid.f;
-  //writefln ("utm datum %s", utm.datum);
-  //writefln("utm ellipsoid %s", utm.datum.ellipsoid);
+
   const real k0 = 0.9996;
 
   const real x = utm.easting - falseEasting; // make x ± relative to central meridian
@@ -272,6 +271,7 @@ UTM toUTM (MGRS mgrs) {
   import std.uni: toUpper;
   import std.string: indexOf;
   import std.math: floor;
+  import coordinate.utm: e100kLetters, n100kLetters;
   const char hemisphere = (mgrs.band.toUpper >= 'N') ? 'N' : 'S';
   // get easting specified by e100k (note +1 because eastings start at 166e3 due to 500km false origin)
   const size_t col = e100kLetters[(mgrs.zone-1)%3].indexOf(mgrs.grid[0]) + 1;
@@ -299,7 +299,7 @@ unittest {
 /** **/
 MGRS toMGRS (UTM utm) {
   import std.math;
-  //import std.string: indexOf;
+  import coordinate.utm: e100kLetters, n100kLetters, mgrsBands;
   // convert UTM to lat/long to get latitude to determine band
   GEO latlong = utm.toLatLon();
   // grid zones are 8° tall, 0°N is 10th band

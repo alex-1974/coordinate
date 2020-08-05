@@ -17,4 +17,16 @@ struct ECEF {
   ECEFType x;
   ECEFType y;
   ECEFType z;
+  /** Constructor
+
+    Params:
+      x = x
+      y = y
+      z = z
+  **/
+  this (ECEFType x, ECEFType y, ECEFType z) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
 }

@@ -32,11 +32,16 @@ struct GeoHash {
 }
 
 
-const char[] base32 = "0123456789bcdefghjkmnpqrstuvwxyz"; // (geohash-specific) Base32 map
+package const char[] base32 = "0123456789bcdefghjkmnpqrstuvwxyz"; // (geohash-specific) Base32 map
 
 /** Encodes latitude/longitude to geohash.
 
   Either to specified precision or to automatically evaluated precision.
+  Params:
+    lat = Latitude
+    lon = Longitude
+    precision = Precision
+  Returns: Returns a geohash string
 **/
 string encode (real lat, real lon, size_t precision = 0) {
   if (precision == 0) {
@@ -92,6 +97,7 @@ string encode (real lat, real lon, size_t precision = 0) {
   }
   return geohash.idup;
 }
+/** **/
 unittest {
   writefln ("encode geohash %s", encode(52.205, 0.119));
 }

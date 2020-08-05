@@ -1,4 +1,26 @@
-/** Defines an Universal-Transverse Mercator (*UTM*) coordinate type **/
+/** Defines an Universal-Transverse Mercator (*UTM*) coordinate type
+
+  Universal Transverse Mercator is a projected coordinate system,
+  which is a type of plane rectangular coordinate system (also called Cartesian coordinate system).
+
+  ## Features ##
+
+  ### Form ###
+    - Conformal
+    - Accurate reproduction of small shapes
+    - Minimal distortion of larger shapes within the zone
+  ### Area ###
+  Minimal distortion within each UTM zone
+  ### Direction ###
+  Local angles are real.
+  ### Distance ###
+  The scale is constant along the mean meridian and has a scale factor of 0.9996
+  to reduce lateral distortion within each zone.
+  With this scale factor, lines 180 km east and west and parallel to the mid-meridian
+  have a scale factor of 1.
+
+
+*/
 module coordinate.utm;
 
 import std.traits: isSomeChar, isNumeric, isFloatingPoint;
@@ -8,17 +30,17 @@ import coordinate.exceptions: UTMException, MGRSException;
 debug import std.stdio;
 
 /** Latitude bands C..X (excluding I and O) 8° each, covering 80°S to 84°N **/
-const char[21] mgrsBands = "CDEFGHJKLMNPQRSTUVWXX".dup; // X is repeated for 80-84°N
+package const char[21] mgrsBands = "CDEFGHJKLMNPQRSTUVWXX".dup; // X is repeated for 80-84°N
 
 /** 100km grid square column A..Z (excluding I and O) letters repeat every third zone **/
-const char[][3] e100kLetters = [ "ABCDEFGH".dup, "JKLMNPQR".dup, "STUVWXYZ".dup ];
+package const char[][3] e100kLetters = [ "ABCDEFGH".dup, "JKLMNPQR".dup, "STUVWXYZ".dup ];
 
 /** 100km grid square row A..V (excluding I and O) letters repeat every other zone **/
-const char[][2] n100kLetters = [ "ABCDEFGHJKLMNPQRSTUV".dup, "FGHJKLMNPQRSTUVABCDE".dup ];
+package const char[][2] n100kLetters = [ "ABCDEFGHJKLMNPQRSTUV".dup, "FGHJKLMNPQRSTUVABCDE".dup ];
 
 
-const real falseEasting = 500e3;    /// false easting
-const real falseNorthing = 10000e3; /// false northing
+package const real falseEasting = 500e3;    /// false easting
+package const real falseNorthing = 10000e3; /// false northing
 
 /** **/
 struct UTM {
@@ -28,11 +50,23 @@ struct UTM {
   UTMType easting;   /// Easting
   UTMType northing;  /// Northing
   mixin ExtendCoordinate; ///
+  /** Constructor
+
+    Params:
+      zone = UTM zone
+      hemisphere = Hemisphere (N or S)
+      easting = East of in meters
+      northing = North of in meters
+      altitude = Altitude in meters
+      accuracy = Accuracy in meters
+      altitudeAccuracy = Accuracy of altitude in meters
+      datum = Datum of projection
+  **/
   this (uint zone, char hemisphere, UTMType easting, UTMType northing, AltitudeType altitude, Datum datum = defaultDatum) {
     import std.uni: toUpper;
     this(zone, hemisphere, easting, northing, altitude, AccuracyType.nan, AccuracyType.nan, datum);
   }
-  /** **/
+  /** ditto **/
   this (uint zone, char hemisphere, UTMType easting, UTMType northing,
         AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum = defaultDatum) {
     import std.uni: toUpper;
@@ -58,17 +92,29 @@ struct UTM {
 }
 /** **/
 auto band (UTM utm) {
-  // TODO: compute and return latitude band
+  /// TODO: compute and return latitude band
 }
 
-/** **/
+/** Low-level api
+
+  Params:
+    zone = UTM zone
+    band = UTM band
+    hemisphere = Hemisphere (N or S)
+    easting = East of in meters
+    northing = North of in meters
+    altitude = Altitude in meters
+    accuracy = Accuracy in meters
+    altitudeAccuracy = Accuracy of altitude in meters
+  Returns: UTM
+**/
 auto utm (alias string Type, T, U, V, X, Y) (T zone, U band, V easting, V northing,
           X altitude, Y accuracy, Y altitudeAccuracy, string file = __FILE__, size_t line = __LINE__)
           if (Type == "band" && isSomeChar!U && isNumeric!T && isNumeric!V && isNumeric!X && isNumeric!Y) {
   const char hemisphere = (band.toUpper >= 'N') ? 'N' : 'S';
   return utm!"hemisphere"(zone, hemisphere, easting, northing, file, line);
 }
-/** **/
+/** ditto **/
 auto utm (alias string Type = "hemisphere", T, U, V, X, Y) (T zone, U hemisphere, V easting, V northing,
           X altitude, Y accuracy, Y altitudeAccuracy, string file = __FILE__, size_t line = __LINE__)
           if (Type != "band" && isSomeChar!U && isNumeric!T && isNumeric!V && isNumeric!X && isNumeric!Y) {
@@ -82,7 +128,7 @@ auto utm (alias string Type = "hemisphere", T, U, V, X, Y) (T zone, U hemisphere
   return UTM(cast(uint)zone, cast(char)hemisphere.toUpper, cast(UTMType)easting, cast(UTMType)northing,
           cast(AltitudeType)altitude, cast(AccuracyType)accuracy, cast(AccuracyType)altitudeAccuracy);
 }
-/** **/
+/** ditto **/
 auto utm (alias string Type, T, U, V) (T zone, U band, V easting, V northing, string file = __FILE__, size_t line = __LINE__)
   if (Type == "band" && isSomeChar!U && isNumeric!T && isNumeric!V) {
   import std.uni: toUpper;
@@ -95,7 +141,11 @@ auto utm (alias string Type = "hemisphere", T,U,V) (T zone, U hemisphere, V east
   static if (Type != "hemisphere")  static assert(0, "Type not valid!");
   return utm(zone, hemisphere, easting, northing, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, file, line);
 }
-/** **/
+/**
+
+    Params:
+      coord = UTM coordinates
+**/
 auto utm (alias string Type) (string coord, string file = __FILE__, size_t line = __LINE__)
   if (Type == "band") {
   import std.uni: toUpper;
@@ -122,6 +172,8 @@ UTM utm (alias string Type = "hemisphere") (string coord, string file = __FILE__
 unittest {
   writefln("utm %s", utm("32 N 461344 5481745"));
 }
+
+/** **/
 private void parseUTM (string coord, out uint zone, out char hemisphere, out UTMType easting, out UTMType northing, string file = __FILE__, size_t line = __LINE__) {
   import std.regex: ctRegex, matchFirst;
   import std.string: strip;
@@ -139,6 +191,7 @@ private void parseUTM (string coord, out uint zone, out char hemisphere, out UTM
   easting = m[3].strip.substitute(',', '.').to!UTMType; // easting
   northing = m[4].strip.substitute(',', '.').to!UTMType; // northing
 }
+
 /** Military Grid Reference System (MGRS/NATO or UTMRef)
 
   MGRS grid references provides geocoordinate references, covering the entire globe, based on UTM projections.
@@ -153,6 +206,19 @@ struct MGRS {
   UTMType easting;   /// Easting in metres within 100km grid square
   UTMType northing;  /// Northing in metres within 100km grid square
   mixin ExtendCoordinate; ///
+  /** Constructor
+
+    Params:
+      zone = Longitudinal zone (1..60)
+      band = Latidudinal band (C..X)
+      grid = MGRS grid [east, north]
+      easting = East of in meters
+      northing = North of in meters
+      altitude = Altitude in meters
+      accuracy = Accuracy in meters
+      altitudeAccuracy = Accuracy of altitude in meters
+      datum = Datum of projection
+  **/
   this(uint zone, char band, string grid, UTMType easting, UTMType northing, AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum = defaultDatum) {
     import std.uni: toUpper;
     this.zone = zone;
@@ -177,12 +243,24 @@ struct MGRS {
     //assert (mgrsBands.canFind(band), "Latitude band out of range!");
   }
 }
-/** **/
+/**
+
+    Params:
+      zone = Longitudinal zone (1..60)
+      band = Latidudinal band (C..X)
+      grid = MGRS grid [east, north]
+      easting = East of in meters
+      northing = North of in meters
+      altitude = Altitude in meters
+      accuracy = Accuracy in meters
+      altitudeAccuracy = Accuracy of altitude in meters
+      datum = Datum of projection
+**/
 MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing,
            AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum, string file = __FILE__, size_t line = __LINE__) {
   return MGRS(zone, band, grid, easting, northing, altitude, accuracy, altitudeAccuracy, datum);
 }
-/** **/
+/** ditto **/
 MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing, string file = __FILE__, size_t line = __LINE__) {
   return mgrs(zone, band, grid, easting, northing, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, Datum.wgs84);
 }
@@ -190,7 +268,11 @@ MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing,
 unittest {
   writefln ("mgrs %s", mgrs(15, 'S', "WC", 80817, 51205));
 }
-/** **/
+/**
+
+    Params:
+      coord = MGRS coordinates
+**/
 MGRS mgrs (string coord, string file = __FILE__, size_t line = __LINE__) {
   import std.regex: ctRegex, matchFirst;
   import std.string: strip;

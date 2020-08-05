@@ -260,17 +260,16 @@ shared static this() {
 
   Throws: If number of fields differ.
 **/
-private auto parseCSV (string csv) {
+private auto parseCSV (string csv) pure @safe {
   enum char commaChar = 0x002c; // ,
   enum char eolChar = 0x000a;   // newline
   return parseCSV(csv, commaChar, eolChar);
 }
 /** ditto **/
-private auto parseCSV (string csv, char fieldSeparator, char lineSeparator) {
-  import std.string: strip, stripLeft, stripRight, splitLines;
-  import std.algorithm: map, filter, splitter, canFind, countUntil, substitute;
-  import std.array: empty, split;
-  import std.range;
+private auto parseCSV (string csv, char fieldSeparator, char lineSeparator) pure @safe {
+  import std.string: strip;
+  import std.algorithm: map, filter, splitter;
+  import std.range: empty;
   enum char numberChar = 0x0023;      // #
   auto lines = csv.splitter(lineSeparator)  // split lines
                   .map!(a => a.strip)
@@ -288,47 +287,34 @@ unittest{
   assert(csv.parseCSV.array == [["steven", "15", "male"],["maria", "20", "female"],["snoopy","15",""]]);
 }
 /** Parses a line of csv fields **/
-private string[] parseCSVImpl (string csv, char fieldSeparator, string[] fields = []) {
-  import std.range;
-  import std.algorithm;
-  import std.conv;
-  import std.exception;
-  import std.string;
+private string[] parseCSVImpl (string csv, char fieldSeparator, string[] fields = []) pure @safe {
+  import std.range: front, empty, array;
+  import std.algorithm: canFind, findSplit, findSkip;
+  import std.conv: to;
+  import std.string: stripLeft, strip;
   enum dchar quotationChar = 0x0022;   // "
   enum dchar apostropheChar = 0x0027;  // '
   enum dchar[] quoteChars = [apostropheChar, quotationChar];
   string[3] split;
   csv = csv.stripLeft;
-  //writefln ("csv <%s>", csv);
   // if field is quoted
   if (csv.empty) return fields ~ "";
   if (quoteChars.canFind(csv.front)) {
-    //writefln ("quoted field");
     // s[0]: before needle s[1]: needle s[2]: after needle
     split = csv[1..$].findSplit(csv.front.to!string).array;
     // is this the last field? if so we don't find another field separator
     if (split[2].findSkip(fieldSeparator.to!string) == false) {
-      //writefln ("end of fields");
       return fields ~ split[0];
-    } else {
-      //writefln ("next char <%s>", split[2].front);
     }
     // unquoted field
   } else {
-    //writefln("unquoted field");
     split = csv.findSplit(fieldSeparator.to!string).array;
     split[2] = split[2].stripLeft;
-    //writefln ("split 0: <%s> 1: <%s>", split[0], split[1]);
     // is this the last field? if so we don't find another field separator
     if (split[1].empty) {
-      //writefln ("end of fields");
       return fields ~ split[0];
     } else if (split[2].empty) {
-      //writefln ("trailing comma");
       split[2] = "";
-    } else {
-      //writefln ("not the last field");
-      //if (!split[2].empty) writefln ("next char <%s>", split[2].front);
     }
     split[0] = split[0].strip;
   }
