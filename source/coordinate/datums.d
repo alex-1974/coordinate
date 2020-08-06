@@ -94,9 +94,13 @@ struct Ellipsoid {
 }
 /** **/
 unittest {
-  writefln("wgs84 %s", Ellipsoid.epsg(7030));
-  writefln("wgs84 %s", Ellipsoid.name("wgs84"));
-  writefln("wgs84 %s", Ellipsoid.wgs84);
+  // Get ellipsoid
+  auto wgs84 = Ellipsoid.epsg(7030);
+  auto grs1967 = Ellipsoid.name("grs1967");
+  auto clarke1880 = Ellipsoid.clarke1880;
+  // Get details
+  auto name = wgs84.name;
+  auto a = wgs84.a;
 }
 /** Datums with associated ellipsoid
  **/
@@ -182,15 +186,15 @@ const Datum defaultDatum;
 **/
 long ellipsoidLookUp (string shortname, string file = __FILE__, size_t line = __LINE__) {
   import std.exception;
-  long* epsg = (shortname in ellipsoidLUT);
-  enforce!DatumException(epsg !is null, "Name of ellipsoid not found in lookup table!", file, line);
-  return *epsg;
+  //long* epsg = (shortname in ellipsoidLUT);
+  enforce!DatumException(shortname in ellipsoidLUT, "Name of ellipsoid not found in lookup table!", file, line);
+  return ellipsoidLUT[shortname];
 }
 
 immutable Ellipsoid[long] geoEllipsoid;  /// Ellipsoids indexed by epsg
 immutable Datum[long] geoDatum;          /// Datums indexed by epsg
-private long[string] ellipsoidLUT;      /// Ellipsoid epsg indexed by name
-private long[string] datumLUT;          /// Datum epsg indexed by name
+immutable long[string] ellipsoidLUT;      /// Ellipsoid epsg indexed by name
+immutable long[string] datumLUT;          /// Datum epsg indexed by name
 
 // Read csv files at module start
 shared static this() {
@@ -206,7 +210,7 @@ shared static this() {
   // Ellipsoid
   Ellipsoid[long] tmpEllipsoid;
   foreach (eLines;import("ellipsoid.csv").parseCSV) {
-    try {
+    try{
       auto fields = eLines.convertCSV!(long, string, string, real, real, real, string);
       if (fields[0] <= 0) fields[0] = idxEllipsoid--;
       ellipsoidLUT[fields[1]] = fields[0];
@@ -352,6 +356,13 @@ unittest {
   writefln ("ct csv %s", r);
 }
 **/
+/** Convert csv line string to types
+
+  Params:
+    fields = csv line as field-strings
+  Returns: Tuple
+  Throws: Throws DatumException if conversion fails.
+**/
 private auto convertCSV (T...) (string[] fields) {
   import std.typecons;
   import std.conv;
@@ -359,9 +370,8 @@ private auto convertCSV (T...) (string[] fields) {
   import std.exception: enforce;
   alias Line = Tuple!T;
   Line line;
-  //writefln("convertCSV %s", csv);
   if (!fields.length) return line;
-  enforce!DatumException(T.length == fields.length, "Number of types doesn't match number of fields! " ~ fields.join(", "));
+  enforce!DatumException(T.length == fields.length, "Number of types doesn't match number of fields in line " ~ fields.join(", "));
   static foreach (i; 0..T.length) {
     try {
       if (fields[i].empty) line[i] = T[i].init;

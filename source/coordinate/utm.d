@@ -174,7 +174,7 @@ UTM utm (alias string Type = "hemisphere") (string coord, string file = __FILE__
 }
 /** **/
 unittest {
-  //auto capetown = utm!"band"("10T 384085.536 4480405.310");
+  auto capetown = utm!"band"("10T 384085.536 4480405.310");
   auto sydney = utm("56S 335003.521 6252510.623");
 }
 
@@ -187,7 +187,7 @@ private void parseUTM (string coord, out uint zone, out char hemisphere, out UTM
   import std.uni: asUpperCase;
   import std.utf: byCodeUnit;
   import std.range;
-  auto ct = ctRegex!(`([\d]{1,2})[\s]*([ns]?)[\s]*([\d]+(?:[.,]?[\d]+))[\s]([\d]+(?:[.,]?[\d]+))`, "i");
+  auto ct = ctRegex!(`([\d]{1,2})[\s]*([c-x]{1,2}?)[\s]*([\d]+(?:[.,]?[\d]+))[\s]([\d]+(?:[.,]?[\d]+))`, "i");
   // m[1]: zone, m[2]: hemisphere, m[3]: easting, m[4]: northing
   auto m = matchFirst(coord.strip, ct);
   if (m.empty) throw new UTMException("Failed to parse coordinates!", file, line);
@@ -290,7 +290,7 @@ MGRS mgrs (string coord, string file = __FILE__, size_t line = __LINE__) {
   import std.utf: byCodeUnit;
   import std.range;
   // m[1]: zone, m[2]: band, m[3]: grid, m[4]: easting and northing
-  auto ct = ctRegex!(`([\d]{1,2})[\s]*([a-z])[\s]*([a-z]{2})[\s]*([\d,.\s]*)`, "i");
+  auto ct = ctRegex!(`([\d]{1,2})[\s]*([c-x])[\s]*([a-z]{2})[\s]*([\d,.\s]*)`, "i");
   auto m = matchFirst(coord.strip, ct);
   if (m.empty) throw new MGRSException("Failed to parse coordinates!", file, line);
   const uint zone = m[1].to!uint;

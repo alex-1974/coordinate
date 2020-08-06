@@ -347,7 +347,7 @@ GEO toLatLon (MGRS mgrs) {
 GEO toLatLon (GeoHash geohash) {
   import coordinate.geohash: decode;
   import coordinate.latlon: LAT, LON;
-  auto coord = decode(geohash.geohash);
+  auto coord = decode(geohash.hash);
   return GEO(LAT(coord[0]), LON(coord[1]), geohash.altitude, geohash.accuracy, geohash.altitudeAccuracy, geohash.datum);
 }
 /** **/

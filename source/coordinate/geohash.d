@@ -23,17 +23,19 @@ module coordinate.geohash;
 import coordinate.utils: AltitudeType, AccuracyType;
 import coordinate.datums: Datum, defaultDatum;
 import coordinate.mathematics;
+import coordinate.exceptions: GeohashException;
 debug import std.stdio;
 
 
 /** **/
 struct GeoHash {
   import coordinate.utils;
-  string geohash; ///
+  string hash; ///
+  alias hash this;
   mixin ExtendCoordinate; ///
   mixin ExtendDatum; ///
-  this (string hash, AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum) {
-    this.geohash = hash;
+  this (string geohash, AltitudeType altitude, AccuracyType accuracy, AccuracyType altitudeAccuracy, Datum datum) {
+    this.hash = geohash;
     this.altitude = altitude;
     this.accuracy = accuracy;
     this.altitudeAccuracy = altitudeAccuracy;
@@ -48,7 +50,10 @@ GeoHash geohash (string hash,
 GeoHash geohash (string hash) {
   return geohash(hash, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, defaultDatum);
 }
-
+/** **/
+unittest {
+  auto hash = geohash("u4pruydqqvj"); // 57.64911°,10.40744°
+}
 
 package const char[] base32 = "0123456789bcdefghjkmnpqrstuvwxyz"; // (geohash-specific) Base32 map
 
@@ -178,4 +183,80 @@ private auto bounds (string geohash) {
   }
   const real[4] bounds = [latMin, lonMin, latMax, lonMax];
   return bounds;
+}
+
+/** Determines adjacent cell in given direction.
+
+  Params:
+    geohash = Cell to which adjacent cell is required.
+    direction = Direction from geohash (N/S/E/W).
+  Returns: Geocode of adjacent cell.
+  Throws:  Throws GeohashException at invalid geohash.
+**/
+GeoHash adjacent(GeoHash hash, char direction) {
+  return geohash(adjacent(hash.hash, direction));
+}
+string adjacent(string geohash, char direction) {
+  // based on github.com/davetroy/geohash-js
+
+  import std.algorithm;
+  import std.uni;
+  string hash = geohash.toLower();
+  direction = cast(char)direction.toLower();
+
+  if (hash.length == 0) throw new GeohashException("Invalid geohash");
+  if (!['n','s','e','w'].canFind(direction)) throw new GeohashException("Invalid direction");
+
+  const string[][char] neighbour = [
+      'n': [ "p0r21436x8zb9dcf5h7kjnmqesgutwvy", "bc01fg45238967deuvhjyznpkmstqrwx" ],
+      's': [ "14365h7k9dcfesgujnmqp0r2twvyx8zb", "238967debc01fg45kmstqrwxuvhjyznp" ],
+      'e': [ "bc01fg45238967deuvhjyznpkmstqrwx", "p0r21436x8zb9dcf5h7kjnmqesgutwvy" ],
+      'w': [ "238967debc01fg45kmstqrwxuvhjyznp", "14365h7k9dcfesgujnmqp0r2twvyx8zb" ],
+  ];
+  const string[][char] border = [
+      'n': [ "prxz",     "bcfguvyz" ],
+      's': [ "028b",     "0145hjnp" ],
+      'e': [ "bcfguvyz", "prxz"     ],
+      'w': [ "0145hjnp", "028b"     ],
+  ];
+
+  const char lastCh = hash[$-1];    // last character of hash
+  string parent = hash[0..$-1]; // hash without last character
+  writefln ("lastChar %s", lastCh);
+  writefln("parent %s", parent);
+  const size_t type = hash.length % 2;
+
+  // check for edge-cases which don't share common prefix
+  if (border[direction][type].countUntil(lastCh) != -1 && parent != "") {
+      parent = adjacent(parent, direction);
+  }
+
+  // append letter for direction to parent
+  return parent ~ base32[neighbour[direction][type].countUntil(lastCh)];
+}
+unittest {
+  auto hash = geohash("gbsuv");
+  assert(adjacent(hash, 'n') == "gbsvj"); // gbsvj
+}
+/** Returns all 8 adjacent cells to specified geohash.
+
+    Params:
+      geohash = Geohash neighbours are required of.
+    Returns {{n,ne,e,se,s,sw,w,nw: string}}
+**/
+
+auto neighbours(string geohash) {
+   return [
+       "n":  geohash.adjacent('n'),
+       "ne": geohash.adjacent('n').adjacent('e'),
+       "e":  geohash.adjacent('e'),
+       "se": geohash.adjacent('s').adjacent('e'),
+       "s":  geohash.adjacent('s'),
+       "sw": geohash.adjacent('s').adjacent('w'),
+       "w":  geohash.adjacent('w'),
+       "nw": geohash.adjacent('n').adjacent('w'),
+   ];
+}
+unittest {
+  assert(neighbours("gbsuv") == ["se":"gbsuw", "n":"gbsvj", "s":"gbsut", "nw":"gbsvh", "ne":"gbsvn", "w":"gbsuu", "e":"gbsuy", "sw":"gbsus"]);
 }
