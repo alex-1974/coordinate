@@ -222,8 +222,6 @@ string adjacent(string geohash, char direction) {
 
   const char lastCh = hash[$-1];    // last character of hash
   string parent = hash[0..$-1]; // hash without last character
-  writefln ("lastChar %s", lastCh);
-  writefln("parent %s", parent);
   const size_t type = hash.length % 2;
 
   // check for edge-cases which don't share common prefix
