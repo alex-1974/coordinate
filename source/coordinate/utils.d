@@ -15,7 +15,7 @@ mixin template ExtendDatum () {
 }
 
 mixin template ExtendCoordinate () {
-  AltitudeType altitude = AltitudeType.nan;         /// Altitude in meters
-  AccuracyType accuracy = AccuracyType.nan;         /// Accuracy in meters
-  AccuracyType altitudeAccuracy = AccuracyType.nan; /// Altitude accuracy in meters
+  AltitudeType altitude = AltitudeType.init;         /// Altitude in meters
+  AccuracyType accuracy = AccuracyType.init;         /// Accuracy in meters
+  AccuracyType altitudeAccuracy = AccuracyType.init; /// Altitude accuracy in meters
 }

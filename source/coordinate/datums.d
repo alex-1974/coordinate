@@ -135,8 +135,7 @@ struct Datum {
   }
   /** Get datum by shortname (ufcs)
 
-      Params:
-        s = Short name of datum
+
       Returns: Datum
       Throws: Throws DatumException if datum was not found.
   **/
@@ -147,6 +146,8 @@ struct Datum {
 
       Params:
         shortname = Short name of datum
+        file = File
+        line = line
       Returns: Datum
       Throws: Throws DatumException if datum was not found.
   **/
@@ -159,6 +160,8 @@ struct Datum {
 
     Params:
       epsg = The epsg code of the datum
+      file = File
+      line = line
     Returns: Datum
     Throws: Throws DatumException if datum was not found.
   **/
@@ -181,6 +184,8 @@ const Datum defaultDatum;
 
     Params:
       shortname = Short name of ellipsoid
+      file = File
+      line = Line 
     Returns: The epsg code of the ellipsoid
     Throws: Throws DatumException if name was not found.
 **/

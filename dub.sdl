@@ -1,12 +1,13 @@
 name "coordinate"
-description "A minimal D application."
+description "Geographic types library."
 authors "Alexander Leisser"
 copyright "Copyright © 2020, Alexander Leisser"
 license "proprietary"
-dependency "mathematics" version="*"
-dependency "mir" version="~>3.2"
-dflags "-J./source/coordinate/data"
 buildType "docs" {
   buildOptions "syntaxOnly"
   dflags "-c" "-Dddocs" "-preview=markdown"
 }
+
+dependency "mathematics" version="*"
+dependency "mir" version="~>3.2"
+dflags "-J$PACKAGE_DIR/source/coordinate/data"

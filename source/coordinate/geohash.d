@@ -48,7 +48,7 @@ GeoHash geohash (string hash,
   return GeoHash(hash, altitude, accuracy, altitudeAccuracy, datum);
 }
 GeoHash geohash (string hash) {
-  return geohash(hash, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, defaultDatum);
+  return geohash(hash, AltitudeType.init, AccuracyType.init, AccuracyType.nan, defaultDatum);
 }
 /** **/
 unittest {
@@ -188,7 +188,7 @@ private auto bounds (string geohash) {
 /** Determines adjacent cell in given direction.
 
   Params:
-    geohash = Cell to which adjacent cell is required.
+    hash = Cell to which adjacent cell is required.
     direction = Direction from geohash (N/S/E/W).
   Returns: Geocode of adjacent cell.
   Throws:  Throws GeohashException at invalid geohash.

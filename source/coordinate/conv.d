@@ -1,9 +1,13 @@
 /** Conversions between geographic coordinate systems **/
 module coordinate.conv;
 
-public import coordinate: UTM, MGRS, GEO, ECEF, GeoHash, PlusCode, CodeArea;
-public import coordinate: utm, mgrs, geo, geohash, pluscode;
-import coordinate.utils: AltitudeType, AccuracyType;
+import mir.math.common: fastmath; // compiles both for dmd and ldc
+public import coordinate.latlon: GEO, geo;
+public import coordinate.utm: UTM, utm, MGRS, mgrs;
+public import coordinate.ecef: ECEF, ecef;
+public import coordinate.geohash: GeoHash, geohash;
+public import coordinate.openlocationcode: PlusCode, CodeArea, pluscode;
+import coordinate.utils: AltitudeType, AccuracyType, UTMType;
 import coordinate.datums: Datum, defaultDatum;
 debug import std.stdio;
 
@@ -20,31 +24,36 @@ debug import std.stdio;
   See: https://www.movable-type.co.uk/scripts/latlong-utm-mgrs.html
 **/
 GEO toLatLon (UTM utm) {
-  import std.math;
+  import coordinate.latlon: LAT, LON;
+  real[2] c = utmToLatLon(utm.hemisphere, utm.zone, utm.easting, utm.northing, utm.datum.ellipsoid.a, utm.datum.ellipsoid.f);
+  return GEO (LAT(c[0]), LON(c[1]), utm.altitude, utm.accuracy, utm.altitudeAccuracy, utm.datum);
+}
+@fastmath auto utmToLatLon (const char hemisphere, const uint zone, const UTMType easting, const UTMType northing, const real a, const real f) {
+  import std.math: sinh, cosh, tanh, atan, atanh, atan2, abs, tan;
+  import mir.math;
   import coordinate.mathematics;
   import coordinate.utm: falseEasting, falseNorthing;
-  import coordinate.latlon: LAT, LON;
-  const real a = utm.datum.ellipsoid.a;
-  const real f = utm.datum.ellipsoid.f;
+  //const real a = utm.datum.ellipsoid.a;
+  //const real f = utm.datum.ellipsoid.f;
 
-  const real k0 = 0.9996;
+  enum real k0 = 0.9996;
 
-  const real x = utm.easting - falseEasting; // make x ± relative to central meridian
-  const real y = (utm.hemisphere == 's')? utm.northing - falseNorthing:utm.northing;  // make y ± relative to equator
+  immutable real x = easting - falseEasting; // make x ± relative to central meridian
+  immutable real y = (hemisphere == 's')? northing - falseNorthing:northing;  // make y ± relative to equator
 
   // ---- from Karney 2011 Eq 15-22, 36:
-  const real e = (f*(2-f)).sqrt;  // eccentricity
-  const real n = f/(2-f);         // 3rd flattening;
-  const real n2 = n*n; const real n3 = n*n2;
-  const real n4 = n*n3; const real n5 = n*n4; const real n6 = n*n5;
+  immutable real e = (f*(2-f)).sqrt;  // eccentricity
+  immutable real n = f/(2-f);         // 3rd flattening;
+  immutable real n2 = n*n; immutable real n3 = n*n2;
+  immutable real n4 = n*n3; immutable real n5 = n*n4; immutable real n6 = n*n5;
 
-  const real A = a/(1+n) * (1 + 1/4*n2 + 1/64*n4 + 1/256*n6); // 2πA is the circumference of a meridian
+  immutable real A = a/(1+n) * (1 + 1/4*n2 + 1/64*n4 + 1/256*n6); // 2πA is the circumference of a meridian
 
-  const real eta = x / (k0*A);  // η
-  const real zeta = y / (k0*A); // ξ
+  immutable real eta = x / (k0*A);  // η
+  immutable real zeta = y / (k0*A); // ξ
 
   // note β is one-based array (6th order Krüger expressions)
-  const real[7] beta = [ 0.0,
+  immutable real[7] beta = [ 0.0,
                  1/2*n - 2/3*n2 + 37/96*n3 -    1/360*n4 -   81/512*n5 +    96199/604800*n6,
                         1/48*n2 +  1/15*n3 - 437/1440*n4 +   46/105*n5 - 1118711/3870720*n6,
                                  17/480*n3 -   37/840*n4 - 209/4480*n5 +      5569/90720*n6,
@@ -60,23 +69,23 @@ GEO toLatLon (UTM utm) {
   for (uint j = 1; j <= 6; j++) {
     eta_dot -= beta[j] * (2*j*zeta).cos * (2*j*eta).sinh;
   }
-  const real sinheta_dot = eta_dot.sinh;
-  const real szeta_dot = zeta_dot.sin; const real czeta_dot = zeta_dot.cos;
+  immutable real sinheta_dot = eta_dot.sinh;
+  immutable real szeta_dot = zeta_dot.sin; const real czeta_dot = zeta_dot.cos;
 
-  const tau_dot = szeta_dot / (sinheta_dot*sinheta_dot + czeta_dot*czeta_dot).sqrt;
+  immutable tau_dot = szeta_dot / (sinheta_dot*sinheta_dot + czeta_dot*czeta_dot).sqrt;
 
   real dtau_i = 0.0;
   real tau_i = tau_dot;
   do {
-    const real sigma_i = (e*atanh(e*tau_i/(1+tau_i*tau_i).sqrt)).sinh;
-    const real tau_i_dot = tau_i * (1+sigma_i*sigma_i).sqrt - sigma_i * (1+tau_i*tau_i).sqrt;
+    immutable real sigma_i = (e*atanh(e*tau_i/(1+tau_i*tau_i).sqrt)).sinh;
+    immutable real tau_i_dot = tau_i * (1+sigma_i*sigma_i).sqrt - sigma_i * (1+tau_i*tau_i).sqrt;
     dtau_i = (tau_dot - tau_i_dot)/(1+tau_i_dot*tau_i_dot).sqrt
             * (1 + (1-e*e)*tau_i_dot*tau_i_dot) / ((1-e*e)*(1+tau_i_dot*tau_i_dot).sqrt);
     tau_i += dtau_i;
-  } while (dtau_i.abs > 1e-12);
+  } while (dtau_i.fabs > 1e-12);
   // note relatively large convergence test as δτi toggles on ±1.12e-16 for eg 31 N 400000 5000000
-  const real tau = tau_i;
-  const real phi = tau.atan;
+  immutable real tau = tau_i;
+  immutable real phi = tau.atan;
   real lambda = atan2(sinheta_dot, czeta_dot);
 
   // ---- convergence: Karney 2011 Eq 26, 27
@@ -85,27 +94,28 @@ GEO toLatLon (UTM utm) {
   real q = 0;
   for (int j = 1; j <= 6; j++) q += 2*j*beta[j] * (2*j*zeta).sin * (2*j*eta).sinh;
 
-  const real gamma_dot = atan(zeta_dot.tan*eta_dot.tanh);
-  const real gamma_dotdot = atan2(q,p);
+  immutable real gamma_dot = atan(zeta_dot.tan*eta_dot.tanh);
+  immutable real gamma_dotdot = atan2(q,p);
 
-  const real gamma = gamma_dot + gamma_dotdot;
+  immutable real gamma = gamma_dot + gamma_dotdot;
 
   // ---- scale: Karney 2011 Eq 28
-  const real sphi = phi.sin;
-  const real k1 = (1 - e*e*sphi*sphi).sqrt * (1 + tau*tau).sqrt * (sinheta_dot*sinheta_dot + czeta_dot*czeta_dot).sqrt;
-  const real k2 = A / a / (p*p + q*q).sqrt;
+  immutable real sphi = phi.sin;
+  immutable real k1 = (1 - e*e*sphi*sphi).sqrt * (1 + tau*tau).sqrt * (sinheta_dot*sinheta_dot + czeta_dot*czeta_dot).sqrt;
+  immutable real k2 = A / a / (p*p + q*q).sqrt;
 
-  const real k = k0 * k1 * k2;
+  immutable real k = k0 * k1 * k2;
 
-  const real lambda_0 = ((cast(real)utm.zone-1)*6-180+3).toRadians(); // longitude of central meridian
+  immutable real lambda_0 = ((cast(real)zone-1)*6-180+3).toRadians(); // longitude of central meridian
   lambda += lambda_0; // move λ from zonal to global coordinates
 
-  const real lat = phi.toDegree();
-  const real lon = lambda.toDegree();
-  const real convergence = gamma.toDegree();
-  const real scale = k;
+  immutable real lat = phi.toDegree();
+  immutable real lon = lambda.toDegree();
+  immutable real convergence = gamma.toDegree();
+  immutable real scale = k;
 
-  return GEO(LAT(lat), LON(lon), utm.altitude, utm.accuracy, utm.altitudeAccuracy, utm.datum);
+  //return GEO(LAT(lat), LON(lon), utm.altitude, utm.accuracy, utm.altitudeAccuracy, utm.datum);
+  return [lat, lon];
 }
 /** **/
 unittest {
@@ -121,19 +131,25 @@ unittest {
 
 **/
 UTM toUTM (GEO geo) {
-  import std.math;
+  auto u = geoToUTM(geo.lat, geo.lon, geo.datum.ellipsoid.a, geo.datum.ellipsoid.f);
+  return UTM(u[0], u[1], u[2], u[3], geo.altitude, geo.altitudeAccuracy, geo.accuracy, geo.datum);
+}
+auto geoToUTM (T) (const T lat, const T lon, const real a, const real f) {
+  import std.math: sinh, cosh, tanh, atan, atanh, atan2, abs, tan, asinh;
+  import mir.math;
   import std.conv: to;
+  import std.typecons: tuple;
   import coordinate.mathematics;
   import coordinate.utm: mgrsBands, falseEasting, falseNorthing;
-  const real lat = geo.lat.lat;
-  const real lon = geo.lon.lon;
-  const real a = geo.datum.ellipsoid.a;
-  const real f = geo.datum.ellipsoid.f;
+  //const real lat = geo.lat.lat;
+  //const real lon = geo.lon.lon;
+  //const real a = geo.datum.ellipsoid.a;
+  //const real f = geo.datum.ellipsoid.f;
   uint zone = cast(uint)floor((lon+180)/6.0) + 1; // longitudinal zone
   real lambda_0 = ((zone-1)*6.0 - 180 + 3).toRadians(); // longitude of central meridian
   // handle Norway/Svalbard exceptions
   // grid zones are 8° tall; 0°N is offset 10 into latitude bands array
-  const char latBand = mgrsBands[floor(lat/8.0 + 10).to!size_t];
+  immutable char latBand = mgrsBands[floor(lat/8.0 + 10).to!size_t];
   // adjust zone & central meridian for Norway
   if (zone==31 && latBand=='v' && lon>= 3) { zone++; lambda_0 += (6.0).toRadians(); }
   // adjust zone & central meridian for Svalbard
@@ -144,27 +160,27 @@ UTM toUTM (GEO geo) {
   if (zone==36 && latBand=='x' && lon< 33) { zone--; lambda_0 -= (6.0).toRadians(); }
   if (zone==36 && latBand=='x' && lon>=33) { zone++; lambda_0 += (6.0).toRadians(); }
 
-  const real phi = lat.toRadians(); // latitude ± from equator
-  const real lambda = lon.toRadians() - lambda_0; // longitude ± from central meridian
+  immutable real phi = lat.toRadians(); // latitude ± from equator
+  immutable real lambda = lon.toRadians() - lambda_0; // longitude ± from central meridian
 
-  const real k0 = 0.9996; // UTM scale on the central meridian
+  enum real k0 = 0.9996; // UTM scale on the central meridian
 
   // easting, northing: Karney 2011 Eq 7-14, 29, 35:
-  const real e = (f*(2.0-f)).sqrt;  // eccentricity
-  const real n = f / (2-f); // 3rd flattening
-  const real n2 = n*n; const real n3 = n*n2; const real n4 = n*n3;
-  const real n5 = n*n4; const real n6 = n*n5;
-  const real clambda = lambda.cos; const real slambda = lambda.sin; const real tlambda = lambda.tan;
-  const real tau = phi.tan;  // τ ≡ tanφ, τʹ ≡ tanφʹ; prime (ʹ) indicates angles on the conformal sphere
-  const real sigma = (e*atanh(e*tau/(1+tau*tau).sqrt)).sinh;
-  const real tau_dot = tau*(1+sigma*sigma).sqrt - sigma*(1+tau*tau).sqrt;
-  const real zeta_dot = atan2(tau_dot, clambda); // ξʹ
-  const real eta_dot = asinh(slambda / (tau_dot*tau_dot + clambda*clambda).sqrt); // ηʹ
+  immutable real e = (f*(2.0-f)).sqrt;  // eccentricity
+  immutable real n = f / (2-f); // 3rd flattening
+  immutable real n2 = n*n; immutable real n3 = n*n2; immutable real n4 = n*n3;
+  immutable real n5 = n*n4; immutable real n6 = n*n5;
+  immutable real clambda = lambda.cos; immutable real slambda = lambda.sin; immutable real tlambda = lambda.tan;
+  immutable real tau = phi.tan;  // τ ≡ tanφ, τʹ ≡ tanφʹ; prime (ʹ) indicates angles on the conformal sphere
+  immutable real sigma = (e*atanh(e*tau/(1+tau*tau).sqrt)).sinh;
+  immutable real tau_dot = tau*(1+sigma*sigma).sqrt - sigma*(1+tau*tau).sqrt;
+  immutable real zeta_dot = atan2(tau_dot, clambda); // ξʹ
+  immutable real eta_dot = asinh(slambda / (tau_dot*tau_dot + clambda*clambda).sqrt); // ηʹ
 
-  const real A = a/(1+n) * (1 + 1/4*n2 + 1/64*n4 + 1/256*n6); // 2πA is the circumference of a meridian
+  immutable real A = a/(1+n) * (1 + 1/4*n2 + 1/64*n4 + 1/256*n6); // 2πA is the circumference of a meridian
 
   // note α is one-based array (6th order Krüger expressions)
-  const real[7] alpha = [ 0.0,
+  immutable real[7] alpha = [ 0.0,
             1/2*n - 2/3*n2 + 5/16*n3 +   41/180*n4 -     127/288*n5 +      7891/37800*n6,
                   13/48*n2 -  3/5*n3 + 557/1440*n4 +     281/630*n5 - 1983433/1935360*n6,
                            61/240*n3 -  103/140*n4 + 15061/26880*n5 +   167603/181440*n6,
@@ -187,25 +203,25 @@ UTM toUTM (GEO geo) {
   real q_dot = 0;
   for (uint j = 1; j <= 6; j++) q_dot += 2*j*alpha[j] * (2*j*zeta_dot).sin * (2*j*eta_dot).sinh;
 
-  const real gamma_dot = atan(tau_dot / (1+tau_dot*tau_dot).sqrt * tlambda);
-  const real gamma_dotdot = atan2(q_dot, p_dot);
+  immutable real gamma_dot = atan(tau_dot / (1+tau_dot*tau_dot).sqrt * tlambda);
+  immutable real gamma_dotdot = atan2(q_dot, p_dot);
 
-  const real gamma = gamma_dot + gamma_dotdot;
+  immutable real gamma = gamma_dot + gamma_dotdot;
 
    // scale: Karney 2011 Eq 25
-   const real sphi = phi.sin;
-   const real k_dot = (1 - e*e*sphi*sphi).sqrt * (1 + tau*tau).sqrt / (tau_dot*tau_dot + clambda*clambda).sqrt;
-   const real k_dotdot = A / a * (p_dot*p_dot + q_dot*q_dot).sqrt;
-   const real k = k0 * k_dot * k_dotdot;
+   immutable real sphi = phi.sin;
+   immutable real k_dot = (1 - e*e*sphi*sphi).sqrt * (1 + tau*tau).sqrt / (tau_dot*tau_dot + clambda*clambda).sqrt;
+   immutable real k_dotdot = A / a * (p_dot*p_dot + q_dot*q_dot).sqrt;
+   immutable real k = k0 * k_dot * k_dotdot;
 
    // shift x/y to false origins
    x = x + falseEasting;  // make x relative to false easting
    if (y < 0) y = y + falseNorthing; // make y in southern hemisphere relative to false northing
 
-   const real convergence = gamma.toDegree();
-   const real scale = k;
-   const char hemisphere = (lat >= 0)? 'N':'S';  // Hemisphere
-   return UTM(zone, hemisphere, x, y, geo.altitude, geo.accuracy, geo.altitudeAccuracy, geo.datum);
+   immutable real convergence = gamma.toDegree();
+   immutable real scale = k;
+   immutable char hemisphere = (lat >= 0)? 'N':'S';  // Hemisphere
+   return tuple(zone, hemisphere, x, y);
 }
 /** **/
 unittest {
@@ -245,29 +261,30 @@ GEO toLatLon (ECEF ecef, Datum datum = defaultDatum) {
   const real sphi = phi.sin, cphi = phi.cos;
   const real ny = a / (1-e2*sphi*sphi).sqrt; // length of the normal terminated by the minor axis
   const real h = p*cphi + z*sphi - (a*a/ny);
-  return geo(LAT(phi.toDegree()), LON(lambda.toDegree()), h, AccuracyType.nan, AccuracyType.nan, datum);
+  return geo(LAT(phi.toDegree()), LON(lambda.toDegree()), h, AccuracyType.init, AccuracyType.init, datum);
 }
 
 /** Converts latitude/longitude to ECEF coordinates **/
-ECEF toECEF (GEO geo) {
-  import std.math;
+@fastmath ECEF toECEF (GEO geo) {
+  //import std.math;
+  import mir.math;
   import coordinate.mathematics: toRadians;
   // x = (ν+h)⋅cosφ⋅cosλ, y = (ν+h)⋅cosφ⋅sinλ, z = (ν⋅(1-e²)+h)⋅sinφ
   // where ν = a/√(1−e²⋅sinφ⋅sinφ), e² = (a²-b²)/a² or (better conditioned) 2⋅f-f²
-  const real phi = geo.lat.lat.toRadians();
-  const real lambda = geo.lon.lon.toRadians();
-  const real h = geo.altitude;
-  const real a = geo.datum.ellipsoid.a;
-  const real f = geo.datum.ellipsoid.f;
+  immutable real phi = geo.lat.lat.toRadians();
+  immutable real lambda = geo.lon.lon.toRadians();
+  immutable real h = geo.altitude;
+  immutable real a = geo.datum.ellipsoid.a;
+  immutable real f = geo.datum.ellipsoid.f;
 
-  const real sphi = phi.sin; const real cphi = phi.cos;
-  const real slambda = lambda.sin; const real clambda = lambda.cos;
+  immutable real sphi = phi.sin; const real cphi = phi.cos;
+  immutable real slambda = lambda.sin; const real clambda = lambda.cos;
 
-  const real eSq = 2*f - f*f;
-  const ny = a / (1 - eSq*sphi*sphi).sqrt; // radius of curvature in prime vertical
-  const x = (ny+h) * cphi * clambda;
-  const y = (ny+h) * cphi * slambda;
-  const z = (ny*(1-eSq)+h) * sphi;
+  immutable real eSq = 2*f - f*f;
+  immutable real ny = a / (1 - eSq*sphi*sphi).sqrt; // radius of curvature in prime vertical
+  immutable real x = (ny+h) * cphi * clambda;
+  immutable real y = (ny+h) * cphi * slambda;
+  immutable real z = (ny*(1-eSq)+h) * sphi;
   return ECEF(x,y,z);
 }
 
