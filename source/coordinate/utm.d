@@ -65,7 +65,7 @@ struct UTM {
   **/
   this (uint zone, char hemisphere, UTMType easting, UTMType northing, AltitudeType altitude, Datum datum = defaultDatum) {
     import std.uni: toUpper;
-    this(zone, hemisphere, easting, northing, altitude, AccuracyType.nan, AccuracyType.nan, datum);
+    this(zone, hemisphere, easting, northing, altitude, AccuracyType.init, AccuracyType.init, datum);
   }
   /** ditto **/
   this (uint zone, char hemisphere, UTMType easting, UTMType northing,
@@ -108,6 +108,8 @@ auto band (UTM utm) {
     accuracy = Accuracy in meters
     altitudeAccuracy = Accuracy of altitude in meters
     datum = Datum of projection
+    file = File
+    line = Line
   Returns: UTM
 **/
 auto utm (alias string Type, T, U, V, X, Y) (T zone, U band, V easting, V northing,
@@ -143,7 +145,7 @@ auto utm (alias string Type, T, U, V) (T zone, U band, V easting, V northing, st
 auto utm (alias string Type = "hemisphere", T,U,V) (T zone, U hemisphere, V easting, V northing, string file = __FILE__, size_t line = __LINE__)
   if (Type != "band" && isSomeChar!U && isNumeric!T && isNumeric!V) {
   static if (Type != "hemisphere")  static assert(0, "Type not valid!");
-  return utm(zone, hemisphere, easting, northing, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, defaultDatum, file, line);
+  return utm(zone, hemisphere, easting, northing, AltitudeType.init, AccuracyType.init, AccuracyType.init, defaultDatum, file, line);
 }
 /** **/
 unittest {
@@ -270,7 +272,7 @@ MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing,
 /** ditto **/
 MGRS mgrs (uint zone, char band, string grid, UTMType easting, UTMType northing,
            string file = __FILE__, size_t line = __LINE__) {
-  return mgrs(zone, band, grid, easting, northing, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, Datum.wgs84);
+  return mgrs(zone, band, grid, easting, northing, AltitudeType.init, AccuracyType.init, AccuracyType.init, Datum.wgs84);
 }
 /** **/
 unittest {
@@ -280,6 +282,8 @@ unittest {
 
     Params:
       coord = MGRS coordinates
+      file = File
+      line = Line
 **/
 MGRS mgrs (string coord, string file = __FILE__, size_t line = __LINE__) {
   import std.regex: ctRegex, matchFirst;

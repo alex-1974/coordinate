@@ -30,3 +30,6 @@ struct ECEF {
     this.z = z;
   }
 }
+auto ecef (T) (T x, T y, T z) {
+  return ECEF(x, y, z);
+}

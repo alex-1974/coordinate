@@ -1,20 +1,24 @@
 /** **/
 module coordinate.mathematics;
 
+import std.traits: isNumeric;
+import mir.math.common: fastmath; // compiles both for dmd and ldc
+
+
 /** **/
-T toRadians (T) (T deg) pure nothrow @safe @nogc { import std.math: PI; return deg*PI/180.0; }
+@fastmath T toRadians (T) (const T deg) pure nothrow @safe @nogc if (isNumeric!T) { import std.math: PI; return cast(T)deg*PI/180.0; }
 /** **/
-T toDegree (T) (T rad) pure nothrow @safe @nogc { import std.math: PI; return rad*180.0/PI; }
+@fastmath T toDegree (T) (const T rad) pure nothrow @safe @nogc if (isNumeric!T) { import std.math: PI; return cast(T)rad*180.0/PI; }
 
 /** Constrain degrees to range 0..360 (e.g. for bearings); -1 => 359, 361 => 1.
 
-  Params: degrees
+  Params: degrees = Degrees
   Returns: Degrees within range 0..360.
 **/
-T wrap360 (T) (T degrees) pure nothrow @safe @nogc
+@fastmath T wrap360 (T) (const T degrees) pure nothrow @safe @nogc if (isNumeric!T)
 out (result) { import mathematics.floating; assert (0.ltE(result) && result.ltE(360)); }
 do {
-  import std.conv;
+  //import std.conv;
   if (0.0 <= degrees && degrees <= 360.0) return degrees; // avoid rounding due to arithmetic ops if within range
   return cast(T)((degrees % 360.0 + 360.0) % 360.0); // sawtooth wave p:360, a:360
 }
@@ -24,10 +28,10 @@ unittest {
 }
 /** Constrain degrees to range -180..+180 (e.g. for longitude); -181 => 179, 181 => -179.
 
-  Params: degrees
+  Params: degrees = Degrees
   Returns: Degrees within range -180..+180.
 **/
-T wrap180 (T) (T degrees) pure nothrow @safe @nogc
+@fastmath T wrap180 (T) (const T degrees) pure nothrow @safe @nogc if (isNumeric!T)
 out (result) { import mathematics.floating; assert ((-180).ltE(result) && result.ltE(180)); }
 do {
   //import std.math;
@@ -40,15 +44,16 @@ unittest {
 }
 /** Constrain degrees to range -90..+90 (e.g. for latitude); -91 => -89, 91 => 89.
 
-  Params: degrees
+  Params: degrees = Degrees
   Returns: Degrees within range -90..+90.
 **/
-T wrap90 (T) (T degrees) pure nothrow @safe @nogc
+@fastmath T wrap90 (T) (const T degrees) pure nothrow @safe @nogc if (isNumeric!T)
 out (result) { import mathematics.floating; assert ((-90).ltE(result) && result.ltE(90)); }
 do {
-  import std.math;
+  //import std.math;
+  import mir.math: fabs;
   if (-90.0 <= degrees && degrees <= 90.0) return degrees; // avoid rounding due to arithmetic ops if within range
-  return cast(T)((degrees % 360.0 + 270.0) % 360.0 - 180.0).abs - cast(T)90.0; // triangle wave p:360 a:±90 TODO: fix e.g. -315°
+  return cast(T)((degrees % 360.0 + 270.0) % 360.0 - 180.0).fabs - cast(T)90.0; // triangle wave p:360 a:±90 TODO: fix e.g. -315°
 }
 /** **/
 unittest {
@@ -56,8 +61,9 @@ unittest {
 }
 
 /** Round to given digits after comma **/
-T roundTo (T) (T coord, int dec) {
-  import std.math: pow, round;
+@fastmath T roundTo (T) (const T coord, const int dec) pure nothrow @safe @nogc if (isNumeric!T) {
+  //import std.math: round;
+  import mir.math: pow, round;
   return round(coord * 10.pow(dec)) / 10.pow(dec);
 }
 unittest {

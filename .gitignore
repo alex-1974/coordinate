@@ -11,6 +11,7 @@ coordinate.lib
 coordinate-test-*
 *.exe
 *.o
+*.a
 *.obj
 *.lst
 *.selections.json

@@ -121,6 +121,8 @@ struct GEO {
       accuracy = Accuracy of Lat/Lon in meters
       altitudeAccuracy = Altitude accuracy in meters
       datum = Datum (defaults to World Geodetic System 1984)
+      file = File
+      line = Line
     Returns: [Geo] type
     Throws: [CoordException](exceptions.html#CoordException) if latitude/longitude or accuracies are out of bounds.
 **/
@@ -153,7 +155,7 @@ unittest {
 auto geo (T, U) (T lat, T lon, U altitude, string file = __FILE__, size_t line = __LINE__)
 if (isNumeric!T && isNumeric!U)
 {
-  return geo(lat, lon, altitude, AccuracyType.nan, AccuracyType.nan, defaultDatum, file, line);
+  return geo(lat, lon, altitude, AccuracyType.init, AccuracyType.init, defaultDatum, file, line);
 }
 /** ditto **/
 auto geo (T, U) (T[2] coord, U altitude, string file = __FILE__, size_t line = __LINE__)
@@ -165,13 +167,13 @@ if (isNumeric!T && isNumeric!U)
 auto geo (T) (T lat, T lon, string file = __FILE__, size_t line = __LINE__)
 if (isNumeric!T)
 {
-  return geo(lat, lon, AltitudeType.nan, file, line);
+  return geo(lat, lon, AltitudeType.init, file, line);
 }
 /** ditto **/
 auto geo (T) (T[2] coord, string file = __FILE__, size_t line = __LINE__)
 if (isNumeric!T)
 {
-  return geo(coord[0], coord[1], AltitudeType.nan, file, line);
+  return geo(coord[0], coord[1], AltitudeType.init, file, line);
 }
 /** **/
 unittest {

@@ -48,7 +48,7 @@ GeoHash geohash (string hash,
   return GeoHash(hash, altitude, accuracy, altitudeAccuracy, datum);
 }
 GeoHash geohash (string hash) {
-  return geohash(hash, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, defaultDatum);
+  return geohash(hash, AltitudeType.init, AccuracyType.init, AccuracyType.nan, defaultDatum);
 }
 /** **/
 unittest {
@@ -188,7 +188,7 @@ private auto bounds (string geohash) {
 /** Determines adjacent cell in given direction.
 
   Params:
-    geohash = Cell to which adjacent cell is required.
+    hash = Cell to which adjacent cell is required.
     direction = Direction from geohash (N/S/E/W).
   Returns: Geocode of adjacent cell.
   Throws:  Throws GeohashException at invalid geohash.
@@ -222,8 +222,6 @@ string adjacent(string geohash, char direction) {
 
   const char lastCh = hash[$-1];    // last character of hash
   string parent = hash[0..$-1]; // hash without last character
-  writefln ("lastChar %s", lastCh);
-  writefln("parent %s", parent);
   const size_t type = hash.length % 2;
 
   // check for edge-cases which don't share common prefix

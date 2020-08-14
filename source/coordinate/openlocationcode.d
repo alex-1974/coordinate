@@ -193,7 +193,7 @@ package auto encode (double latitude, double longitude, string file = __FILE__, 
   return encode (latitude, longitude, pairCodeLength, file, line);
 }
 /** ditto **/
-package auto encode (double latitude, double longitude, int codeLength, string file = __FILE__, size_t line = __LINE__) {
+auto encode (double latitude, double longitude, int codeLength, string file = __FILE__, size_t line = __LINE__) {
   import std.math: round;
   import std.algorithm: reverse;
   codeLength = min(codeLength, maxDigitCount);
@@ -448,7 +448,7 @@ auto pluscode (string code,
 }
 /** **/
 auto pluscode (string code, string file = __FILE__, size_t line = __LINE__) {
-  return pluscode(code, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, file, line);
+  return pluscode(code, AltitudeType.init, AccuracyType.init, AccuracyType.init, file, line);
 }
 /** **/
 struct CodeArea {
@@ -479,7 +479,7 @@ struct CodeArea {
   GEO center () {
     import std.algorithm: min;
     import coordinate: GEO, LAT, LON, geo;
-    return geo(centerLatitude, centerLongitude, AltitudeType.nan, AccuracyType.nan, AccuracyType.nan, Datum.epsg(6326));
+    return geo(centerLatitude, centerLongitude, AltitudeType.init, AccuracyType.init, AccuracyType.init, Datum.epsg(6326));
   }
   /** The center latitude coordinate in decimal degrees. **/
   private LAT centerLatitude () {
