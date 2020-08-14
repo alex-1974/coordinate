@@ -1,3 +1,12 @@
+/** Transformation between different geographic datums
+
+  Convention:
+    + All transformation are given as to wgs84.
+    + Transformation parameters are in meters
+    + Rotation parameters are in arcseconds and use position vector format
+      For coordinate frame format change signs of rotation parameters.
+
+**/
 module coordinate.transform;
 
 import mir.ndslice;
@@ -71,7 +80,14 @@ auto cartesian3p (T, U) (T[] source, U[] transformation) {
   auto t = transformation.sliced(1,3);      // (x,y,z)-shift in metrers
   return s + t;
 }
-/** **/
+/** 3D-Helmert transformation from local datum to wgs84
+
+  Params:
+    source = Cartesian source coordinates (x,y,z in meters)
+    transformation = Transformation parameters (x,y,z in meters)
+    rotation = Rotation parameters (arcseconds in position vector format)
+    scale = Scale parameter (in ppm)
+**/
 @fastmath auto cartesian7p (T, U) (T[] source, U[] transformation, U[] rotation, U scale)  {
   import coordinate.mathematics;
   import std.algorithm: map;
@@ -92,7 +108,7 @@ unittest {
   writefln("t7p %s", source.cartesian7p(shift, rotation, scale) );
 }
 
-/** Molodensky-Badekas transformation
+/** 3D-Molodensky-Badekas transformation from local datum to wgs84
 
   To eliminate the coupling between the rotations and translations of the Helmert transform,
   three additional parameters can be introduced to give a new XYZ center of rotation
@@ -104,11 +120,11 @@ unittest {
         which operates directly in the geodetic coordinates.
         Molodensky-Badekas can rather be seen as a variation of Helmert transform
   Params:
-    source = Cartesian source coordinates
-    transformation = Transformation parameter
-    rotation = Rotation parameter
+    source = Cartesian source coordinates (x,y,z in meters)
+    transformation = Transformation parameter (x,y,z in meters)
+    rotation = Rotation parameter (arcseconds in position vector format)
     origin = Origin for the rotation
-    scale = Scale factor
+    scale = Scale factor (in ppm)
 **/
 @fastmath auto cartesian10p (T, U) (T[3] source, U[3] transformation, U[3] rotation, U[3] origin, U scale) {
   import coordinate.mathematics;
